@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="User Service" type="Application" factoryName="Application">
+    <envs>
+      <env name="DB_NAME" value="usersdb" />
+      <env name="DB_HOST_URL" value="localhost:5432" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.parimal.e_wholesaler.user_service.UserServiceApplication" />
+    <module name="user-service" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Sales Service" type="Application" factoryName="Application">
+    <envs>
+      <env name="DB_NAME" value="salesdb" />
+      <env name="DB_HOST_URL" value="localhost:5432" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.parimal.e_wholesaler.sales_service.SalesServiceApplication" />
+    <module name="sales-service" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

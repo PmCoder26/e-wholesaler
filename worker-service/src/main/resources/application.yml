@@ -1,0 +1,16 @@
+spring:
+  application:
+  name: worker-service
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST_URL}/${DB_NAME}?useSSL=false
+    username:
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
