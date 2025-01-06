@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Data
@@ -25,6 +24,6 @@ public class DailySalesEntity {
     private Long shopId;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
 }

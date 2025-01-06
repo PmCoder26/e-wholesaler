@@ -18,6 +18,11 @@ public class GlobalExceptionHandler {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleException(Exception e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
     private ResponseEntity<ApiResponse> buildApiError(String message, List<String> subErrors, HttpStatus status) {
         ApiError apiError = ApiError.builder()
                 .message(message)

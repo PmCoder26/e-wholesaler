@@ -21,6 +21,7 @@ public class ShopEntity {
 
     private String name;
 
+    @Column(unique = true, nullable = false)
     private String gstNo;
 
     private String address;

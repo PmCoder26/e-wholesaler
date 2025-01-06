@@ -17,3 +17,6 @@ spring:
 
 server:
   port: 9060
+
+secret:
+  key: ${SECRET_KEY}
