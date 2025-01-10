@@ -1,6 +1,5 @@
-package com.parimal.e_wholesaler.shop_service.dtos;
+package com.parimal.e_wholesaler.shop_service.dtos.shop;
 
-import com.parimal.e_wholesaler.shop_service.utils.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,15 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OwnerDTO {
+public class ShopDTO {
 
     private Long id;
 
     private String name;
 
-    private Gender gender;
-
-    private Long mobNo;
+    private String gstNo;
 
     private String address;
 

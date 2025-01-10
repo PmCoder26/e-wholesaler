@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ShopRepository extends JpaRepository<ShopEntity, Long> {
 
-    boolean existsByGstNo(String gstNo);
+    boolean existsByNameAndGstNo(String name,String gstNo);
 
 }

@@ -32,13 +32,13 @@ public class UserService implements UserDetailsService {
 
     public SignupResponseDTO signup(SignupRequestDTO requestDTO) {
         boolean userExists = userRepository.existsByUsername(requestDTO.getUsername());
-        if(!userExists) {
-            requestDTO.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
-            UserEntity toSave = modelMapper.map(requestDTO, UserEntity.class);
-            UserEntity saved = userRepository.save(toSave);
-            return modelMapper.map(saved, SignupResponseDTO.class);
+        if(userExists) {
+            throw new ResourceAlreadyExistsException("User with username: " + requestDTO.getUsername() + " already exists.");
         }
-        throw new ResourceAlreadyExistsException("User with username: " + requestDTO.getUsername() + " already exists.");
+        requestDTO.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
+        UserEntity toSave = modelMapper.map(requestDTO, UserEntity.class);
+        UserEntity saved = userRepository.save(toSave);
+        return modelMapper.map(saved, SignupResponseDTO.class);
     }
 
 }

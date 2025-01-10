@@ -1,8 +1,6 @@
-package com.parimal.e_wholesaler.shop_service.dtos;
+package com.parimal.e_wholesaler.shop_service.dtos.owner;
 
 import com.parimal.e_wholesaler.shop_service.utils.Gender;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OwnerRequestDTO {
+public class OwnerDTO {
 
     private Long id;
 
@@ -18,8 +16,6 @@ public class OwnerRequestDTO {
 
     private Gender gender;
 
-    @Min(value = 10, message = "Invalid mobile number.")
-    @Max(value = 10, message = "Invalid mobile number.")
     private Long mobNo;
 
     private String address;

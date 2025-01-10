@@ -1,9 +1,9 @@
 package com.parimal.e_wholesaler.shop_service.controllers;
 
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.OwnerDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.OwnerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.OwnerResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerResponseDTO;
 import com.parimal.e_wholesaler.shop_service.services.OwnerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,8 +19,7 @@ public class OwnerController {
 
     @PostMapping
     public OwnerResponseDTO createOwner(
-            @RequestBody
-            @Valid
+            @RequestBody @Valid
             OwnerRequestDTO requestDTO
     ) {
         return ownerService.createOwner(requestDTO);

@@ -1,10 +1,11 @@
 package com.parimal.e_wholesaler.shop_service.controllers;
 
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.ShopDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.ShopRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.ShopResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
 import com.parimal.e_wholesaler.shop_service.services.ShopService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class ShopController {
 
     @PostMapping
     public ShopResponseDTO createShop(
-            @RequestBody
+            @RequestBody @Valid
             ShopRequestDTO requestDTO
     ) {
         return shopService.createShop(requestDTO);
