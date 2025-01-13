@@ -23,7 +23,7 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ModelMapper modelMapper;
-    private final OwnerRepository ownerRepository;
+    private final OwnerService ownerService;
 
 
     public ShopResponseDTO createShop(ShopRequestDTO requestDTO) {
@@ -31,8 +31,7 @@ public class ShopService {
          if(shopExists) {
              throw new ResourceAlreadyExistsException("Shop already exists.");
          }
-        OwnerEntity owner = ownerRepository.findById(requestDTO.getOwnerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + requestDTO.getOwnerId() + " not found."));
+        OwnerEntity owner = ownerService.getOwnerEntityById(requestDTO.getOwnerId());
         ShopEntity toSave = modelMapper.map(requestDTO, ShopEntity.class);
         toSave.setOwner(owner);
         ShopEntity saved = shopRepository.save(toSave);
@@ -54,4 +53,8 @@ public class ShopService {
         return new MessageDTO("Shop deleted successfully.");
     }
 
+    public DataDTO<Boolean> existsById(Long id) {
+        boolean shopExists = shopRepository.existsById(id);
+        return new DataDTO<>(shopExists);
+    }
 }

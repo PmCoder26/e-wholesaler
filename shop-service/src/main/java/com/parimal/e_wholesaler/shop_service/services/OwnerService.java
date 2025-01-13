@@ -44,4 +44,13 @@ public class OwnerService {
         return new MessageDTO("Customer deleted successfully.");
     }
 
+
+//    Default type methods only accessible within the package.
+
+    OwnerEntity getOwnerEntityById(Long id) {
+        return ownerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + id + " not found."));
+    }
+
+
 }

@@ -28,8 +28,6 @@ public class ProductEntity {
 
     private String company;
 
-    private Long shopId;
-
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SubProductEntity> subProducts;
 

@@ -1,5 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.controllers;
 
+import com.parimal.e_wholesaler.shop_service.dtos.DataDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
@@ -39,6 +40,14 @@ public class ShopController {
             Long id
     ) {
         return shopService.deleteShopById(id);
+    }
+
+    @GetMapping(path = "/exists/{id}")
+    public DataDTO<Boolean> shopExistsById(
+            @PathVariable
+            Long id
+    ) {
+        return shopService.existsById(id);
     }
 
 }

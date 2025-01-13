@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubProductRequestDTO {
-
-    private Double price;
-
-    private Long shopId;
-
+public class DataDTO<T> {
+    T data;
 }

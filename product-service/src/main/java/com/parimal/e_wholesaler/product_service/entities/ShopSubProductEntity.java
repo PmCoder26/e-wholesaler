@@ -7,29 +7,29 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import java.time.LocalDateTime;
-import java.util.List;
 
-@Data
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "sub_products")
+@Table(name = "shop_sub_product")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class SubProductEntity {
+public class ShopSubProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double price;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
+    @JoinColumn(name = "sub_product_id")
+    private SubProductEntity subProduct;
 
-    @OneToMany(mappedBy = "subProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ShopSubProductEntity> shopSubProducts;
+    @JoinColumn(name = "shop_id", nullable = false)
+    private Long shopId;
+
+    private Long stock = 0L;
 
     @CreatedDate
     private LocalDateTime createdAt;

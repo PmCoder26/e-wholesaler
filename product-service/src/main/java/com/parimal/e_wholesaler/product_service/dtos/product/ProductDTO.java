@@ -1,9 +1,8 @@
-package com.parimal.e_wholesaler.product_service.dtos;
+package com.parimal.e_wholesaler.product_service.dtos.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +16,5 @@ public class ProductDTO {
     private String category;
 
     private String company;
-
-    private Long shopId;
-
-    private LocalDateTime createdAt;
 
 }

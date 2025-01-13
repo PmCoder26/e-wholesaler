@@ -1,18 +1,16 @@
-package com.parimal.e_wholesaler.product_service.dtos;
+package com.parimal.e_wholesaler.product_service.dtos.sub_product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashMap;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubProductResponseDTO {
 
-    private Long id;
-
-    private Double price;
-
-    private Long stock;
+    private HashMap<Long, Double> idAndPrices;
 
 }
