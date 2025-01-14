@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -25,9 +26,9 @@ public class ShopSubProductRequestDTO {
     @NotEmpty(message = "Product company should not be empty")
     private String company;
 
-    @NotNull(message = "Product price(s) should not be null")
-    @NotEmpty(message = "Product price(s) should not be empty")
-    private List<Double> prices;
+    @NotNull(message = "Product MRP -> Selling-Price(s) should not be null")
+    @NotEmpty(message = "Product MRP -> Selling-Price(s) should not be empty")
+    private HashMap<Double, Double> mrpToSelling;
 
     @NotNull(message = "Shop id should not be null")
     private Long shopId;

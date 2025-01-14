@@ -29,6 +29,8 @@ public class ShopSubProductEntity {
     @JoinColumn(name = "shop_id", nullable = false)
     private Long shopId;
 
+    private Double sellingPrice;
+
     private Long stock = 0L;
 
     @CreatedDate

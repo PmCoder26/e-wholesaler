@@ -11,6 +11,10 @@ public class ShopSubProductDTO {
 
     private Long id;
 
+    private Double MRP;
+
+    private Double sellingPrice;
+
     private Long stock;
 
 }

@@ -27,14 +27,14 @@ public class SubProductService {
     public SubProductResponseDTO addSubProduct(SubProductRequestDTO requestDTO) {
         ProductEntity product = productService.findById(requestDTO.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id: " + requestDTO.getProductId() + " not found."));
-        Double price = requestDTO.getPrice();
+        Double MRP = requestDTO.getMRP();
         boolean subProductNotExists = product.getSubProducts()
                 .stream()
-                .filter(subProduct -> Objects.equals(subProduct.getPrice(), price))
+                .filter(subProduct -> Objects.equals(subProduct.getMRP(), MRP))
                 .toList()
                 .isEmpty();
         if(!subProductNotExists) {
-            throw new ResourceAlreadyExistsException("Sub-product with price: " + requestDTO.getPrice() + " already exists.");
+            throw new ResourceAlreadyExistsException("Sub-product with price: " + requestDTO.getMRP() + " already exists.");
         }
         SubProductEntity toSave = modelMapper.map(requestDTO, SubProductEntity.class);
         toSave.setProduct(product);
@@ -57,10 +57,10 @@ public class SubProductService {
         return new MessageDTO("Sub-product deleted successfully");
     }
 
-    SubProductEntity addSubProduct(ProductEntity product, Double price) {
+    SubProductEntity addSubProduct(ProductEntity product, Double mrp) {
         SubProductEntity toSave = new SubProductEntity();
         toSave.setProduct(product);
-        toSave.setPrice(price);
+        toSave.setMRP(mrp);
         return subProductRepository.save(toSave);
     }
 
