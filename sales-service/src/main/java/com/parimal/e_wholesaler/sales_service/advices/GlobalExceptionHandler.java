@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.sales_service.advices;
 
 
+import com.parimal.e_wholesaler.sales_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse> handleResourceNotFound(ResourceNotFoundException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse> handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleException(Exception e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 

@@ -18,13 +18,12 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="worker-service" />
-        <module name="sales-service" />
-        <module name="customer-service" />
         <module name="shop-service" />
         <module name="user-service" />
         <module name="order-service" />
+        <module name="customer-service" />
       </profile>
-      <profile name="Annotation profile for product-service" enabled="true">
+      <profile name="Annotation profile for sales-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -32,6 +31,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="product-service" />
+        <module name="sales-service" />
       </profile>
     </annotationProcessing>
   </component>

@@ -1,10 +1,8 @@
 package com.parimal.e_wholesaler.sales_service.controllers;
 
-import com.parimal.e_wholesaler.sales_service.dtos.DailySalesDTO;
-import com.parimal.e_wholesaler.sales_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.sales_service.dtos.SalesRequestDTO;
-import com.parimal.e_wholesaler.sales_service.dtos.SalesResponseDTO;
+import com.parimal.e_wholesaler.sales_service.dtos.*;
 import com.parimal.e_wholesaler.sales_service.services.DailySalesService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,26 +16,30 @@ public class DailySalesController {
 
     @PostMapping
     public SalesResponseDTO createDailySales(
-            @RequestBody
-            SalesRequestDTO requestDTO
-    ) {
+            @RequestBody @Valid SalesRequestDTO requestDTO
+    ) throws Exception {
         return salesService.createDailySales(requestDTO);
     }
 
     @GetMapping(path = "{id}")
     public DailySalesDTO getDailySalesById(
-            @PathVariable
-            Long id
+            @PathVariable Long id
     ) {
         return salesService.getDailySalesById(id);
     }
 
-    @DeleteMapping(path = "{id}")
+    @DeleteMapping
     public MessageDTO deleteDailySalesById(
-            @PathVariable
-            Long id
-    ) {
-        return salesService.deleteSalesById(id);
+            @RequestBody @Valid RequestDTO requestDTO
+    ) throws Exception {
+        return salesService.deleteSalesById(requestDTO);
+    }
+
+    @PatchMapping
+    public SalesResponseDTO updateDailySales(
+            @RequestBody @Valid SalesUpdateRequestDTO requestDTO
+    ) throws Exception {
+        return salesService.updateDailySales(requestDTO);
     }
 
 }

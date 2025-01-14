@@ -102,13 +102,10 @@ public class ShopSubProductService {
     }
 
     public ShopSubProductDTO getShopSubProductById(RequestDTO requestDTO) throws Exception {
-        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(requestDTO.getShopId());
-        if(shopExistsData.getData() == null || !shopExistsData.getData().getData()) {
-            throw new Exception(shopExistsData.getError().getMessage());
-        }
+        shopExistenceCheck(requestDTO.getShopId());
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
-        if(shopSubProduct.getShopId() != requestDTO.getShopId()) {
+        if(!Objects.equals(shopSubProduct.getShopId(), requestDTO.getShopId())) {
             throw new Exception("Requested shop sub-product is not owned by your shop.");
         }
         ShopSubProductDTO shopSubProductDTO = modelMapper.map(shopSubProduct, ShopSubProductDTO.class);
@@ -117,10 +114,7 @@ public class ShopSubProductService {
     }
 
     public MessageDTO removeShopSubProductById(RequestDTO requestDTO) throws Exception {
-        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(requestDTO.getShopId());
-        if(shopExistsData.getData() == null || !shopExistsData.getData().getData()) {
-            throw new Exception(shopExistsData.getError().getMessage());
-        }
+        shopExistenceCheck(requestDTO.getShopId());
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
         if(shopSubProduct.getShopId() != requestDTO.getShopId()) {
@@ -128,6 +122,16 @@ public class ShopSubProductService {
         }
         shopSubProductRepository.deleteById(requestDTO.getShopSubProductId());
         return new MessageDTO("Shop sub-product removed successfully");
+    }
+
+    private void shopExistenceCheck(Long shopId) throws Exception {
+        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(shopId);
+        if(shopExistsData.getData() == null) {
+            throw new Exception(shopExistsData.getError().getMessage());
+        }
+        if(!shopExistsData.getData().getData()) {
+            throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");
+        }
     }
 
 

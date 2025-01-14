@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SalesRequestDTO {
+public class RequestDTO {
+
+    @NotNull(message = "Sales id cannot be null.")
+    private Long salesId;
 
     @NotNull(message = "Shop id cannot be null.")
     private Long shopId;

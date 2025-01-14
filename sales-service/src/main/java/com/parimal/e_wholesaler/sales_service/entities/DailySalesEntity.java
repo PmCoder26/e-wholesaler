@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,12 +23,12 @@ public class DailySalesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double amount;
+    private Double amount = 0.0;
 
     private Long shopId;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedAt;
