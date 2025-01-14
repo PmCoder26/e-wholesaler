@@ -11,6 +11,8 @@ import java.util.HashMap;
 @NoArgsConstructor
 public class SubProductResponseDTO {
 
-    private HashMap<Long, Double> idAndPrices;
+    private Long id;
+
+    private Long mrp;
 
 }

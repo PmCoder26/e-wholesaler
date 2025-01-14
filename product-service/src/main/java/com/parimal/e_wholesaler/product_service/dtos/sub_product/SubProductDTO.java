@@ -11,7 +11,7 @@ public class SubProductDTO {
 
     private Long id;
 
-    private Double price;
+    private Double mrp;
 
 }
 

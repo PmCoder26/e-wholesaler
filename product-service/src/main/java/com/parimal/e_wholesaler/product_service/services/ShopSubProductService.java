@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.product_service.services;
 import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.product_service.dtos.DataDTO;
+import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductResponseDTO;
@@ -10,12 +11,12 @@ import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
 import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepository;
+import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 
 @Service
@@ -27,7 +28,6 @@ public class ShopSubProductService {
     private final SubProductService subProductService;
     private final ModelMapper modelMapper;
     private final ShopFeignClient shopFeignClient;
-
 
 
     @Transactional
@@ -46,30 +46,30 @@ public class ShopSubProductService {
                 ProductEntity toSaveProduct = modelMapper.map(requestDTO, ProductEntity.class);
                 ProductEntity savedProduct = productService.saveProduct(toSaveProduct);
                 responseDTO.setProductId(savedProduct.getId());
-                for (Double mrp : MRPs) {
-                    SubProductEntity savedSubProduct = subProductService.addSubProduct(savedProduct, mrp);
+                for (Double Mrp : MRPs) {
+                    SubProductEntity savedSubProduct = subProductService.addSubProduct(savedProduct, Mrp);
                     ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
                     toSaveShopSubProduct.setSubProduct(savedSubProduct);
                     toSaveShopSubProduct.setShopId(requestDTO.getShopId());
-                    toSaveShopSubProduct.setSellingPrice(map.get(mrp));
+                    toSaveShopSubProduct.setSellingPrice(map.get(Mrp));
                     ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
-                    idToPriceMap.put(saved.getId(), savedSubProduct.getMRP());
+                    idToPriceMap.put(saved.getId(), savedSubProduct.getMrp());
                 }
             } else {
                 List<SubProductEntity> subProducts = product.get().getSubProducts();
                 List<Double> subProductPrices = product.get()
                         .getSubProducts()
                         .stream()
-                        .map(SubProductEntity::getMRP)
+                        .map(SubProductEntity::getMrp)
                         .toList();
                 Long shopId = requestDTO.getShopId();
                 responseDTO.setProductId(product.get().getId());
                 MRPs
-                        .forEach(mrp -> {
+                        .forEach(Mrp -> {
                             boolean shouldAssignSubProduct = false;
                             SubProductEntity subProduct = null;
-                            if (subProductPrices.contains(mrp)) {
-                                int idx = subProductPrices.indexOf(mrp);
+                            if (subProductPrices.contains(Mrp)) {
+                                int idx = subProductPrices.indexOf(Mrp);
                                 boolean shopHasNoSubProduct = subProducts.get(idx)
                                         .getShopSubProducts()
                                         .stream()
@@ -81,16 +81,16 @@ public class ShopSubProductService {
                                     shouldAssignSubProduct = true;
                                 }
                             } else {
-                                subProduct = subProductService.addSubProduct(product.get(), mrp);
+                                subProduct = subProductService.addSubProduct(product.get(), Mrp);
                                 shouldAssignSubProduct = true;
                             }
                             if (shouldAssignSubProduct) {
                                 ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
                                 toSaveShopSubProduct.setShopId(requestDTO.getShopId());
                                 toSaveShopSubProduct.setSubProduct(subProduct);
-                                toSaveShopSubProduct.setSellingPrice(map.get(mrp));
+                                toSaveShopSubProduct.setSellingPrice(map.get(Mrp));
                                 ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
-                                idToPriceMap.put(saved.getId(), subProduct.getMRP());
+                                idToPriceMap.put(saved.getId(), subProduct.getMrp());
                             }
                         });
             }
@@ -101,6 +101,34 @@ public class ShopSubProductService {
         }
     }
 
+    public ShopSubProductDTO getShopSubProductById(RequestDTO requestDTO) throws Exception {
+        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(requestDTO.getShopId());
+        if(shopExistsData.getData() == null || !shopExistsData.getData().getData()) {
+            throw new Exception(shopExistsData.getError().getMessage());
+        }
+        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
+        if(shopSubProduct.getShopId() != requestDTO.getShopId()) {
+            throw new Exception("Requested shop sub-product is not owned by your shop.");
+        }
+        ShopSubProductDTO shopSubProductDTO = modelMapper.map(shopSubProduct, ShopSubProductDTO.class);
+        shopSubProductDTO.setMrp(shopSubProduct.getSubProduct().getMrp());
+        return shopSubProductDTO;
+    }
+
+    public MessageDTO removeShopSubProductById(RequestDTO requestDTO) throws Exception {
+        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(requestDTO.getShopId());
+        if(shopExistsData.getData() == null || !shopExistsData.getData().getData()) {
+            throw new Exception(shopExistsData.getError().getMessage());
+        }
+        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
+        if(shopSubProduct.getShopId() != requestDTO.getShopId()) {
+            throw new Exception("Requested shop sub-product is not owned by your shop.");
+        }
+        shopSubProductRepository.deleteById(requestDTO.getShopSubProductId());
+        return new MessageDTO("Shop sub-product removed successfully");
+    }
 
 
 }

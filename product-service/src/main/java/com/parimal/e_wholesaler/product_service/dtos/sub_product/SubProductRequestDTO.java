@@ -13,7 +13,7 @@ public class SubProductRequestDTO {
     @NotNull(message = "Product-id cannot be null.")
     private Long productId;
 
-    @NotNull(message = "MRP cannot be null.")
-    private Double MRP;
+    @NotNull(message = "mrp cannot be null.")
+    private Double mrp;
 
 }
