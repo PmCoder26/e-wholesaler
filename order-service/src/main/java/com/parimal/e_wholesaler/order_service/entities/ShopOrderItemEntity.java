@@ -1,6 +1,5 @@
-package com.parimal.e_wholesaler.worker_service.entities;
+package com.parimal.e_wholesaler.order_service.entities;
 
-import com.parimal.e_wholesaler.worker_service.utils.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,38 +7,27 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "workers")
+@Table(name = "shop_order_items")
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class WorkerEntity {
+public class ShopOrderItemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private Long subProductId;
 
-    @Enumerated(value = EnumType.STRING)
-    private Gender gender;
+    private Long quantity;
 
-    @Column(nullable = false, length = 10, unique = true)
-    private String mobNo;
+    private Double price;
 
-    private String address;
-
-    private String city;
-
-    private String state;
-
-    private Long shopId;
-
-    private Double salary;
+    private Long orderId;
 
     @CreatedDate
     private LocalDateTime createdAt;

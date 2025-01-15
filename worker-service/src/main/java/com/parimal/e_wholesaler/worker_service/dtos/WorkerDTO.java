@@ -16,7 +16,7 @@ public class WorkerDTO {
 
     private Gender gender;
 
-    private Long mobNo;
+    private String mobNo;
 
     private String address;
 

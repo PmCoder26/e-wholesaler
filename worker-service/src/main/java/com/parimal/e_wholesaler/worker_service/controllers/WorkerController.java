@@ -1,10 +1,8 @@
 package com.parimal.e_wholesaler.worker_service.controllers;
 
-import com.parimal.e_wholesaler.worker_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.worker_service.dtos.WorkerDTO;
-import com.parimal.e_wholesaler.worker_service.dtos.WorkerRequestDTO;
-import com.parimal.e_wholesaler.worker_service.dtos.WorkerResponseDTO;
+import com.parimal.e_wholesaler.worker_service.dtos.*;
 import com.parimal.e_wholesaler.worker_service.services.WorkerService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,26 +16,23 @@ public class WorkerController {
 
     @PostMapping
     public WorkerResponseDTO createWorker(
-            @RequestBody
-            WorkerRequestDTO requestDTO
+            @RequestBody @Valid WorkerRequestDTO requestDTO
     ) {
         return workerService.createWorker(requestDTO);
     }
 
     @GetMapping(path = "{id}")
     public WorkerDTO getWorkerById(
-            @PathVariable
-            Long id
+            @PathVariable Long id
     ) {
         return workerService.getWorkerById(id);
     }
 
-    @DeleteMapping(path = "{id}")
+    @DeleteMapping
     public MessageDTO deleteWorkerById(
-            @PathVariable
-            Long id
-    ) {
-        return workerService.deleteWorkerById(id);
+            @RequestBody @Valid DeleteRequestDTO requestDTO
+            ) {
+        return workerService.deleteWorkerById(requestDTO);
     }
 
 }
