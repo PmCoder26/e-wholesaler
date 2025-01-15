@@ -29,6 +29,9 @@ public class ShopOrderItemEntity {
 
     private Long orderId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ShopOrderEntity shopOrder;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

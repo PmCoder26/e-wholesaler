@@ -20,25 +20,21 @@ public class CustomerController {
 
     @PostMapping
     public CustomerResponseDTO createCustomer(
-            @RequestBody
-            @Valid
-            CustomerRequestDTO requestDTO
+            @RequestBody @Valid CustomerRequestDTO requestDTO
     ) {
         return customerService.createCustomer(requestDTO);
     }
 
     @GetMapping(path = "/{id}")
     public CustomerDTO getCustomerById(
-            @PathVariable
-            Long id
+            @PathVariable Long id
     ) {
         return customerService.getCustomerById(id);
     }
 
     @DeleteMapping(path = "/{id}")
     public MessageDTO removeCustomerById(
-            @PathVariable
-            Long id
+            @PathVariable Long id
     ) {
         return customerService.deleteCustomerById(id);
     }

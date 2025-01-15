@@ -60,4 +60,8 @@ public class WorkerService {
         }
     }
 
+    public DataDTO<Boolean> workerExistsByIdAndShopId(Long workerId, Long shopId) {
+        boolean workerExists = workerRepository.existsByIdAndShopId(workerId, shopId);
+        return new DataDTO<>(workerExists);
+    }
 }

@@ -21,17 +21,25 @@ public class WorkerController {
         return workerService.createWorker(requestDTO);
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "/{id}")
     public WorkerDTO getWorkerById(
             @PathVariable Long id
     ) {
         return workerService.getWorkerById(id);
     }
 
+    @GetMapping(path = "/{workerId}/shop/{shopId}")
+    public DataDTO<Boolean> workerExistsByIdAndShopId(
+            @PathVariable Long workerId,
+            @PathVariable Long shopId
+    ) {
+        return workerService.workerExistsByIdAndShopId(workerId, shopId);
+    }
+
     @DeleteMapping
     public MessageDTO deleteWorkerById(
             @RequestBody @Valid DeleteRequestDTO requestDTO
-            ) {
+    ) {
         return workerService.deleteWorkerById(requestDTO);
     }
 

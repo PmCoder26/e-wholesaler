@@ -1,14 +1,14 @@
 package com.parimal.e_wholesaler.product_service.services;
 
+import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductResponseDTO;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
+import com.parimal.e_wholesaler.product_service.exceptions.ResourceAlreadyExistsException;
+import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.SubProductRepository;
-import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

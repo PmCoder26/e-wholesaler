@@ -7,5 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RouteOrderResponseDTO {
+public class MessageDTO {
+
+    private String message;
+
 }

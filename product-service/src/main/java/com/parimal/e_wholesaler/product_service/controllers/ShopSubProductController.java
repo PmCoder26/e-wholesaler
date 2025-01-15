@@ -1,11 +1,12 @@
 package com.parimal.e_wholesaler.product_service.controllers;
 
+import com.parimal.e_wholesaler.product_service.dtos.DataDTO;
+import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductResponseDTO;
 import com.parimal.e_wholesaler.product_service.services.ShopSubProductService;
-import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,14 @@ public class ShopSubProductController {
             @RequestBody @Valid RequestDTO requestDTO
     ) throws Exception {
         return shopSubProductService.getShopSubProductById(requestDTO);
+    }
+
+    @GetMapping(path = "/{subProductId}/shop/{shopId}")
+    public ShopSubProductDTO getShopSubProductByIds(
+            @PathVariable Long subProductId,
+            @PathVariable Long shopId
+    ) {
+        return shopSubProductService.getShopSubProductByIds(subProductId, shopId);
     }
 
     @DeleteMapping

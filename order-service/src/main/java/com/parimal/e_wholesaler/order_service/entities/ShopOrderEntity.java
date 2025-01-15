@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,7 +24,7 @@ public class ShopOrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double amount;
+    private Double amount = 0.0;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus status;
@@ -32,6 +33,9 @@ public class ShopOrderEntity {
     private PaymentMethod payment;
 
     private Long workerId;
+
+    @OneToMany(mappedBy = "shopOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ShopOrderItemEntity> shopOrderItems;
 
     @CreatedDate
     private LocalDateTime createdAt;

@@ -1,4 +1,4 @@
-package com.parimal.e_wholesaler.order_service.dtos;
+package com.parimal.e_wholesaler.order_service.dtos.shop;
 
 import com.parimal.e_wholesaler.order_service.utils.OrderStatus;
 import com.parimal.e_wholesaler.order_service.utils.PaymentMethod;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RouteOrderDTO {
+public class ShopOrderDTO {
 
     private Long id;
 
@@ -22,8 +22,6 @@ public class RouteOrderDTO {
     private PaymentMethod payment;
 
     private Long workerId;
-
-    private Long customerId;
 
     private LocalDateTime createdAt;
 

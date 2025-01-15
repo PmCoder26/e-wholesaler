@@ -28,7 +28,9 @@ public class RouteOrderItemEntity {
 
     private Double price;
 
-    private Long orderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private RouteOrderEntity routeOrder;
 
     @CreatedDate
     private LocalDateTime createdAt;
