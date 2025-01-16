@@ -7,12 +7,12 @@ import com.parimal.e_wholesaler.sales_service.entities.DailySalesEntity;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.sales_service.repositories.SalesRepository;
-import com.parimal.e_wholesaler.sales_service.utils.SalesUpdateMode;
-import jakarta.ws.rs.sse.Sse;
+import com.parimal.e_wholesaler.sales_service.utils.SalesUpdate;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Service
 @AllArgsConstructor
@@ -53,7 +53,7 @@ public class DailySalesService {
     public SalesResponseDTO updateDailySales(SalesUpdateRequestDTO requestDTO) throws Exception {
         DailySalesEntity dailySales = salesRepository.findById(requestDTO.getSalesId())
                 .orElseThrow(() -> new ResourceNotFoundException("Daily sales with id: " + requestDTO.getSalesId() + " not found."));
-        if(requestDTO.getUpdateMode().equals(SalesUpdateMode.CREDIT)) {
+        if(requestDTO.getUpdateMode().equals(SalesUpdate.CREDIT)) {
             dailySales.setAmount(dailySales.getAmount() + requestDTO.getAmount());
         }
         else {
@@ -65,6 +65,23 @@ public class DailySalesService {
         DailySalesEntity updated = salesRepository.save(dailySales);
         return modelMapper.map(updated, SalesResponseDTO.class);
     }
+
+    public MessageDTO updateDailySalesAfterOrder(SalesUpdateRequestDTO2 requestDTO) throws Exception {
+        DailySalesEntity dailySales = salesRepository.findByCreatedAtAndShopId(LocalDate.now(), requestDTO.getShopId())
+                .orElseThrow(() -> new ResourceNotFoundException("Daily sales with shop-id: " + requestDTO.getShopId() + " not found."));
+        if(requestDTO.getUpdateMode().equals(SalesUpdate.CREDIT)) {
+            dailySales.setAmount(dailySales.getAmount() + requestDTO.getAmount());
+        }
+        else {
+            if(dailySales.getAmount() <= requestDTO.getAmount()) {
+                throw new Exception("Insufficient balance.");
+            }
+            dailySales.setAmount(dailySales.getAmount() - requestDTO.getAmount());
+        }
+        salesRepository.save(dailySales);
+        return new MessageDTO("Daily sales updated successfully.");
+    }
+
 
     private void shopExistenceCheck(Long shopId) throws Exception {
         ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(shopId);

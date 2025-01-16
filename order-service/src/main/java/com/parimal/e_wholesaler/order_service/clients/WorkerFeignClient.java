@@ -13,5 +13,4 @@ public interface WorkerFeignClient {
     ApiResponse<DataDTO<Boolean>> workerExistsByIdAndShopId(@PathVariable Long workerId, @PathVariable Long shopId);
 
 
-
 }

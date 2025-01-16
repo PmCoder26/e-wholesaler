@@ -2,6 +2,8 @@ package com.parimal.e_wholesaler.order_service.controllers;
 
 import com.parimal.e_wholesaler.order_service.dtos.DeleteRequestDTO;
 import com.parimal.e_wholesaler.order_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.order_service.dtos.SalesUpdateRequestDTO;
+import com.parimal.e_wholesaler.order_service.dtos.ShopOrderStatusUpdateDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderRequestDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderResponseDTO;
@@ -37,6 +39,13 @@ public class ShopOrderController {
             @RequestBody @Valid DeleteRequestDTO requestDTO
     ) {
         return shopOrderService.deleteOrderById(requestDTO);
+    }
+
+    @PutMapping(path = "/update-status")
+    public MessageDTO updateOrderStatus(
+            @RequestBody @Valid ShopOrderStatusUpdateDTO requestDTO
+    ) {
+        return shopOrderService.updateOrderStatus(requestDTO);
     }
 
 }

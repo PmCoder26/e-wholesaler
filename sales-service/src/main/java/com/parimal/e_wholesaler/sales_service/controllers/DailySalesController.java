@@ -42,4 +42,11 @@ public class DailySalesController {
         return salesService.updateDailySales(requestDTO);
     }
 
+    @PutMapping(path = "/update-sales")
+    public MessageDTO updateDailySalesAfterOrder(
+            @RequestBody @Valid SalesUpdateRequestDTO2 requestDTO
+    ) throws Exception {
+        return salesService.updateDailySalesAfterOrder(requestDTO);
+    }
+
 }

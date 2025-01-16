@@ -1,32 +1,44 @@
 package com.parimal.e_wholesaler.order_service.services;
 
 import com.parimal.e_wholesaler.order_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.order_service.clients.SalesFeignClient;
+import com.parimal.e_wholesaler.order_service.clients.SubProductFeignClient;
 import com.parimal.e_wholesaler.order_service.clients.WorkerFeignClient;
-import com.parimal.e_wholesaler.order_service.dtos.DataDTO;
-import com.parimal.e_wholesaler.order_service.dtos.DeleteRequestDTO;
-import com.parimal.e_wholesaler.order_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.order_service.dtos.*;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderRequestDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderResponseDTO;
 import com.parimal.e_wholesaler.order_service.entities.ShopOrderEntity;
+import com.parimal.e_wholesaler.order_service.entities.ShopOrderItemEntity;
 import com.parimal.e_wholesaler.order_service.exceptions.MyException;
 import com.parimal.e_wholesaler.order_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.order_service.repositories.ShopOrderRepository;
 import com.parimal.e_wholesaler.order_service.utils.OrderStatus;
+import com.parimal.e_wholesaler.order_service.utils.SalesUpdate;
+import com.parimal.e_wholesaler.order_service.utils.StockUpdate;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class ShopOrderService {
 
     private final ShopOrderRepository shopOrderRepository;
-    private final WorkerFeignClient workerFeignClient;
+
     private final ModelMapper modelMapper;
 
+    private final WorkerFeignClient workerFeignClient;
+    private final SalesFeignClient salesFeignClient;
+    private final SubProductFeignClient subProductFeignClient;
+
+
+    @Transactional
     public ShopOrderResponseDTO createOrder(ShopOrderRequestDTO requestDTO) {
         shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
         ShopOrderEntity toSave = new ShopOrderEntity();
@@ -44,6 +56,7 @@ public class ShopOrderService {
         return modelMapper.map(shopOrder, ShopOrderDTO.class);
     }
 
+    @Transactional
     public MessageDTO deleteOrderById(DeleteRequestDTO requestDTO) {
         shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
         ShopOrderEntity shopOrder = shopOrderRepository.findById(requestDTO.getOrderId())
@@ -51,13 +64,41 @@ public class ShopOrderService {
         if(Objects.equals(shopOrder.getStatus(), OrderStatus.DELIVERED)) {
             throw new RuntimeException("Ordered cannot be deleted as it is delivered.");
         }
+        if(!shopOrder.getWorkerId().equals(requestDTO.getWorkerId())) {
+            throw new RuntimeException("This order doesn't belong to you.");
+        }
+        updateStockDetails(requestDTO.getShopId(), shopOrder.getShopOrderItems());
         shopOrderRepository.delete(shopOrder);
         return new MessageDTO("Order deleted successfully.");
     }
 
-
-    boolean existsById(Long id) {
-        return shopOrderRepository.existsById(id);
+    @Transactional
+    public MessageDTO updateOrderStatus(ShopOrderStatusUpdateDTO requestDTO) {
+        shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
+        ShopOrderEntity shopOrder = shopOrderRepository.findById(requestDTO.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Order with id: " + requestDTO.getOrderId() + " not found."));
+        OrderStatus orderStatus = shopOrder.getStatus();
+        if(!shopOrder.getWorkerId().equals(requestDTO.getWorkerId())) {
+            throw new RuntimeException("This order doesn't belong to you.");
+        }
+        if(orderStatus.equals(requestDTO.getStatus())) {
+            throw new RuntimeException("The order status already " + requestDTO.getStatus());
+        }
+        else if(orderStatus.equals(OrderStatus.DELIVERED)) {
+            throw new RuntimeException("The order status is already 'DELIVERED' hence status cannot be changed.");
+        }
+        else if(requestDTO.getStatus().equals(OrderStatus.CONFIRMED)) {
+            if(requestDTO.getPaymentMethod() == null) {
+                throw new RuntimeException("Please provide the payment method to confirm order.");
+            }
+            shopOrder.setPayment(requestDTO.getPaymentMethod());
+        }
+        shopOrder.setStatus(requestDTO.getStatus());
+        ShopOrderEntity saved = shopOrderRepository.save(shopOrder);
+        if(saved.getStatus().equals(OrderStatus.DELIVERED)) {
+            updateSalesDetails(requestDTO.getShopId(), saved.getAmount());
+        }
+        return new MessageDTO("Order status updated successfully.");
     }
 
     private void shopAndWorkerCheck(Long workerId, Long shopId) {
@@ -68,6 +109,47 @@ public class ShopOrderService {
         if(!existenceResponse.getData().getData()) {
             throw new ResourceNotFoundException("Worker-Shop id mismatch or invalid worker id and shop id.");
         }
+    }
+
+    private void updateSalesDetails(Long shopId, Double amount) {
+        SalesUpdateRequestDTO requestDTO = new SalesUpdateRequestDTO();
+        requestDTO.setShopId(shopId);
+        requestDTO.setAmount(amount);
+        requestDTO.setUpdateMode(SalesUpdate.CREDIT);
+        ApiResponse<MessageDTO> salesUpdateResponse = salesFeignClient.updateDailySales(requestDTO);
+        if(salesUpdateResponse.getData() == null) {
+            throw new MyException(salesUpdateResponse.getError());
+        }
+    }
+
+    private void updateStockDetails(Long shopId, List<ShopOrderItemEntity> orderItems) {
+        orderItems.forEach( orderItem -> {
+            updateStockDetailsForEach(shopId, orderItem.getSubProductId(), orderItem.getQuantity());
+        });
+    }
+
+    private void updateStockDetailsForEach(Long shopId, Long subProductId, Long stock) {
+        SubProductStockUpdateDTO updateDTO = new SubProductStockUpdateDTO();
+        updateDTO.setShopId(shopId);
+        updateDTO.setSubProductId(subProductId);
+        updateDTO.setStock(stock);
+        updateDTO.setStockUpdate(StockUpdate.INCREASE);
+        ApiResponse<MessageDTO> stockUpdateResponse = subProductFeignClient.updateStock(updateDTO);
+        if(stockUpdateResponse.getData() == null) {
+            throw new MyException(stockUpdateResponse.getError());
+        }
+    }
+
+    boolean existsById(Long id) {
+        return shopOrderRepository.existsById(id);
+    }
+
+    Optional<ShopOrderEntity> getShopOrderById(Long id) {
+        return shopOrderRepository.findById(id);
+    }
+
+    void updateOrder(ShopOrderEntity shopOrder) {
+        shopOrderRepository.save(shopOrder);
     }
 
 }

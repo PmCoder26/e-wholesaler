@@ -4,6 +4,7 @@ import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.product_service.dtos.DataDTO;
 import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.product_service.dtos.SubProductStockUpdateDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
@@ -13,6 +14,7 @@ import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepository;
+import com.parimal.e_wholesaler.product_service.utils.StockUpdate;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -128,6 +130,22 @@ public class ShopSubProductService {
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(subProductId, shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product not found with sub-product id: " + subProductId + " and shop id: " + shopId));
         return modelMapper.map(shopSubProduct, ShopSubProductDTO.class);
+    }
+
+    public MessageDTO updateStock(SubProductStockUpdateDTO updateDTO) {
+        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(updateDTO.getSubProductId(), updateDTO.getShopId())
+                .orElseThrow(() -> new ResourceNotFoundException("Sub-product not found."));
+        if(updateDTO.getStockUpdate().equals(StockUpdate.INCREASE)) {
+            shopSubProduct.setStock(shopSubProduct.getStock() + updateDTO.getStock());
+        }
+        else {
+            if(shopSubProduct.getStock() < updateDTO.getStock()) {
+                throw new RuntimeException("Insufficient stock.");
+            }
+            shopSubProduct.setStock(shopSubProduct.getStock() - updateDTO.getStock());
+        }
+        shopSubProductRepository.save(shopSubProduct);
+        return new MessageDTO("Stock updated successfully.");
     }
 
     private void shopExistenceCheck(Long shopId) throws Exception {

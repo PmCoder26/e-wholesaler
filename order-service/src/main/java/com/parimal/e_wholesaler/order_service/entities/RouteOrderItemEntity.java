@@ -26,7 +26,7 @@ public class RouteOrderItemEntity {
 
     private Long quantity;
 
-    private Double price;
+    private Double amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)

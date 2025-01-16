@@ -16,8 +16,8 @@ public class ShopOrderItemRequestDTO {
     @NotNull(message = "Quantity cannot be null.")
     private Long quantity;
 
-    @NotNull(message = "Price id cannot be null.")
-    private Long price;
+    @NotNull(message = "Amount cannot be null.")
+    private Double amount;
 
     @NotNull(message = "Order id cannot be null.")
     private Long orderId;

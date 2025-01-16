@@ -1,0 +1,16 @@
+package com.parimal.e_wholesaler.order_service.clients;
+
+import com.parimal.e_wholesaler.order_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.order_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.order_service.dtos.SalesUpdateRequestDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@FeignClient(name = "sales-service", path = "/sales")
+public interface SalesFeignClient {
+
+    @PutMapping(path = "/update-sales")
+    ApiResponse<MessageDTO> updateDailySales(@RequestBody SalesUpdateRequestDTO requestDTO);
+
+}

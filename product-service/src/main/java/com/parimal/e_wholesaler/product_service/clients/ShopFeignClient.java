@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ShopFeignClient {
 
     @GetMapping(path = "/{id}")
-    public ApiResponse<ShopDTO> getShopById(@PathVariable Long id);
+    ApiResponse<ShopDTO> getShopById(@PathVariable Long id);
 
     @GetMapping(path = "/exists/{id}")
-    public ApiResponse<DataDTO<Boolean>> shopExistsById(@PathVariable Long id);
+    ApiResponse<DataDTO<Boolean>> shopExistsById(@PathVariable Long id);
 
 }

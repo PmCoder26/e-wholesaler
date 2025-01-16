@@ -1,7 +1,7 @@
 package com.parimal.e_wholesaler.product_service.controllers;
 
-import com.parimal.e_wholesaler.product_service.dtos.DataDTO;
 import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.product_service.dtos.SubProductStockUpdateDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
@@ -46,6 +46,13 @@ public class ShopSubProductController {
             @RequestBody @Valid RequestDTO requestDTO
     ) throws Exception {
         return shopSubProductService.removeShopSubProductById(requestDTO);
+    }
+
+    @PutMapping(path = "/update-stock")
+    public MessageDTO updateStock(
+            @RequestBody @Valid SubProductStockUpdateDTO updateDTO
+    ) {
+        return shopSubProductService.updateStock(updateDTO);
     }
 
 }

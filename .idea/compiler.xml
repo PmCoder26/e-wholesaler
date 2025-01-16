@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="discovery-service" />
       </profile>
-      <profile name="Annotation profile for product-service" enabled="true">
+      <profile name="Annotation profile for worker-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -19,10 +19,10 @@
         <module name="worker-service" />
         <module name="sales-service" />
         <module name="customer-service" />
-        <module name="product-service" />
         <module name="shop-service" />
-        <module name="order-service" />
+        <module name="product-service" />
         <module name="user-service" />
+        <module name="order-service" />
       </profile>
     </annotationProcessing>
   </component>

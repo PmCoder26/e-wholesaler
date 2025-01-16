@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.order_service.advices;
 
 
+import com.parimal.e_wholesaler.order_service.exceptions.InvalidCalculationException;
 import com.parimal.e_wholesaler.order_service.exceptions.MyException;
 import com.parimal.e_wholesaler.order_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.order_service.exceptions.ResourceNotFoundException;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getDefaultMessage())
                 .toList();
         return buildApiError("Invalid arguments", subErrors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCalculationException.class)
+    public ResponseEntity<ApiResponse> handleInvalidCalculation(InvalidCalculationException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MyException.class)

@@ -25,11 +25,10 @@ public class ShopOrderItemEntity {
 
     private Long quantity;
 
-    private Double price;
-
-    private Long orderId;
+    private Double amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private ShopOrderEntity shopOrder;
 
     @CreatedDate

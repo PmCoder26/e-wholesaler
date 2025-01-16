@@ -13,7 +13,7 @@ public interface ShopFeignClient {
 //    public ApiResponse<ShopDTO> getShopById(@PathVariable Long id);
 
     @GetMapping(path = "/exists/{id}")
-    public ApiResponse<DataDTO<Boolean>> shopExistsById(@PathVariable Long id);
+    ApiResponse<DataDTO<Boolean>> shopExistsById(@PathVariable Long id);
 
 }
 

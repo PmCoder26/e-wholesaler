@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SalesUpdateRequestDTO {
+public class SalesUpdateRequestDTO2 {
 
     @NotNull(message = "Sales id cannot be null.")
-    private Long salesId;
+    private Long shopId;
 
     @NotNull(message = "Amount cannot be null.")
     private Double amount;
