@@ -12,6 +12,8 @@ spring:
       ddl-auto: update
 
 server:
+  servlet:
+    context-path: /users
   port: 9060
 
 secret:

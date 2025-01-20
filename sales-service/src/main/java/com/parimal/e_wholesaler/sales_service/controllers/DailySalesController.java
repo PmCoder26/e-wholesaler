@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/sales")
+@RequestMapping(path = "/sale")
 @AllArgsConstructor
 public class DailySalesController {
 

@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "sales-service", path = "/sales")
+@FeignClient(name = "sales-service", path = "/sales/sale")
 public interface SalesFeignClient {
 
     @PutMapping(path = "/update-sales")

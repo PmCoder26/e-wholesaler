@@ -7,7 +7,7 @@ import com.parimal.e_wholesaler.order_service.dtos.SubProductStockUpdateDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "product-service", path = "/shop-sub-product")
+@FeignClient(name = "product-service", path = "products/shop-sub-product")
 public interface SubProductFeignClient {
 
     @GetMapping(path = "/{subProductId}/shop/{shopId}")

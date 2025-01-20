@@ -22,6 +22,8 @@ management:
         include: "*"
 
 server:
+  servlet:
+    context-path: /products
   port: 9030
 
 eureka:

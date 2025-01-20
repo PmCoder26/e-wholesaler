@@ -18,6 +18,8 @@ management:
         include: "*"
 
 server:
+  servlet:
+    context-path: /shops
   port: 9050
 
 eureka:
