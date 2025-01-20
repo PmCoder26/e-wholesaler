@@ -29,7 +29,7 @@ public class JwtService {
                 .signWith(getSecretKey())
                 .subject(user.getId().toString())
                 .claim("username", user.getUsername())
-                .claim("roles", user.getAuthorities())
+                .claim("roles", user.getUserType())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 10)))
                 .compact();
@@ -40,7 +40,7 @@ public class JwtService {
                 .signWith(getSecretKey())
                 .subject(user.getId().toString())
                 .claim("username", user.getUsername())
-                .claim("roles", user.getAuthorities())
+                .claim("roles", user.getUserType())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 180)))
                 .compact();

@@ -1,5 +1,6 @@
 package com.parimal.e_wholesaler.user_service.entities;
 
+import com.parimal.e_wholesaler.user_service.utils.PermissionMapping;
 import com.parimal.e_wholesaler.user_service.utils.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
 @Data
 @Entity
@@ -36,7 +36,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return PermissionMapping.getAuthorities(userType);
     }
 
     @CreatedDate

@@ -21,6 +21,9 @@ management:
       exposure:
         include: "*"
 
+secret:
+  key: ${SECRET_KEY}
+
 server:
   servlet:
     context-path: /workers
