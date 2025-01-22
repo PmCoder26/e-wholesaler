@@ -21,7 +21,8 @@ public class SecurityAspect {
 
     private final JwtService jwtService;
 
-    @Pointcut(value = "execution( public * com.parimal.e_wholesaler.worker_service.services.WorkerService.*(..))")
+    @Pointcut(value = "execution(public * com.parimal.e_wholesaler.worker_service.services..*(..)) &&" +
+            "execution(* com.parimal.e_wholesaler.worker_service.services.JwtService.*(..))")
     public void servicesPointCut() {}
 
     @Before(value = "servicesPointCut()")

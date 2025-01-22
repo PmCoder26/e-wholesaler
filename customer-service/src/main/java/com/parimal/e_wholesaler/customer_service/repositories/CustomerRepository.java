@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
 
-    boolean findByMobNo(Long mobNo);
+    boolean findByMobNo(String mobNo);
 
 }

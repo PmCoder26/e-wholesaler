@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.shop_service.advices;
 
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.shop_service.exceptions.UnAuthorizedAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse> handleUnsupportedInputs(HttpMessageNotReadableException e) {
         return buildApiError("Invalid input(s) or input(s) not supported", Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnAuthorizedAccessException.class)
+    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

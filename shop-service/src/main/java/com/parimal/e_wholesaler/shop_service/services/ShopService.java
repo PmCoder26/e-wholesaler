@@ -10,6 +10,7 @@ import com.parimal.e_wholesaler.shop_service.exceptions.ResourceAlreadyExistsExc
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.shop_service.repositories.OwnerRepository;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -26,7 +27,7 @@ public class ShopService {
     private final OwnerService ownerService;
 
 
-    public ShopResponseDTO createShop(ShopRequestDTO requestDTO) {
+    public ShopResponseDTO createShop(HttpServletRequest request, ShopRequestDTO requestDTO) {
          boolean shopExists = shopRepository.existsByNameAndGstNo(requestDTO.getName(), requestDTO.getGstNo());
          if(shopExists) {
              throw new ResourceAlreadyExistsException("Shop already exists.");
@@ -38,13 +39,13 @@ public class ShopService {
         return modelMapper.map(saved, ShopResponseDTO.class);
     }
 
-    public ShopDTO getShopById(Long id) {
+    public ShopDTO getShopById(HttpServletRequest request, Long id) {
         ShopEntity shop = shopRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + id + " not found."));
         return modelMapper.map(shop, ShopDTO.class);
     }
 
-    public MessageDTO deleteShopById(Long id) {
+    public MessageDTO deleteShopById(HttpServletRequest request, Long id) {
         boolean exists = shopRepository.existsById(id);
         if(!exists) {
             throw new ResourceNotFoundException("Shop with id: " + id + " not found.");
@@ -53,7 +54,7 @@ public class ShopService {
         return new MessageDTO("Shop deleted successfully.");
     }
 
-    public DataDTO<Boolean> existsById(Long id) {
+    public DataDTO<Boolean> existsById(HttpServletRequest request, Long id) {
         boolean shopExists = shopRepository.existsById(id);
         return new DataDTO<>(shopExists);
     }

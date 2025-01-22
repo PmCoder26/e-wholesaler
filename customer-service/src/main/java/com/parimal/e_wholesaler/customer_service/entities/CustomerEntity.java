@@ -28,7 +28,7 @@ public class CustomerEntity {
     private Gender gender;
 
     @Column(nullable = false, length = 10, unique = true)
-    private Long mobNo;
+    private String mobNo;
 
     private String address;
 

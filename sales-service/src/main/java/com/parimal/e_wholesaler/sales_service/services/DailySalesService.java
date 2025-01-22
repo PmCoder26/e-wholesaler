@@ -8,11 +8,11 @@ import com.parimal.e_wholesaler.sales_service.exceptions.ResourceAlreadyExistsEx
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.sales_service.repositories.SalesRepository;
 import com.parimal.e_wholesaler.sales_service.utils.SalesUpdate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Service
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class DailySalesService {
     private final ShopFeignClient shopFeignClient;
 
 
-    public SalesResponseDTO createDailySales(SalesRequestDTO requestDTO) throws Exception {
+    public SalesResponseDTO createDailySales(HttpServletRequest request, SalesRequestDTO requestDTO) throws Exception {
         shopExistenceCheck(requestDTO.getShopId());
         boolean dailySalesExists = salesRepository.existsByCreatedAtAndShopId(LocalDate.now(), requestDTO.getShopId());
         if(!dailySalesExists) {
@@ -34,13 +34,13 @@ public class DailySalesService {
         throw new ResourceAlreadyExistsException("Daly sales for today already exists.");
     }
 
-    public DailySalesDTO getDailySalesById(Long id) {
+    public DailySalesDTO getDailySalesById(HttpServletRequest request, Long id) {
         DailySalesEntity dailySales = salesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Daily sales with id: " + id + " not found."));
         return modelMapper.map(dailySales, DailySalesDTO.class);
     }
 
-    public MessageDTO deleteSalesById(RequestDTO requestDTO) throws Exception {
+    public MessageDTO deleteSalesById(HttpServletRequest request, RequestDTO requestDTO) throws Exception {
         shopExistenceCheck(requestDTO.getShopId());
         boolean dailySalesExists = salesRepository.existsById(requestDTO.getSalesId());
         if(dailySalesExists) {
@@ -50,7 +50,7 @@ public class DailySalesService {
         throw new ResourceNotFoundException("Daily sales with id: " + requestDTO.getSalesId() + " not found.");
     }
 
-    public SalesResponseDTO updateDailySales(SalesUpdateRequestDTO requestDTO) throws Exception {
+    public SalesResponseDTO updateDailySales(HttpServletRequest request, SalesUpdateRequestDTO requestDTO) throws Exception {
         DailySalesEntity dailySales = salesRepository.findById(requestDTO.getSalesId())
                 .orElseThrow(() -> new ResourceNotFoundException("Daily sales with id: " + requestDTO.getSalesId() + " not found."));
         if(requestDTO.getUpdateMode().equals(SalesUpdate.CREDIT)) {
@@ -66,7 +66,7 @@ public class DailySalesService {
         return modelMapper.map(updated, SalesResponseDTO.class);
     }
 
-    public MessageDTO updateDailySalesAfterOrder(SalesUpdateRequestDTO2 requestDTO) throws Exception {
+    public MessageDTO updateDailySalesAfterOrder(HttpServletRequest request, SalesUpdateRequestDTO2 requestDTO) throws Exception {
         DailySalesEntity dailySales = salesRepository.findByCreatedAtAndShopId(LocalDate.now(), requestDTO.getShopId())
                 .orElseThrow(() -> new ResourceNotFoundException("Daily sales with shop-id: " + requestDTO.getShopId() + " not found."));
         if(requestDTO.getUpdateMode().equals(SalesUpdate.CREDIT)) {

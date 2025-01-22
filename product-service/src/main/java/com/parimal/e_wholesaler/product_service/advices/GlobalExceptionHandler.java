@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.product_service.advices;
 
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.product_service.exceptions.UnAuthorizedAccessException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
         return buildApiError("Invalid arguments.", subErrors, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnAuthorizedAccessException.class)
+    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

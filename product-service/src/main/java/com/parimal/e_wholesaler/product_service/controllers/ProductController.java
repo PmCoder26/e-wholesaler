@@ -5,6 +5,7 @@ import com.parimal.e_wholesaler.product_service.dtos.product.ProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.product.ProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.product.ProductResponseDTO;
 import com.parimal.e_wholesaler.product_service.services.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,23 +20,26 @@ public class ProductController {
 
     @PostMapping
     public ProductResponseDTO addProduct(
+            HttpServletRequest request,
             @RequestBody @Valid ProductRequestDTO requestDTO
     ) {
-        return productService.addProduct(requestDTO);
+        return productService.addProduct(request, requestDTO);
     }
 
     @GetMapping(path = "/{id}")
     public ProductDTO getProductById(
+            HttpServletRequest request,
             @PathVariable Long id
     ) {
-        return productService.getProductById(id);
+        return productService.getProductById(request, id);
     }
 
     @DeleteMapping(path = "/{id}")
     public MessageDTO removeProductById(
+            HttpServletRequest request,
             @PathVariable Long id
     ) {
-        return productService.removeProductById(id);
+        return productService.removeProductById(request, id);
     }
 
 

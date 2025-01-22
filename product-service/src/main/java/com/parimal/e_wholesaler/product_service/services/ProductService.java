@@ -8,6 +8,7 @@ import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.ProductRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
-    public ProductResponseDTO addProduct(ProductRequestDTO requestDTO) {
+    public ProductResponseDTO addProduct(HttpServletRequest request, ProductRequestDTO requestDTO) {
         boolean productExists = productRepository.existsByName(requestDTO.getName());
         if(productExists) {
             throw new ResourceAlreadyExistsException("Product with name: " + requestDTO.getName() + " already exists.");
@@ -31,13 +32,13 @@ public class ProductService {
         return modelMapper.map(saved, ProductResponseDTO.class);
     }
 
-    public ProductDTO getProductById(Long id) {
+    public ProductDTO getProductById(HttpServletRequest request, Long id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with id: " + id + " not found."));
         return modelMapper.map(product, ProductDTO.class);
     }
 
-    public MessageDTO removeProductById(Long id) {
+    public MessageDTO removeProductById(HttpServletRequest request, Long id) {
         boolean productExists = productRepository.existsById(id);
         if(!productExists) {
             throw new ResourceNotFoundException("Product with id: " + id + " not found.");

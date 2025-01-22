@@ -7,6 +7,7 @@ import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubPro
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductResponseDTO;
 import com.parimal.e_wholesaler.product_service.services.ShopSubProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,38 +22,43 @@ public class ShopSubProductController {
 
     @PostMapping
     public ShopSubProductResponseDTO addShopSubProduct(
+            HttpServletRequest request,
             @RequestBody @Valid ShopSubProductRequestDTO requestDTO
     ) throws Exception {
-        return shopSubProductService.addShopSubProduct(requestDTO);
+        return shopSubProductService.addShopSubProduct(request, requestDTO);
     }
 
     @GetMapping
     public ShopSubProductDTO getShopSubProductById(
+            HttpServletRequest request,
             @RequestBody @Valid RequestDTO requestDTO
     ) throws Exception {
-        return shopSubProductService.getShopSubProductById(requestDTO);
+        return shopSubProductService.getShopSubProductById(request, requestDTO);
     }
 
     @GetMapping(path = "/{subProductId}/shop/{shopId}")
     public ShopSubProductDTO getShopSubProductByIds(
+            HttpServletRequest request,
             @PathVariable Long subProductId,
             @PathVariable Long shopId
     ) {
-        return shopSubProductService.getShopSubProductByIds(subProductId, shopId);
+        return shopSubProductService.getShopSubProductByIds(request, subProductId, shopId);
     }
 
     @DeleteMapping
     public MessageDTO removeShopSubProductById(
+            HttpServletRequest request,
             @RequestBody @Valid RequestDTO requestDTO
     ) throws Exception {
-        return shopSubProductService.removeShopSubProductById(requestDTO);
+        return shopSubProductService.removeShopSubProductById(request, requestDTO);
     }
 
     @PutMapping(path = "/update-stock")
     public MessageDTO updateStock(
+            HttpServletRequest request,
             @RequestBody @Valid SubProductStockUpdateDTO updateDTO
     ) {
-        return shopSubProductService.updateStock(updateDTO);
+        return shopSubProductService.updateStock(request, updateDTO);
     }
 
 }

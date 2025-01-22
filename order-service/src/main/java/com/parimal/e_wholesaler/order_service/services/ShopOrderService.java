@@ -16,6 +16,7 @@ import com.parimal.e_wholesaler.order_service.repositories.ShopOrderRepository;
 import com.parimal.e_wholesaler.order_service.utils.OrderStatus;
 import com.parimal.e_wholesaler.order_service.utils.SalesUpdate;
 import com.parimal.e_wholesaler.order_service.utils.StockUpdate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ShopOrderService {
 
 
     @Transactional
-    public ShopOrderResponseDTO createOrder(ShopOrderRequestDTO requestDTO) {
+    public ShopOrderResponseDTO createOrder(HttpServletRequest request, ShopOrderRequestDTO requestDTO) {
         shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
         ShopOrderEntity toSave = new ShopOrderEntity();
         toSave.setWorkerId(requestDTO.getWorkerId());
@@ -50,14 +51,14 @@ public class ShopOrderService {
         return responseDTO;
     }
 
-    public ShopOrderDTO getOrderById(Long id) {
+    public ShopOrderDTO getOrderById(HttpServletRequest request, Long id) {
         ShopOrderEntity shopOrder = shopOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop-order with id: " + id + " not found."));
         return modelMapper.map(shopOrder, ShopOrderDTO.class);
     }
 
     @Transactional
-    public MessageDTO deleteOrderById(DeleteRequestDTO requestDTO) {
+    public MessageDTO deleteOrderById(HttpServletRequest request, DeleteRequestDTO requestDTO) {
         shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
         ShopOrderEntity shopOrder = shopOrderRepository.findById(requestDTO.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id: " + requestDTO.getOrderId() + " not found."));
@@ -73,7 +74,7 @@ public class ShopOrderService {
     }
 
     @Transactional
-    public MessageDTO updateOrderStatus(ShopOrderStatusUpdateDTO requestDTO) {
+    public MessageDTO updateOrderStatus(HttpServletRequest request, ShopOrderStatusUpdateDTO requestDTO) {
         shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
         ShopOrderEntity shopOrder = shopOrderRepository.findById(requestDTO.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id: " + requestDTO.getOrderId() + " not found."));

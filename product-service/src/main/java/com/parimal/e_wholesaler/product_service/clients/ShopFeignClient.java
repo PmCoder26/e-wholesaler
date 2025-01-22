@@ -14,6 +14,6 @@ public interface ShopFeignClient {
     ApiResponse<ShopDTO> getShopById(@PathVariable Long id);
 
     @GetMapping(path = "/exists/{id}")
-    ApiResponse<DataDTO<Boolean>> shopExistsById(@PathVariable Long id);
+    ApiResponse<DataDTO<Boolean>> shopExistsById(@PathVariable(value = "id") Long id);
 
 }

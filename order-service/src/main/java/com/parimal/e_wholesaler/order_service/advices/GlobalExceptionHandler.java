@@ -1,10 +1,7 @@
 package com.parimal.e_wholesaler.order_service.advices;
 
 
-import com.parimal.e_wholesaler.order_service.exceptions.InvalidCalculationException;
-import com.parimal.e_wholesaler.order_service.exceptions.MyException;
-import com.parimal.e_wholesaler.order_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.order_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.order_service.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,8 +39,13 @@ public class GlobalExceptionHandler {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnAuthorizedAccessException.class)
+    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(MyException.class)
-    public ResponseEntity<ApiResponse> handleException(MyException e) {
+    public ResponseEntity<ApiResponse> handleMyException(MyException e) {
         return buildApiError(e.getError().getMessage(), e.getError().getSubErrors(), e.getError().getStatus());
     }
 

@@ -15,8 +15,8 @@ import com.parimal.e_wholesaler.order_service.exceptions.MyException;
 import com.parimal.e_wholesaler.order_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.order_service.repositories.ShopOrderItemRepository;
 import com.parimal.e_wholesaler.order_service.utils.OrderStatus;
-import com.parimal.e_wholesaler.order_service.utils.SalesUpdate;
 import com.parimal.e_wholesaler.order_service.utils.StockUpdate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class ShopOrderItemService {
 
 
     @Transactional
-    public ShopOrderItemResponseDTO addOrderItem(ShopOrderItemRequestDTO requestDTO) {
+    public ShopOrderItemResponseDTO addOrderItem(HttpServletRequest request, ShopOrderItemRequestDTO requestDTO) {
         ShopOrderEntity shopOrder = shopOrderService.getShopOrderById(requestDTO.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id: " + requestDTO.getOrderId() + " not found."));
         OrderStatus orderStatus = shopOrder.getStatus();
@@ -70,14 +70,14 @@ public class ShopOrderItemService {
         return modelMapper.map(saved, ShopOrderItemResponseDTO.class);
     }
 
-    public ShopOrderItemDTO getOrderItemById(Long id) {
+    public ShopOrderItemDTO getOrderItemById(HttpServletRequest request, Long id) {
         ShopOrderItemEntity shopOrderItem = shopOrderItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order item with id: " + id + " not found."));
         return modelMapper.map(shopOrderItem, ShopOrderItemDTO.class);
     }
 
     @Transactional
-    public MessageDTO removeOrderItem(OrderItemDeleteRequestDTO requestDTO) {
+    public MessageDTO removeOrderItem(HttpServletRequest request, OrderItemDeleteRequestDTO requestDTO) {
         workerAndShopCheck(requestDTO.getShopId(), requestDTO.getWorkerId());
         ShopOrderItemEntity shopOrderItem = shopOrderItemRepository.findById(requestDTO.getOrderItemId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order-item with id: " + requestDTO.getOrderItemId() + " not found."));

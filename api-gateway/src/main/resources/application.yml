@@ -60,9 +60,6 @@ spring:
             - StripPrefix=2
             - name: AuthenticationFilter
 
-
-
-
 server:
   port: 8090
 

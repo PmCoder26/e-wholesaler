@@ -15,6 +15,7 @@ import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepository;
 import com.parimal.e_wholesaler.product_service.utils.StockUpdate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class ShopSubProductService {
 
 
     @Transactional
-    public ShopSubProductResponseDTO addShopSubProduct(ShopSubProductRequestDTO requestDTO) throws Exception {
+    public ShopSubProductResponseDTO addShopSubProduct(HttpServletRequest request, ShopSubProductRequestDTO requestDTO) throws Exception {
         ApiResponse<DataDTO<Boolean>> shopExistsResponse = shopFeignClient.shopExistsById(requestDTO.getShopId());
         if (shopExistsResponse.getData() != null) {
             if (!shopExistsResponse.getData().getData()) {
@@ -103,7 +104,7 @@ public class ShopSubProductService {
         }
     }
 
-    public ShopSubProductDTO getShopSubProductById(RequestDTO requestDTO) throws Exception {
+    public ShopSubProductDTO getShopSubProductById(HttpServletRequest request, RequestDTO requestDTO) throws Exception {
         shopExistenceCheck(requestDTO.getShopId());
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
@@ -115,7 +116,7 @@ public class ShopSubProductService {
         return shopSubProductDTO;
     }
 
-    public MessageDTO removeShopSubProductById(RequestDTO requestDTO) throws Exception {
+    public MessageDTO removeShopSubProductById(HttpServletRequest request, RequestDTO requestDTO) throws Exception {
         shopExistenceCheck(requestDTO.getShopId());
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
@@ -126,13 +127,13 @@ public class ShopSubProductService {
         return new MessageDTO("Shop sub-product removed successfully");
     }
 
-    public ShopSubProductDTO getShopSubProductByIds(Long subProductId, Long shopId) {
+    public ShopSubProductDTO getShopSubProductByIds(HttpServletRequest request, Long subProductId, Long shopId) {
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(subProductId, shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product not found with sub-product id: " + subProductId + " and shop id: " + shopId));
         return modelMapper.map(shopSubProduct, ShopSubProductDTO.class);
     }
 
-    public MessageDTO updateStock(SubProductStockUpdateDTO updateDTO) {
+    public MessageDTO updateStock(HttpServletRequest request, SubProductStockUpdateDTO updateDTO) {
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(updateDTO.getSubProductId(), updateDTO.getShopId())
                 .orElseThrow(() -> new ResourceNotFoundException("Sub-product not found."));
         if(updateDTO.getStockUpdate().equals(StockUpdate.INCREASE)) {

@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.sales_service.advices;
 
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.sales_service.exceptions.UnAuthorizedAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +23,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ApiResponse> handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnAuthorizedAccessException.class)
+    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

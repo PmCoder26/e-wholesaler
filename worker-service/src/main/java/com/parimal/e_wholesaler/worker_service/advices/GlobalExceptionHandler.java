@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnAuthorizedAccessException.class)
-    public ResponseEntity<ApiResponse> handleUnAuthorizedAccess(UnAuthorizedAccessException e) {
+    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
     }
 

@@ -5,6 +5,7 @@ import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductResponseDTO;
 import com.parimal.e_wholesaler.product_service.services.SubProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,23 +20,26 @@ public class SubProductController {
 
     @PostMapping
     public SubProductResponseDTO addSubProduct(
+            HttpServletRequest request,
             @RequestBody @Valid SubProductRequestDTO requestDTO
     ) {
-        return subProductService.addSubProduct(requestDTO);
+        return subProductService.addSubProduct(request, requestDTO);
     }
 
     @GetMapping(path = "/{id}")
     public SubProductDTO getSubProductById(
+            HttpServletRequest request,
             @PathVariable Long id
     ) {
-        return subProductService.getSubProductById(id);
+        return subProductService.getSubProductById(request, id);
     }
 
     @DeleteMapping(path = "/{id}")
     public MessageDTO removeSubProductById(
+            HttpServletRequest request,
             @PathVariable Long id
     ) {
-        return subProductService.removeSubProductById(id);
+        return subProductService.removeSubProductById(request, id);
     }
 
 }
