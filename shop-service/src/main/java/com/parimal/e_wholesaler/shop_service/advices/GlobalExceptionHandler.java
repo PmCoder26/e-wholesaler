@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.shop_service.advices;
 
 
+import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.shop_service.exceptions.UnAuthorizedAccessException;
@@ -46,6 +47,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnAuthorizedAccessException.class)
     public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MyException.class)
+    public ResponseEntity<ApiResponse> handleMyException(MyException e) {
+        return buildApiErrorResponse(e.apiError);
     }
 
     @ExceptionHandler(Exception.class)

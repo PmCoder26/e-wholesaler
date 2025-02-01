@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ShopOrderRepository extends JpaRepository<ShopOrderEntity, Long> {
 
+    long countByShopId(Long shopId);
+
 }

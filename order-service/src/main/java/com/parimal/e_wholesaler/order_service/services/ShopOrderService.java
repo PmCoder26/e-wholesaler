@@ -22,9 +22,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @AllArgsConstructor
@@ -32,17 +34,17 @@ public class ShopOrderService {
 
     private final ShopOrderRepository shopOrderRepository;
 
-    private final ModelMapper modelMapper;
-
     private final WorkerFeignClient workerFeignClient;
     private final SalesFeignClient salesFeignClient;
     private final SubProductFeignClient subProductFeignClient;
 
+    private final ModelMapper modelMapper;
 
     @Transactional
     public ShopOrderResponseDTO createOrder(HttpServletRequest request, ShopOrderRequestDTO requestDTO) {
         shopAndWorkerCheck(requestDTO.getWorkerId(), requestDTO.getShopId());
         ShopOrderEntity toSave = new ShopOrderEntity();
+        toSave.setShopId(requestDTO.getShopId());
         toSave.setWorkerId(requestDTO.getWorkerId());
         toSave.setStatus(OrderStatus.CREATING);
         ShopOrderEntity saved = shopOrderRepository.save(toSave);
@@ -55,6 +57,18 @@ public class ShopOrderService {
         ShopOrderEntity shopOrder = shopOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop-order with id: " + id + " not found."));
         return modelMapper.map(shopOrder, ShopOrderDTO.class);
+    }
+
+    public Long calculateShopCount(HttpServletRequest request, List<Long> shopIdList) {
+        AtomicLong orderCount = new AtomicLong();
+        shopIdList
+                .forEach(shopId -> {
+                    Optional<Long> count = Optional.of(orderCount.addAndGet(shopOrderRepository.countByShopId(shopId)));
+                    if(count.isEmpty()) {
+                        
+                    }
+                });
+        return orderCount.get();
     }
 
     @Transactional

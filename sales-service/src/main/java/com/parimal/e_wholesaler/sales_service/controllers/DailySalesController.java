@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/sale")
 @AllArgsConstructor
@@ -21,6 +23,14 @@ public class DailySalesController {
             @RequestBody @Valid SalesRequestDTO requestDTO
     ) throws Exception {
         return salesService.createDailySales(request, requestDTO);
+    }
+
+    @PostMapping(path = "/sales-amount")
+    public Double calculateSalesAmount(
+            HttpServletRequest request,
+            @RequestBody List<Long> shopIdList
+    ) {
+        return salesService.calculateSalesAmount(request, shopIdList);
     }
 
     @GetMapping(path = "{id}")

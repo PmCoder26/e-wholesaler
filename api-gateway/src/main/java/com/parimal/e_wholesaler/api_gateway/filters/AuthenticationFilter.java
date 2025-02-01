@@ -25,10 +25,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
     private final JwtService jwtService;
 
-    private final Map<String, String> roleToPathMap = Map.of(
-            "OWNER", "/owners/",
-            "WORKER", "/workers/",
-            "CUSTOMER", "/customers/"
+    private final Map<String, List<String>> roleToPathMap = Map.of(
+            "OWNER", List.of("/shops/", "/sales/"),
+            "WORKER", List.of("/workers/"),
+            "CUSTOMER", List.of("/customers/")
     );
 
     public AuthenticationFilter(JwtService jwtService) {
@@ -64,7 +64,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     }
 
     private boolean isAuthorized(String requestPath, String role) {
-        return requestPath.startsWith(roleToPathMap.get(role));
+        return !roleToPathMap.get(role)
+                .stream()
+                .filter(requestPath::startsWith)
+                .toList()
+                .isEmpty();
     }
 
     private Mono<Void> completeResponse(ServerWebExchange exchange) {

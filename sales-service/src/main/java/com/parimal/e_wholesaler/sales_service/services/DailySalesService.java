@@ -1,5 +1,6 @@
 package com.parimal.e_wholesaler.sales_service.services;
 
+import com.netflix.spectator.impl.AtomicDouble;
 import com.parimal.e_wholesaler.sales_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.sales_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.sales_service.dtos.*;
@@ -13,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +35,15 @@ public class DailySalesService {
             return modelMapper.map(saved, SalesResponseDTO.class);
         }
         throw new ResourceAlreadyExistsException("Daly sales for today already exists.");
+    }
+
+    public Double calculateSalesAmount(HttpServletRequest request, List<Long> shopIdList) {
+        AtomicDouble totalSalesAmount = new AtomicDouble();
+        shopIdList
+                .forEach(shopId ->
+                        totalSalesAmount.addAndGet(salesRepository.findAmountByShopIdAndCreatedAt(shopId, LocalDate.now()))
+                );
+        return totalSalesAmount.get();
     }
 
     public DailySalesDTO getDailySalesById(HttpServletRequest request, Long id) {

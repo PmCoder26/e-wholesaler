@@ -11,4 +11,6 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, Long> {
 
     boolean existsByIdAndShopId(Long workerId, Long shopId);
 
+    long countByShopId(Long shopId);
+
 }

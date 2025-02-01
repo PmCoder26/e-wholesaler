@@ -34,6 +34,8 @@ public class RouteOrderEntity {
 
     private Long workerId;
 
+    private Long shopId;
+
     private Long customerId;
 
     @OneToMany(mappedBy = "routeOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

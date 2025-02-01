@@ -23,7 +23,7 @@ public class FeignClientConfig {
             if (requestAttributes instanceof ServletRequestAttributes) {
                 HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
                 String transactionToken = request.getHeader("Transaction-Token");
-                // here, use the small case in adding the headers.
+                // Here, use the small case in adding the headers.
                 // Feign generally follows the convention of sending headers in lowercase
                 requestTemplate.header("transaction-token", transactionToken);
             }

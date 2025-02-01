@@ -35,6 +35,8 @@ public class ShopOrderEntity {
 
     private Long workerId;
 
+    private Long shopId;
+
     @OneToMany(mappedBy = "shopOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ShopOrderItemEntity> shopOrderItems;
 

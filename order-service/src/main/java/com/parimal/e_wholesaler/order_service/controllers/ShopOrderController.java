@@ -1,9 +1,6 @@
 package com.parimal.e_wholesaler.order_service.controllers;
 
-import com.parimal.e_wholesaler.order_service.dtos.DeleteRequestDTO;
-import com.parimal.e_wholesaler.order_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.order_service.dtos.SalesUpdateRequestDTO;
-import com.parimal.e_wholesaler.order_service.dtos.ShopOrderStatusUpdateDTO;
+import com.parimal.e_wholesaler.order_service.dtos.*;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderRequestDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderResponseDTO;
@@ -12,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/shop-order")
@@ -27,6 +26,14 @@ public class ShopOrderController {
             @RequestBody @Valid ShopOrderRequestDTO requestDTO
     ) {
         return shopOrderService.createOrder(request, requestDTO);
+    }
+
+    @PostMapping(path = "/count")
+    public Long calculateShopCount(
+            HttpServletRequest request,
+            @RequestBody List<Long> shopIdList
+    ) {
+        return shopOrderService.calculateShopCount(request, shopIdList);
     }
 
     @GetMapping(path = "/{id}")

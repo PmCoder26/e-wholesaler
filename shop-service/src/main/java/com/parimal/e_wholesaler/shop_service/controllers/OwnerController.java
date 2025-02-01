@@ -2,6 +2,7 @@ package com.parimal.e_wholesaler.shop_service.controllers;
 
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerHomeDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerResponseDTO;
 import com.parimal.e_wholesaler.shop_service.services.OwnerService;
@@ -36,6 +37,15 @@ public class OwnerController {
         return ownerService.getOwnerById(request, id);
     }
 
+    @GetMapping(path = "/home/{ownerId}")
+    public OwnerHomeDTO getHomeDetails(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId
+    ) {
+        return ownerService.getHomeDetails(request, ownerId);
+    }
+
     @DeleteMapping(path = "/{id}")
     public MessageDTO deleteOwnerById(
             HttpServletRequest request,
@@ -44,5 +54,7 @@ public class OwnerController {
     ) {
         return ownerService.deleteOwnerById(request, id);
     }
+
+
 
 }

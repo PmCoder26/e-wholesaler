@@ -14,6 +14,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
 @Service
 @AllArgsConstructor
 public class WorkerService {
@@ -38,6 +41,13 @@ public class WorkerService {
         WorkerEntity worker = workerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker with id: " + id + " not found."));
         return modelMapper.map(worker, WorkerDTO.class);
+    }
+
+    public Long getWorkerCount(HttpServletRequest request, List<Long> shopIdList) {
+        AtomicLong workerCount = new AtomicLong(0L);
+        shopIdList
+                .forEach(shopId -> workerCount.addAndGet(workerRepository.countByShopId(shopId)));
+        return workerCount.get();
     }
 
     public MessageDTO deleteWorkerById(HttpServletRequest request, DeleteRequestDTO requestDTO) {
@@ -65,4 +75,5 @@ public class WorkerService {
             throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");
         }
     }
+
 }

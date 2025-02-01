@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/worker")
 @AllArgsConstructor
@@ -21,6 +23,15 @@ public class WorkerController {
             @RequestBody @Valid WorkerRequestDTO requestDTO
     ) {
         return workerService.createWorker(request, requestDTO);
+    }
+
+    @PostMapping(path = "/worker-count")
+    public Long getWorkerCount(
+            HttpServletRequest request,
+            @RequestBody
+            List<Long> shopIdList
+    ) {
+        return workerService.getWorkerCount(request, shopIdList);
     }
 
     @GetMapping(path = "/{id}")
