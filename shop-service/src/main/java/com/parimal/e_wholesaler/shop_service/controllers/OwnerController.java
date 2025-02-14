@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.shop_service.controllers;
 
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.SalesRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerHomeDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerRequestDTO;
@@ -26,6 +27,15 @@ public class OwnerController {
             OwnerRequestDTO requestDTO
     ) {
         return ownerService.createOwner(request, requestDTO);
+    }
+
+    @PostMapping(path = "/shop/sales")
+    public MessageDTO createSalesForShop(
+            HttpServletRequest request,
+            @RequestBody
+            SalesRequestDTO requestDTO
+    ) {
+        return ownerService.createDailySales(request, requestDTO.getShopId());
     }
 
     @GetMapping(path = "/{id}")

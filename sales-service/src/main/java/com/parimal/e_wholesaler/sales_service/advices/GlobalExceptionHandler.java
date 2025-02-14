@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.sales_service.advices;
 
 
+import com.parimal.e_wholesaler.sales_service.exceptions.MyException;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.sales_service.exceptions.UnAuthorizedAccessException;
@@ -16,26 +17,40 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleResourceNotFound(ResourceNotFoundException e) {
+    public ApiResponse handleResourceNotFound(ResourceNotFoundException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse> handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
+    public ApiResponse handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UnAuthorizedAccessException.class)
-    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
+    public ApiResponse handleUnAuthorized(UnAuthorizedAccessException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(MyException.class)
+    public ApiResponse handleMyException(MyException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), e.apiError.getStatus());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ApiResponse handleRuntimeException(RuntimeException e) {
+        ApiError apiError = ApiError.builder()
+                .message(e.getMessage())
+                .status(HttpStatus.NOT_FOUND)
+                .build();
+        return new ApiResponse(apiError);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleException(Exception e) {
+    public ApiResponse handleException(Exception e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
-    private ResponseEntity<ApiResponse> buildApiError(String message, List<String> subErrors, HttpStatus status) {
+    private ApiResponse buildApiError(String message, List<String> subErrors, HttpStatus status) {
         ApiError apiError = ApiError.builder()
                 .message(message)
                 .subErrors(subErrors)
@@ -44,8 +59,8 @@ public class GlobalExceptionHandler {
         return buildApiErrorResponse(apiError);
     }
 
-    private ResponseEntity<ApiResponse> buildApiErrorResponse(ApiError apiError){
-        return new ResponseEntity<>(new ApiResponse(apiError), apiError.getStatus());
+    private ApiResponse buildApiErrorResponse(ApiError apiError){
+        return new ApiResponse(apiError);
     }
 
 }

@@ -1,6 +1,6 @@
-package com.parimal.e_wholesaler.shop_service.exceptions;
+package com.parimal.e_wholesaler.sales_service.exceptions;
 
-import com.parimal.e_wholesaler.shop_service.advices.ApiError;
+import com.parimal.e_wholesaler.sales_service.advices.ApiError;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 

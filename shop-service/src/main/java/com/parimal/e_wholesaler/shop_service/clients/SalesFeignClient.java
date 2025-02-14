@@ -1,6 +1,8 @@
 package com.parimal.e_wholesaler.shop_service.clients;
 
 import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.shop_service.dtos.SalesRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.SalesResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -11,5 +13,8 @@ public interface SalesFeignClient {
 
     @PostMapping(path = "/sales-amount")
     ApiResponse<Double> getSalesAmount(List<Long> shopIdList);
+
+    @PostMapping
+    ApiResponse<SalesResponseDTO> createSalesForShop(SalesRequestDTO requestDTO);
 
 }

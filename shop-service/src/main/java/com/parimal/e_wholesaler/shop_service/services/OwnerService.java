@@ -6,6 +6,8 @@ import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.DataDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.SalesRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.SalesResponseDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerHomeDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerRequestDTO;
@@ -18,11 +20,13 @@ import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundExceptio
 import com.parimal.e_wholesaler.shop_service.repositories.OwnerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OwnerService {
@@ -43,6 +47,15 @@ public class OwnerService {
         OwnerEntity toSave = modelMapper.map(requestDTO, OwnerEntity.class);
         OwnerEntity saved = ownerRepository.save(toSave);
         return modelMapper.map(saved, OwnerResponseDTO.class);
+    }
+
+    public MessageDTO createDailySales(HttpServletRequest request, Long shopId) {
+        ApiResponse<SalesResponseDTO> salesResponse = salesFeignClient.createSalesForShop(new SalesRequestDTO(shopId));
+        log.error("Error: {}", salesResponse.getError());
+        if(salesResponse.getError() != null) {
+            throw new MyException(salesResponse.getError());
+        }
+        return new MessageDTO("Daily sales created for shop-id: " + salesResponse.getData().getId());
     }
 
     public OwnerDTO getOwnerById(HttpServletRequest request, Long id) {

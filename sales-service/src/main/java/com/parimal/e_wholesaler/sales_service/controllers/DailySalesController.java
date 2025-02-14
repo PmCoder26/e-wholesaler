@@ -21,7 +21,7 @@ public class DailySalesController {
     public SalesResponseDTO createDailySales(
             HttpServletRequest request,
             @RequestBody @Valid SalesRequestDTO requestDTO
-    ) throws Exception {
+    ) {
         return salesService.createDailySales(request, requestDTO);
     }
 
@@ -45,7 +45,7 @@ public class DailySalesController {
     public MessageDTO deleteDailySalesById(
             HttpServletRequest request,
             @RequestBody @Valid RequestDTO requestDTO
-    ) throws Exception {
+    ) {
         return salesService.deleteSalesById(request, requestDTO);
     }
 
@@ -53,7 +53,7 @@ public class DailySalesController {
     public SalesResponseDTO updateDailySales(
             HttpServletRequest request,
             @RequestBody @Valid SalesUpdateRequestDTO requestDTO
-    ) throws Exception {
+    ) {
         return salesService.updateDailySales(request, requestDTO);
     }
 
@@ -61,7 +61,7 @@ public class DailySalesController {
     public MessageDTO updateDailySalesAfterOrder(
             HttpServletRequest request,
             @RequestBody @Valid SalesUpdateRequestDTO2 requestDTO
-    ) throws Exception {
+    ) {
         return salesService.updateDailySalesAfterOrder(request, requestDTO);
     }
 

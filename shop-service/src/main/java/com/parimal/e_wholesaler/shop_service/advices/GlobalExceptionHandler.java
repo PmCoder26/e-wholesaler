@@ -20,17 +20,17 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleResourceNotFound(ResourceNotFoundException e) {
+    public ApiResponse handleResourceNotFound(ResourceNotFoundException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse> handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
+    public ApiResponse handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleInvalidArgument(MethodArgumentNotValidException e) {
+    public ApiResponse handleInvalidArgument(MethodArgumentNotValidException e) {
         List<String> subErrors = e.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -40,26 +40,31 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResponse> handleUnsupportedInputs(HttpMessageNotReadableException e) {
+    public ApiResponse handleUnsupportedInputs(HttpMessageNotReadableException e) {
         return buildApiError("Invalid input(s) or input(s) not supported", Collections.emptyList(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnAuthorizedAccessException.class)
-    public ResponseEntity<ApiResponse> handleUnAuthorized(UnAuthorizedAccessException e) {
+    public ApiResponse handleUnAuthorized(UnAuthorizedAccessException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MyException.class)
-    public ResponseEntity<ApiResponse> handleMyException(MyException e) {
+    public ApiResponse handleMyException(MyException e) {
         return buildApiErrorResponse(e.apiError);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ApiResponse handleRuntimeException(RuntimeException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleException(Exception e) {
+    public ApiResponse handleException(Exception e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<ApiResponse> buildApiError(String message, List<String> subErrors, HttpStatus status) {
+    private ApiResponse buildApiError(String message, List<String> subErrors, HttpStatus status) {
         ApiError apiError = ApiError.builder()
                 .message(message)
                 .subErrors(subErrors)
@@ -68,8 +73,8 @@ public class GlobalExceptionHandler {
         return buildApiErrorResponse(apiError);
     }
 
-    private ResponseEntity<ApiResponse> buildApiErrorResponse(ApiError apiError){
-        return new ResponseEntity<>(new ApiResponse(apiError), apiError.getStatus());
+    private ApiResponse buildApiErrorResponse(ApiError apiError){
+        return new ApiResponse(apiError);
     }
 
 }
