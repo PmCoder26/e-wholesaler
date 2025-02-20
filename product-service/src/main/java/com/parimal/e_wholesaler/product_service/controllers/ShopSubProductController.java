@@ -1,16 +1,23 @@
 package com.parimal.e_wholesaler.product_service.controllers;
 
 import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.product_service.dtos.ShopProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.SubProductStockUpdateDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductResponseDTO;
+import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
+import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
 import com.parimal.e_wholesaler.product_service.services.ShopSubProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/shop-sub-product")
@@ -43,6 +50,14 @@ public class ShopSubProductController {
             @PathVariable Long shopId
     ) {
         return shopSubProductService.getShopSubProductByIds(request, subProductId, shopId);
+    }
+
+    @GetMapping(path = "/shop/{shopId}/shop-sub-products")
+    public List<ShopProductDTO> getShopSubProductsByShopId(
+            HttpServletRequest request,
+            @PathVariable Long shopId
+    ) {
+        return shopSubProductService.getShopSubProductsByShopId(request, shopId);
     }
 
     @DeleteMapping

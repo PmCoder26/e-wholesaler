@@ -6,6 +6,7 @@ import io.jsonwebtoken.Header;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,12 @@ import static reactor.core.publisher.Mono.fromRunnable;
 
 @Component
 @Slf4j
-public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.ConfigClass> {
+public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.ConfigClass> implements Ordered {
 
     private final JwtService jwtService;
 
     private final Map<String, List<String>> roleToPathMap = Map.of(
-            "OWNER", List.of("/shops/", "/sales/"),
+            "OWNER", List.of("/shops/", "/sales/", "/products/"),
             "WORKER", List.of("/workers/"),
             "CUSTOMER", List.of("/customers/")
     );
@@ -74,6 +75,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     private Mono<Void> completeResponse(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         return exchange.getResponse().setComplete();
+    }
+
+    @Override
+    public int getOrder() {
+        return 2;
     }
 
 

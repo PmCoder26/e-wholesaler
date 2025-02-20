@@ -4,14 +4,9 @@ import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.clients.OrderFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
-import com.parimal.e_wholesaler.shop_service.dtos.DataDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.SalesRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.SalesResponseDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerHomeDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.*;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.*;
+import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
 import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
@@ -56,6 +51,16 @@ public class OwnerService {
             throw new MyException(salesResponse.getError());
         }
         return new MessageDTO("Daily sales created for shop-id: " + salesResponse.getData().getId());
+    }
+
+    public List<ShopDTO> getShopsById(HttpServletRequest request, Long ownerId) {
+        OwnerEntity owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + ownerId + " not found."));
+        List<ShopDTO> shops = owner.getShops()
+                .stream()
+                .map(shop -> modelMapper.map(shop, ShopDTO.class))
+                .toList();
+        return shops;
     }
 
     public OwnerDTO getOwnerById(HttpServletRequest request, Long id) {
@@ -108,6 +113,5 @@ public class OwnerService {
         return ownerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + id + " not found."));
     }
-
 
 }

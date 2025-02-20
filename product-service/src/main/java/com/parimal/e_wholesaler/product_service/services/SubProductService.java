@@ -37,7 +37,8 @@ public class SubProductService {
         if(!subProductNotExists) {
             throw new ResourceAlreadyExistsException("Sub-product with price: " + requestDTO.getMrp() + " already exists.");
         }
-        SubProductEntity toSave = modelMapper.map(requestDTO, SubProductEntity.class);
+        SubProductEntity toSave = new SubProductEntity();
+        toSave.setMrp(requestDTO.getMrp());
         toSave.setProduct(product);
         SubProductEntity saved = subProductRepository.save(toSave);
         return modelMapper.map(saved, SubProductResponseDTO.class);

@@ -2,9 +2,7 @@ package com.parimal.e_wholesaler.product_service.services;
 
 import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
-import com.parimal.e_wholesaler.product_service.dtos.DataDTO;
-import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.product_service.dtos.SubProductStockUpdateDTO;
+import com.parimal.e_wholesaler.product_service.dtos.*;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
@@ -17,11 +15,14 @@ import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepos
 import com.parimal.e_wholesaler.product_service.utils.StockUpdate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ShopSubProductService {
@@ -157,6 +158,38 @@ public class ShopSubProductService {
         if(!shopExistsData.getData().getData()) {
             throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");
         }
+    }
+
+    public List<ShopProductDTO> getShopSubProductsByShopId(HttpServletRequest request, Long shopId) {
+        List<ShopSubProductEntity> shopSubProductList = shopSubProductRepository.findByShopId(shopId);
+        HashMap<ProductEntity, LinkedList<ShopSubProduct2DTO>> subProductHashMap = new HashMap<>();
+        List<ShopProductDTO> shopSubProducts = new LinkedList<>();
+
+        shopSubProductList.forEach(shopSubProduct -> {
+            ProductEntity key = shopSubProduct.getSubProduct().getProduct();
+            ShopSubProduct2DTO temp = new ShopSubProduct2DTO();
+            temp.setMrp(shopSubProduct.getSubProduct().getMrp());
+            temp.setSellingPrice(shopSubProduct.getSellingPrice());
+            temp.setStock(shopSubProduct.getStock());
+            if(subProductHashMap.containsKey(key)) {
+                subProductHashMap.get(key).add(temp);
+            }
+            else {
+                LinkedList<ShopSubProduct2DTO> list = new LinkedList<>();
+                subProductHashMap.put(key, list);
+                subProductHashMap.get(key).add(temp);
+            }
+            System.out.println(subProductHashMap.get(key));
+        });
+
+        Set<ProductEntity> productSet = subProductHashMap.keySet();
+        for(ProductEntity product : productSet) {
+            List<ShopSubProduct2DTO> shopSubProductEntityList = subProductHashMap.get(product);
+            ShopProductDTO shopProductDTO = modelMapper.map(product, ShopProductDTO.class);
+            shopProductDTO.setShopSubProducts(shopSubProductEntityList);
+            shopSubProducts.add(shopProductDTO);
+        }
+        return shopSubProducts;
     }
 
 }
