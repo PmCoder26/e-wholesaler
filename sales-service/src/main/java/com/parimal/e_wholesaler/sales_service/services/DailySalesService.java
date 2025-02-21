@@ -15,8 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -107,4 +110,14 @@ public class DailySalesService {
         }
     }
 
+    public List<PairDTO<Long, Double>> getSalesByShopIdList(HttpServletRequest request, List<Long> shopIdList) {
+        List<PairDTO<Long, Double>> salesList =  shopIdList.stream()
+                .map(shopId -> {
+                    DailySalesEntity dailySales = salesRepository.findByShopIdAndCreatedAt(shopId, LocalDate.now())
+                            .orElseThrow(() -> new ResourceNotFoundException("Daily Sales for shop id: " + shopId + " not found."));
+                    return new PairDTO<>(shopId, dailySales.getAmount());
+                })
+                .toList();
+        return salesList;
+    }
 }

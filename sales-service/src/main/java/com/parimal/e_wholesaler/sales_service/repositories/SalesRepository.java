@@ -16,6 +16,8 @@ public interface SalesRepository extends JpaRepository<DailySalesEntity, Long> {
     Optional<DailySalesEntity> findByCreatedAtAndShopId(LocalDate createdAt, Long shopId);
 
     @Query(value = "SELECT dse.amount FROM DailySalesEntity dse WHERE dse.shopId = :shopId AND dse.createdAt = :now")
-    double findAmountByShopIdAndCreatedAt(Long shopId, LocalDate now);
+    Double findAmountByShopIdAndCreatedAt(Long shopId, LocalDate now);
+
+    Optional<DailySalesEntity> findByShopIdAndCreatedAt(Long shopId, LocalDate now);
 
 }

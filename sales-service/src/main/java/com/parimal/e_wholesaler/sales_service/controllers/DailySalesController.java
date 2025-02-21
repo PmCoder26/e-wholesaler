@@ -33,7 +33,16 @@ public class DailySalesController {
         return salesService.calculateSalesAmount(request, shopIdList);
     }
 
-    @GetMapping(path = "{id}")
+    @PostMapping(path = "/shops")
+    public List<PairDTO<Long, Double>> getSalesByShopIdList(
+            HttpServletRequest request,
+            @RequestBody
+            List<Long> shopIdList
+    ) {
+        return salesService.getSalesByShopIdList(request, shopIdList);
+    }
+
+    @GetMapping(path = "/{id}")
     public DailySalesDTO getDailySalesById(
             HttpServletRequest request,
             @PathVariable Long id

@@ -27,7 +27,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     private final JwtService jwtService;
 
     private final Map<String, List<String>> roleToPathMap = Map.of(
-            "OWNER", List.of("/shops/", "/sales/", "/products/"),
+            "OWNER", List.of("/shops/", "/sales/", "/products/", "/orders/", "/workers/"),
             "WORKER", List.of("/workers/"),
             "CUSTOMER", List.of("/customers/")
     );

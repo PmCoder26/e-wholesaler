@@ -60,4 +60,13 @@ public class ShopOrderController {
         return shopOrderService.updateOrderStatus(request, requestDTO);
     }
 
+    @PostMapping(path = "/daily-orders-count")
+    public List<PairDTO<Long, Long>> getDailyOrdersCountByShopIdList(
+            HttpServletRequest request,
+            @RequestBody
+            List<Long> shopIdList
+    ) {
+        return shopOrderService.getDailyOrdersCountByShopIdList(request, shopIdList);
+    }
+
 }

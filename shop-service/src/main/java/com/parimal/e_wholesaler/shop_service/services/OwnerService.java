@@ -114,4 +114,8 @@ public class OwnerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + id + " not found."));
     }
 
+    boolean ownerExistsById(Long ownerId) {
+        return ownerRepository.existsById(ownerId);
+    }
+
 }

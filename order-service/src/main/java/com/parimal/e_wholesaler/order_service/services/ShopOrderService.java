@@ -18,16 +18,20 @@ import com.parimal.e_wholesaler.order_service.utils.SalesUpdate;
 import com.parimal.e_wholesaler.order_service.utils.StockUpdate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ShopOrderService {
@@ -153,6 +157,18 @@ public class ShopOrderService {
         if(stockUpdateResponse.getData() == null) {
             throw new MyException(stockUpdateResponse.getError());
         }
+    }
+
+
+    public List<PairDTO<Long, Long>> getDailyOrdersCountByShopIdList(HttpServletRequest request, List<Long> shopIdList) {
+        List<PairDTO<Long, Long>> orderCountList =  shopIdList.stream()
+                .map(shopId -> {
+                    LocalDateTime endOfDay = LocalDate.now().atStartOfDay();
+                     Long ordersCount = shopOrderRepository.countByShopIdAndStatusAndCreatedAtBetween(shopId, OrderStatus.DELIVERED, LocalDate.now().atStartOfDay(), LocalDateTime.now());
+                     return new PairDTO<>(shopId, ordersCount);
+                })
+                .toList();
+        return orderCountList;
     }
 
     boolean existsById(Long id) {

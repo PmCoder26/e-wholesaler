@@ -1,9 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.controllers;
 
-import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.ProductDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.SalesRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.ShopProductDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.*;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.*;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
@@ -99,6 +96,14 @@ public class OwnerController {
         return shopService.getProductsByShopId(request, shopId);
     }
 
+    @GetMapping(path = "/{ownerId}/daily-revenue")
+    public List<DailyRevenueDTO> getDailyRevenue(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId
+    ) {
+        return shopService.getDailyRevenue(request, ownerId);
+    }
 
     @DeleteMapping(path = "/{id}")
     public MessageDTO deleteOwnerById(
