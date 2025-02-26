@@ -11,12 +11,14 @@ import com.parimal.e_wholesaler.worker_service.exceptions.UnAuthorizedAccessExce
 import com.parimal.e_wholesaler.worker_service.repositories.WorkerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class WorkerService {
@@ -50,6 +52,18 @@ public class WorkerService {
         return workerCount.get();
     }
 
+    public List<ShopAndWorkersDTO> getWorkersByShopIdList(HttpServletRequest request, List<Long> shopIdList) {
+        List<ShopAndWorkersDTO> shopAndWorkers = shopIdList.stream()
+                .map(shopId -> {
+                    List<WorkerEntity> workers = workerRepository.findByShopId(shopId);
+                    List<WorkerDTO> workerDTOS = workers.stream()
+                            .map(workerEntity -> modelMapper.map(workerEntity, WorkerDTO.class))
+                            .toList();
+                    return new ShopAndWorkersDTO(shopId, "", workerDTOS);
+                }).toList();
+        return shopAndWorkers;
+    }
+
     public MessageDTO deleteWorkerById(HttpServletRequest request, DeleteRequestDTO requestDTO) {
         shopExistenceCheck(requestDTO.getShopId());
         WorkerEntity worker = workerRepository.findById(requestDTO.getWorkerId())
@@ -76,4 +90,14 @@ public class WorkerService {
         }
     }
 
+    public WorkerDTO updateWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+        WorkerEntity worker = workerRepository.findByMobNo(requestDTO.getMobNo())
+                .orElseThrow(() -> new ResourceNotFoundException("Worker not found."));
+        worker.setName(requestDTO.getName());
+        worker.setSalary(requestDTO.getSalary());
+        worker.setAddress(requestDTO.getAddress());
+        worker.setCity(requestDTO.getCity());
+        WorkerEntity saved = workerRepository.save(worker);
+        return modelMapper.map(saved, WorkerDTO.class);
+    }
 }

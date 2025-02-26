@@ -97,6 +97,27 @@ public class OwnerService {
         );
     }
 
+    public List<ShopAndWorkersDTO> getShopWorkersByOwnerId(HttpServletRequest request, Long ownerId) {
+        OwnerEntity owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + ownerId + " not found."));
+        List<ShopEntity> shops = owner.getShops();
+        List<Long> shopIdList = shops.stream()
+                .map(ShopEntity::getId)
+                .toList();
+
+        ApiResponse<List<ShopAndWorkersDTO>> shopWorkersResponse = workerFeignClient.getWorkersByShopIdList(shopIdList);
+        List<ShopAndWorkersDTO> shopWorkersList = shopWorkersResponse.getData();
+        if(shopWorkersResponse.getError() != null) throw new MyException(shopWorkersResponse.getError());
+
+        for (int x = 0; x < shops.size(); x++) {
+            ShopEntity shop = shops.get(x);
+            ShopAndWorkersDTO shopAndWorkersDTO = shopWorkersList.get(x);
+            if(!shop.getId().equals(shopAndWorkersDTO.getShopId())) throw new RuntimeException("Shop-id sequence mismatched.");
+            shopAndWorkersDTO.setShopName(shop.getName());
+        }
+        return shopWorkersList;
+    }
+
     public MessageDTO deleteOwnerById(HttpServletRequest request, Long id) {
         boolean ownerExists = ownerRepository.existsById(id);
         if(!ownerExists) {

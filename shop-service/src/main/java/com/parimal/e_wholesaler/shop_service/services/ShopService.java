@@ -4,6 +4,7 @@ import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.clients.OrderFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
+import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.*;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
@@ -17,6 +18,7 @@ import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundExceptio
 import com.parimal.e_wholesaler.shop_service.exceptions.UnAuthorizedAccessException;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -37,6 +39,7 @@ public class ShopService {
     private final ProductFeignClient productFeignClient;
     private final SalesFeignClient salesFeignClient;
     private final OrderFeignClient orderFeignClient;
+    private final WorkerFeignClient workerFeignClient;
 
 
     public ShopResponseDTO createShop(HttpServletRequest request, ShopRequestDTO requestDTO) {
@@ -133,4 +136,23 @@ public class ShopService {
         return revenueDTOList;
     }
 
+    public WorkerResponseDTO addWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+        boolean shopExists = shopRepository.existsById(requestDTO.getShopId());
+        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
+
+        ApiResponse<WorkerResponseDTO> workerAddResponse = workerFeignClient.addWorker(requestDTO);
+        if(workerAddResponse.getError() != null) throw new MyException(workerAddResponse.getError());
+
+        return workerAddResponse.getData();
+    }
+
+    public WorkerResponseDTO updateWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+        boolean shopExists = shopRepository.existsById(requestDTO.getShopId());
+        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
+
+        ApiResponse<WorkerResponseDTO> workerUpdateResponse = workerFeignClient.updateWorker(requestDTO);
+        if(workerUpdateResponse.getError() != null) throw new MyException(workerUpdateResponse.getError());
+
+        return workerUpdateResponse.getData();
+    }
 }

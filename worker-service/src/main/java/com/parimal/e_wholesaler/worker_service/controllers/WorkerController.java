@@ -34,6 +34,24 @@ public class WorkerController {
         return workerService.getWorkerCount(request, shopIdList);
     }
 
+    @PostMapping(path = "/shops")
+    public List<ShopAndWorkersDTO> getWorkersByShopIdList(
+            HttpServletRequest request,
+            @RequestBody
+            List<Long> shopIdList
+    ) {
+        return workerService.getWorkersByShopIdList(request, shopIdList);
+    }
+
+    @PostMapping(path = "/update")
+    public WorkerDTO updateWorker(
+            HttpServletRequest request,
+            @RequestBody @Valid
+            WorkerRequestDTO requestDTO
+    ) {
+        return workerService.updateWorker(request, requestDTO);
+    }
+
     @GetMapping(path = "/{id}")
     public WorkerDTO getWorkerById(
             HttpServletRequest request,

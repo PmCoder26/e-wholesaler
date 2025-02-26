@@ -96,6 +96,15 @@ public class OwnerController {
         return shopService.getProductsByShopId(request, shopId);
     }
 
+    @GetMapping(path = "/{ownerId}/shop-workers")
+    public List<ShopAndWorkersDTO> getShopWorkers(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId
+    ) {
+        return ownerService.getShopWorkersByOwnerId(request, ownerId);
+    }
+
     @GetMapping(path = "/{ownerId}/daily-revenue")
     public List<DailyRevenueDTO> getDailyRevenue(
             HttpServletRequest request,
@@ -103,6 +112,24 @@ public class OwnerController {
             Long ownerId
     ) {
         return shopService.getDailyRevenue(request, ownerId);
+    }
+
+    @PostMapping(path = "/shops/worker")
+    public WorkerResponseDTO addWorker(
+            HttpServletRequest request,
+            @RequestBody @Valid
+            WorkerRequestDTO requestDTO
+    ) {
+        return shopService.addWorker(request, requestDTO);
+    }
+
+    @PostMapping(path = "/shops/worker/update")
+    public WorkerResponseDTO updateWorker(
+            HttpServletRequest request,
+            @RequestBody @Valid
+            WorkerRequestDTO requestDTO
+    ) {
+        return shopService.updateWorker(request, requestDTO);
     }
 
     @DeleteMapping(path = "/{id}")
