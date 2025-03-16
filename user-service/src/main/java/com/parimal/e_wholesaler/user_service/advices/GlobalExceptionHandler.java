@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.user_service.advices;
 
 
+import com.parimal.e_wholesaler.user_service.exceptions.MyException;
 import com.parimal.e_wholesaler.user_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.user_service.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ApiResponse handleException(Exception e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MyException.class)
+    public ApiResponse handleMyException(MyException e) {
+        return buildApiErrorResponse(e.apiError);
     }
 
     private ApiResponse buildApiError(String message, List<String> subErrors, HttpStatus status) {

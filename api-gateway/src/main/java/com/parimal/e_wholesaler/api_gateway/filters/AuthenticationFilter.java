@@ -42,7 +42,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return (exchange, chain) -> {
             log.info("Inside the Authentication Filter 'PRE' with request path: {}", exchange.getRequest().getPath());
             String requestPath = exchange.getRequest().getPath().value();
-            if(requestPath.startsWith("/users/")) return chain.filter(exchange);
+            if(requestPath.startsWith("/api/v1/users/")) return chain.filter(exchange);
 
             String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
             if(authHeader == null) return completeResponse(exchange);

@@ -1,5 +1,6 @@
 package com.parimal.e_wholesaler.user_service.dtos;
 
+import com.parimal.e_wholesaler.user_service.utils.Gender;
 import com.parimal.e_wholesaler.user_service.utils.UserType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,5 +26,28 @@ public class SignupRequestDTO {
 
     @NotNull
     private UserType userType;
+
+    @NotNull
+    @NotEmpty
+    private String name;
+
+    @NotNull
+    private Gender gender;
+
+    @NotNull
+    @NotEmpty
+    private String mobNo;
+
+    @NotNull
+    @NotEmpty
+    private String address;
+
+    @NotNull
+    @NotEmpty
+    private String city;
+
+    @NotNull
+    @NotEmpty
+    private String state;
 
 }

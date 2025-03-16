@@ -1,6 +1,5 @@
 package com.parimal.e_wholesaler.user_service.dtos;
 
-import com.parimal.e_wholesaler.user_service.utils.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,12 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDTO {
+public class OwnerResponseDTO {
 
-    private String accessToken;
+    private Long id;
 
-    private String refreshToken;
-
-    private UserType userType;
+    private String name;
 
 }
