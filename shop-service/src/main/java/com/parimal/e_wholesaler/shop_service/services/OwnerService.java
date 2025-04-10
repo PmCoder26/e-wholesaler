@@ -139,4 +139,9 @@ public class OwnerService {
         return ownerRepository.existsById(ownerId);
     }
 
+    public Long getOwnerIdByMobNo(HttpServletRequest request, String mobNo) {
+        return ownerRepository.findIdByMobNo(mobNo)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner with mobile number: " + mobNo + " not found."));
+    }
+
 }

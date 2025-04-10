@@ -100,4 +100,10 @@ public class WorkerService {
         WorkerEntity saved = workerRepository.save(worker);
         return modelMapper.map(saved, WorkerDTO.class);
     }
+
+    public Long getWorkerIdByMobNo(HttpServletRequest request, String mobNo) {
+        return workerRepository.findIdByMobNo(mobNo)
+                .orElseThrow(() -> new ResourceNotFoundException("Worker-id with mobile number: " + mobNo + " not found"));
+    }
+
 }

@@ -16,4 +16,6 @@ public class LoginResponseDTO {
 
     private UserType userType;
 
+    private Long userTypeId;
+
 }

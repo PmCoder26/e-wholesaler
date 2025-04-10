@@ -69,6 +69,14 @@ public class WorkerController {
         return workerService.workerExistsByIdAndShopId(request, workerId, shopId);
     }
 
+    @PostMapping(path = "/id")
+    public Long getWorkerIdByMobNo(
+            HttpServletRequest request,
+            @RequestBody String mobNo
+    ) {
+        return workerService.getWorkerIdByMobNo(request, mobNo);
+    }
+ 
     @DeleteMapping
     public MessageDTO deleteWorkerById(
             HttpServletRequest request,

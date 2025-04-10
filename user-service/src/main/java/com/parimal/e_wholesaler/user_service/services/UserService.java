@@ -1,7 +1,7 @@
 package com.parimal.e_wholesaler.user_service.services;
 
 import com.parimal.e_wholesaler.user_service.advices.ApiResponse;
-import com.parimal.e_wholesaler.user_service.clients.OwnerFeignClient;
+import com.parimal.e_wholesaler.user_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.user_service.dtos.OwnerRequestDTO;
 import com.parimal.e_wholesaler.user_service.dtos.OwnerResponseDTO;
 import com.parimal.e_wholesaler.user_service.dtos.SignupRequestDTO;
@@ -26,8 +26,9 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    private final OwnerFeignClient ownerFeignClient;
+    private final ShopFeignClient shopFeignClient;
 
 
     @Override
@@ -53,7 +54,8 @@ public class UserService implements UserDetailsService {
                     requestDTO.getCity(),
                     requestDTO.getState()
             );
-            ApiResponse<OwnerResponseDTO> ownerResponse = ownerFeignClient.createOwner(ownerRequestDTO);
+            String transactionToken = jwtService.generateTransactionToken(saved.getId());
+            ApiResponse<OwnerResponseDTO> ownerResponse = shopFeignClient.createOwner(transactionToken, ownerRequestDTO);
             if(ownerResponse.getError() != null) {
                 throw new MyException(ownerResponse.getError());
             }

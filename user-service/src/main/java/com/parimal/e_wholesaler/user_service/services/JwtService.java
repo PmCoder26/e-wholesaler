@@ -46,6 +46,16 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateTransactionToken(Long id) {
+        return Jwts
+                .builder()
+                .signWith(getSecretKey())
+                .subject(id.toString())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 5)))
+                .compact();
+    }
+
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSecretKey())

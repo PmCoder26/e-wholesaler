@@ -33,6 +33,14 @@ public class OwnerController {
         return ownerService.createOwner(request, requestDTO);
     }
 
+    @PostMapping(path = "/id")
+    public Long getOwnerIdByMobNo(
+            HttpServletRequest request,
+            @RequestBody String mobNo
+    ) {
+        return ownerService.getOwnerIdByMobNo(request, mobNo);
+    }
+
     @PostMapping(path = "/shop/sales")
     public MessageDTO createSalesForShop(
             HttpServletRequest request,
