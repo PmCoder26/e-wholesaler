@@ -4,6 +4,7 @@ package com.parimal.e_wholesaler.user_service.advices;
 import com.parimal.e_wholesaler.user_service.exceptions.MyException;
 import com.parimal.e_wholesaler.user_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.user_service.exceptions.ResourceNotFoundException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ApiResponse handleUnsupportedInputs(HttpMessageNotReadableException e) {
         return buildApiError("Invalid input(s) or input(s) not supported", Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ApiResponse handleJwtException(JwtException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
