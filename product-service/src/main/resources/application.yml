@@ -1,6 +1,6 @@
 spring:
   application:
-  name: product-service
+    name: product-service
 
   datasource:
     url: jdbc:postgresql://${DB_HOST_URL}/${DB_NAME}?useSSL=false
