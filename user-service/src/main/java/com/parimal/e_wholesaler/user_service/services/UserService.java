@@ -13,6 +13,9 @@ import com.parimal.e_wholesaler.user_service.repositories.UserRepository;
 import com.parimal.e_wholesaler.user_service.utils.UserType;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -54,13 +57,20 @@ public class UserService implements UserDetailsService {
                     requestDTO.getCity(),
                     requestDTO.getState()
             );
-            String transactionToken = jwtService.generateTransactionToken(saved.getId());
-            ApiResponse<OwnerResponseDTO> ownerResponse = shopFeignClient.createOwner(transactionToken, ownerRequestDTO);
+
+            setAuthentication(saved);
+
+            ApiResponse<OwnerResponseDTO> ownerResponse = shopFeignClient.createOwner(ownerRequestDTO);
             if(ownerResponse.getError() != null) {
                 throw new MyException(ownerResponse.getError());
             }
         }
         return modelMapper.map(saved, SignupResponseDTO.class);
+    }
+
+    private void setAuthentication(UserEntity user) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
 }

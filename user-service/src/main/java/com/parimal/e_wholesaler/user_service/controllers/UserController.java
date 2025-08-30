@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.user_service.controllers;
 import com.parimal.e_wholesaler.user_service.dtos.SignupRequestDTO;
 import com.parimal.e_wholesaler.user_service.dtos.SignupResponseDTO;
 import com.parimal.e_wholesaler.user_service.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

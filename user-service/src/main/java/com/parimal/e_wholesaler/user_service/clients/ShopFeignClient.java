@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface ShopFeignClient {
 
     @PostMapping
-    ApiResponse<OwnerResponseDTO> createOwner(@RequestHeader("Authorization") String token, OwnerRequestDTO requestDTO);
+    ApiResponse<OwnerResponseDTO> createOwner(OwnerRequestDTO requestDTO);
 
     @PostMapping(path = "/id")
     ApiResponse<Long> getOwnerIdByUsername(@RequestHeader("Authorization") String token, String mobNo);
