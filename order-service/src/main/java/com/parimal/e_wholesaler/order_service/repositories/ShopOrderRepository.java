@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Repository
 public interface ShopOrderRepository extends JpaRepository<ShopOrderEntity, Long> {
 
-    long countByShopId(Long shopId);
+
+    Long countByShopIdAndStatus(Long shopId, OrderStatus status);
 
 //    @Query(value = "SELECT COUNT(o) FROM ShopOrderEntity o WHERE o.shopId = :shopId AND o.createdAt >= :startOfDay AND o.status = :status")
 //    Long countByShopIdAndForToday(Long shopId, LocalDateTime startOfDay, OrderStatus status);

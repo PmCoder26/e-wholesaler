@@ -67,10 +67,7 @@ public class ShopOrderService {
         AtomicLong orderCount = new AtomicLong();
         shopIdList
                 .forEach(shopId -> {
-                    Optional<Long> count = Optional.of(orderCount.addAndGet(shopOrderRepository.countByShopId(shopId)));
-                    if(count.isEmpty()) {
-                        
-                    }
+                    orderCount.addAndGet(shopOrderRepository.countByShopIdAndStatus(shopId, OrderStatus.CREATING));
                 });
         return orderCount.get();
     }
