@@ -18,13 +18,13 @@ import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundExceptio
 import com.parimal.e_wholesaler.shop_service.exceptions.UnAuthorizedAccessException;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -122,7 +122,6 @@ public class ShopService {
         List<PairDTO<Long, Long>> orderCountList = dailyOrdersCountResponse.getData();
         List<DailyRevenueDTO> revenueDTOList = new LinkedList<>();
         for (int x = 0; x < shopIdList.size(); x++) {
-            Long shopId = shopIdList.get(x);
             PairDTO<Long, Double> sales = salesList.get(x);
             PairDTO<Long, Long> orderCount = orderCountList.get(x);
             ShopEntity shop = shopList.get(x);

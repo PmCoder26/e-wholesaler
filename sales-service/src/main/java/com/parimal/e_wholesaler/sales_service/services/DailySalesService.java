@@ -6,7 +6,6 @@ import com.parimal.e_wholesaler.sales_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.sales_service.dtos.*;
 import com.parimal.e_wholesaler.sales_service.entities.DailySalesEntity;
 import com.parimal.e_wholesaler.sales_service.exceptions.MyException;
-import com.parimal.e_wholesaler.sales_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.sales_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.sales_service.repositories.SalesRepository;
 import com.parimal.e_wholesaler.sales_service.utils.SalesUpdate;
@@ -16,10 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -45,9 +42,12 @@ public class DailySalesService {
     public Double calculateSalesAmount(HttpServletRequest request, List<Long> shopIdList) {
         AtomicDouble totalSalesAmount = new AtomicDouble();
         shopIdList
-                .forEach(shopId ->
-                        totalSalesAmount.addAndGet(salesRepository.findAmountByShopIdAndCreatedAt(shopId, LocalDate.now()))
-                );
+                .forEach(shopId -> {
+                    Double salesAmount = salesRepository.findAmountByShopIdAndCreatedAt(shopId, LocalDate.now())
+                            // orElseGet() runs only when the optional is null.
+                            .orElseGet(() -> generateDailySales(shopId).getAmount());
+                    totalSalesAmount.addAndGet(salesAmount);
+                });
         return totalSalesAmount.get();
     }
 
@@ -111,13 +111,20 @@ public class DailySalesService {
     }
 
     public List<PairDTO<Long, Double>> getSalesByShopIdList(HttpServletRequest request, List<Long> shopIdList) {
-        List<PairDTO<Long, Double>> salesList =  shopIdList.stream()
+        return shopIdList.stream()
                 .map(shopId -> {
                     DailySalesEntity dailySales = salesRepository.findByShopIdAndCreatedAt(shopId, LocalDate.now())
-                            .orElseThrow(() -> new ResourceNotFoundException("Daily Sales for shop id: " + shopId + " not found."));
+                            // orElseGet() runs only when the optional is null.
+                            .orElseGet(() -> generateDailySales(shopId));
                     return new PairDTO<>(shopId, dailySales.getAmount());
                 })
                 .toList();
-        return salesList;
     }
+
+    private DailySalesEntity generateDailySales(Long shopId) {
+        DailySalesEntity toSave = new DailySalesEntity();
+        toSave.setShopId(shopId);
+        return salesRepository.save(toSave);
+    }
+
 }
