@@ -5,6 +5,8 @@ import com.parimal.e_wholesaler.user_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.user_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.user_service.dtos.LoginRequestDTO;
 import com.parimal.e_wholesaler.user_service.dtos.LoginResponseDTO;
+import com.parimal.e_wholesaler.user_service.dtos.RefreshAccessTokenRequestDTO;
+import com.parimal.e_wholesaler.user_service.dtos.RefreshAccessTokenResponseDTO;
 import com.parimal.e_wholesaler.user_service.entities.UserEntity;
 import com.parimal.e_wholesaler.user_service.exceptions.MyException;
 import com.parimal.e_wholesaler.user_service.utils.UserType;
@@ -50,6 +52,13 @@ public class AuthService {
             userTypeId = userTypeIdResponse.getData();
         }
         return new LoginResponseDTO(accessToken, refreshToken, user.getUserType(), userTypeId);
+    }
+
+    public RefreshAccessTokenResponseDTO refreshAccessToken(RefreshAccessTokenRequestDTO requestDTO) {
+        String username = jwtService.getUsernameFromToken(requestDTO.getRefreshToken());
+        UserEntity user = (UserEntity) userService.loadUserByUsername(username);
+        String newAccessToken = jwtService.generateAccessToken(user);
+        return new RefreshAccessTokenResponseDTO(newAccessToken);
     }
 
 }

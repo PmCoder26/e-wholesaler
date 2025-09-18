@@ -1,17 +1,12 @@
 package com.parimal.e_wholesaler.worker_service.advices;
 
 
-import com.parimal.e_wholesaler.worker_service.exceptions.MyException;
-import com.parimal.e_wholesaler.worker_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.worker_service.exceptions.ResourceNotFoundException;
-import com.parimal.e_wholesaler.worker_service.exceptions.UnAuthorizedAccessException;
+import com.parimal.e_wholesaler.worker_service.exceptions.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +36,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnAuthorizedAccessException.class)
     public ApiResponse handleUnAuthorized(UnAuthorizedAccessException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiResponse handleForbiddenException(ForbiddenException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MatchException.class)

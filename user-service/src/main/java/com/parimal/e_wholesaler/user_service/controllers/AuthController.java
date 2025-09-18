@@ -2,6 +2,8 @@ package com.parimal.e_wholesaler.user_service.controllers;
 
 import com.parimal.e_wholesaler.user_service.dtos.LoginRequestDTO;
 import com.parimal.e_wholesaler.user_service.dtos.LoginResponseDTO;
+import com.parimal.e_wholesaler.user_service.dtos.RefreshAccessTokenRequestDTO;
+import com.parimal.e_wholesaler.user_service.dtos.RefreshAccessTokenResponseDTO;
 import com.parimal.e_wholesaler.user_service.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,15 @@ public class AuthController {
             LoginRequestDTO requestDTO
     ) {
         return authService.login(requestDTO);
+    }
+
+    @PostMapping(path = "/refresh-token")
+    public RefreshAccessTokenResponseDTO refreshAccessToken(
+            @RequestBody
+            @Valid
+            RefreshAccessTokenRequestDTO requestDTO
+    ) {
+        return authService.refreshAccessToken(requestDTO);
     }
 
 }

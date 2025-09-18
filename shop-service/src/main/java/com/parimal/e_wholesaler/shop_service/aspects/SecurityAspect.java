@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.aspects;
 
-import com.parimal.e_wholesaler.shop_service.exceptions.UnAuthorizedAccessException;
+import com.parimal.e_wholesaler.shop_service.exceptions.ForbiddenException;
 import com.parimal.e_wholesaler.shop_service.services.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +32,7 @@ public class SecurityAspect {
         log.info("Request Path:{}", request.getPathInfo());
         String transactionToken = request.getHeader("Transaction-Token");
         log.info("Transaction-Token: {}", transactionToken);
-        if(transactionToken == null) throw new UnAuthorizedAccessException("Unauthorized access.");
+        if(transactionToken == null) throw new ForbiddenException("Access Denied");
         Claims claims = jwtService.getClaimsFromToken(transactionToken);
     }
 

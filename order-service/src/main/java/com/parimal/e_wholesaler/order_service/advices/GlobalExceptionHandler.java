@@ -3,7 +3,6 @@ package com.parimal.e_wholesaler.order_service.advices;
 
 import com.parimal.e_wholesaler.order_service.exceptions.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -52,6 +51,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ApiResponse handleRuntimeException(RuntimeException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiResponse handleForbiddenException(ForbiddenException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)

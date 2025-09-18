@@ -1,10 +1,10 @@
 package com.parimal.e_wholesaler.customer_service.advices;
 
 
+import com.parimal.e_wholesaler.customer_service.exceptions.ForbiddenException;
 import com.parimal.e_wholesaler.customer_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.customer_service.exceptions.UnAuthorizedAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,6 +34,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnAuthorizedAccessException.class)
     public ApiResponse handleUnAuthorized(UnAuthorizedAccessException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiResponse handleForbiddenException(ForbiddenException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)

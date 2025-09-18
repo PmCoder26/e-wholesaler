@@ -65,4 +65,13 @@ public class JwtService {
         return Long.parseLong(claims.getSubject());
     }
 
+    public String getUsernameFromToken(String refreshToken) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(refreshToken)
+                .getPayload()
+                .get("username").toString();
+    }
+
 }

@@ -1,9 +1,8 @@
 package com.parimal.e_wholesaler.worker_service.aspects;
 
-import com.parimal.e_wholesaler.worker_service.exceptions.UnAuthorizedAccessException;
+import com.parimal.e_wholesaler.worker_service.exceptions.ForbiddenException;
 import com.parimal.e_wholesaler.worker_service.services.JwtService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class SecurityAspect {
         log.info("Inside the Security Aspect: Transaction token check.");
         HttpServletRequest request = (HttpServletRequest) joinPoint.getArgs()[0];
         String transactionToken = request.getHeader("Transaction-Token");
-        if(transactionToken == null) throw new UnAuthorizedAccessException("Unauthorized access.");
+        if(transactionToken == null) throw new ForbiddenException("Access Denied");
         Claims claims = jwtService.getClaimsFromToken(transactionToken);
     }
 
