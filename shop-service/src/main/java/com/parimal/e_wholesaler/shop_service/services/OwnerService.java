@@ -53,7 +53,7 @@ public class OwnerService {
         return new MessageDTO("Daily sales created for shop-id: " + salesResponse.getData().getId());
     }
 
-    public List<ShopDTO> getShopsById(HttpServletRequest request, Long ownerId) {
+    public List<ShopDTO> getShopsByOwnerId(HttpServletRequest request, Long ownerId) {
         OwnerEntity owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + ownerId + " not found."));
         List<ShopDTO> shops = owner.getShops()

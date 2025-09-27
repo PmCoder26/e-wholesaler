@@ -74,7 +74,7 @@ public class ShopService {
         return new DataDTO<>(shopExists);
     }
 
-    public ShopDTO updateShop(HttpServletRequest request, ShopEditRequestDTO requestDTO) {
+    public ShopDTO updateShop(HttpServletRequest request, Long ownerId, ShopEditRequestDTO requestDTO) {
         ShopEntity shop = shopRepository.findById(requestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + requestDTO.getId() + " not found."));
         if(!shop.getOwner().getId().equals(requestDTO.getOwnerId()))

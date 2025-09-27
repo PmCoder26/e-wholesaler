@@ -69,12 +69,12 @@ public class OwnerController {
     }
 
     @GetMapping(path = "/{ownerId}/shops")
-    public List<ShopDTO> getShopsById(
+    public List<ShopDTO> getShopsByOwnerId(
             HttpServletRequest request,
             @PathVariable
             Long ownerId
     ) {
-        return ownerService.getShopsById(request, ownerId);
+        return ownerService.getShopsByOwnerId(request, ownerId);
     }
 
     @PostMapping(path = "/shop")
@@ -86,13 +86,15 @@ public class OwnerController {
         return shopService.createShop(request, requestDTO);
     }
 
-    @PutMapping(path = "/shop")
+    @PutMapping(path = "/{ownerId}/shop")
     public ShopDTO updateShop(
             HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
             @RequestBody @Valid
             ShopEditRequestDTO requestDTO
     ) {
-        return shopService.updateShop(request, requestDTO);
+        return shopService.updateShop(request, ownerId, requestDTO);
     }
 
     @GetMapping(path = "/shop/{shopId}/products")
