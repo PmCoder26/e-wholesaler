@@ -77,9 +77,9 @@ public class ShopService {
     public ShopDTO updateShop(HttpServletRequest request, Long ownerId, ShopEditRequestDTO requestDTO) {
         ShopEntity shop = shopRepository.findById(requestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + requestDTO.getId() + " not found."));
-        if(!shop.getOwner().getId().equals(requestDTO.getOwnerId()))
+        if(!shop.getOwner().getId().equals(ownerId))
             throw new UnAuthorizedAccessException(
-                    "The shop with id " + requestDTO.getOwnerId() + " doesn't belongs to you."
+                    "The shop with id " + ownerId + " doesn't belongs to you."
             );
         shop.setName(requestDTO.getName());
         shop.setGstNo(requestDTO.getGstNo());
