@@ -77,13 +77,15 @@ public class OwnerController {
         return ownerService.getShopsByOwnerId(request, ownerId);
     }
 
-    @PostMapping(path = "/shop")
+    @PostMapping(path = "/{ownerId}/shop")
     public ShopResponseDTO createShop(
             HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
             @RequestBody @Valid
             ShopRequestDTO requestDTO
     ) {
-        return shopService.createShop(request, requestDTO);
+        return shopService.createShop(request, ownerId, requestDTO);
     }
 
     @PutMapping(path = "/{ownerId}/shop")

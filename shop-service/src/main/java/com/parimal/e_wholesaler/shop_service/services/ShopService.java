@@ -42,12 +42,12 @@ public class ShopService {
     private final WorkerFeignClient workerFeignClient;
 
 
-    public ShopResponseDTO createShop(HttpServletRequest request, ShopRequestDTO requestDTO) {
+    public ShopResponseDTO createShop(HttpServletRequest request, Long ownerId, ShopRequestDTO requestDTO) {
          boolean shopExists = shopRepository.existsByNameAndGstNo(requestDTO.getName(), requestDTO.getGstNo());
          if(shopExists) {
              throw new ResourceAlreadyExistsException("Shop already exists.");
          }
-        OwnerEntity owner = ownerService.getOwnerEntityById(requestDTO.getOwnerId());
+        OwnerEntity owner = ownerService.getOwnerEntityById(ownerId);
         ShopEntity toSave = modelMapper.map(requestDTO, ShopEntity.class);
         toSave.setOwner(owner);
         ShopEntity saved = shopRepository.save(toSave);

@@ -33,7 +33,4 @@ public class ShopRequestDTO {
     @NotEmpty(message = "State cannot be empty.")
     private String state;
 
-    @NotNull(message = "Owner-id cannot be null.")
-    private Long ownerId;
-
 }

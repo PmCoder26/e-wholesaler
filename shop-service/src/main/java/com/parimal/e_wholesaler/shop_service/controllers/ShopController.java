@@ -22,13 +22,15 @@ public class ShopController {
     private final ShopService shopService;
 
 
-    @PostMapping
+    @PostMapping(path = "/{ownerId}")
     public ShopResponseDTO createShop(
             HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
             @RequestBody @Valid
             ShopRequestDTO requestDTO
     ) {
-        return shopService.createShop(request, requestDTO);
+        return shopService.createShop(request, ownerId, requestDTO);
     }
 
     @GetMapping(path = "/{id}")
