@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 public class ShopResponseDTO {
 
     private Long id;
-
     private String name;
+    private String gstNo;
+    private String address;
+    private String city;
+    private String state;
 
 }
