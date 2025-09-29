@@ -1,5 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.services;
 
+import com.parimal.e_wholesaler.shop_service.advices.ApiError;
 import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.clients.OrderFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
@@ -21,8 +22,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,11 +93,17 @@ public class ShopService {
         return modelMapper.map(saved, ShopDTO.class);
     }
 
-    public List<ShopProductDTO> getProductsByShopId(HttpServletRequest request, Long shopId) {
-        boolean shopExists = shopRepository.existsById(shopId);
-        if(!shopExists) {
-            throw new ResourceNotFoundException("Shop with id: " + shopId + " now found.");
+    public List<ShopProductDTO> getProductsByShopId(HttpServletRequest request, Long ownerId, Long shopId) {
+        ShopEntity shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + shopId + " now found."));
+        if(!shop.getOwner().getId().equals(ownerId)) {
+            ApiError apiError = ApiError.builder()
+                    .message("You don't have permission to access this shop.")
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+            throw new MyException(apiError);
         }
+
         ApiResponse<List<ShopProductDTO>> productsResponse = productFeignClient.getShopSubProductsByShopId(shopId);
         if(productsResponse.getError() != null) {
             throw new MyException(productsResponse.getError());

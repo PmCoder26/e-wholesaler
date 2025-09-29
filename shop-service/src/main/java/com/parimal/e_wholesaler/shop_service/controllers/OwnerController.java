@@ -99,13 +99,15 @@ public class OwnerController {
         return shopService.updateShop(request, ownerId, requestDTO);
     }
 
-    @GetMapping(path = "/shop/{shopId}/products")
+    @GetMapping(path = "/{ownerId}/shop/{shopId}/products")
     public List<ShopProductDTO> getProductsByShopId(
             HttpServletRequest request,
             @PathVariable
+            Long ownerId,
+            @PathVariable
             Long shopId
     ) {
-        return shopService.getProductsByShopId(request, shopId);
+        return shopService.getProductsByShopId(request, ownerId, shopId);
     }
 
     @GetMapping(path = "/{ownerId}/shop-workers")
