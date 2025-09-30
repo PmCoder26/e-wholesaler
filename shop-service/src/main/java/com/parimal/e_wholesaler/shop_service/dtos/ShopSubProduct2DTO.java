@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ShopSubProduct2DTO {
 
+    private Long id;
+
     private Double mrp;
 
     private Double sellingPrice;
+
+    private Integer quantity;
 
     private Long stock;
 

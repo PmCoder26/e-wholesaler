@@ -31,6 +31,8 @@ public class ShopSubProductEntity {
 
     private Double sellingPrice;
 
+    private Integer quantity;
+
     private Long stock = 0L;
 
     @CreatedDate

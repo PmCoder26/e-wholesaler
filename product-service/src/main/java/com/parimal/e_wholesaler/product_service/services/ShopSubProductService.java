@@ -3,10 +3,7 @@ package com.parimal.e_wholesaler.product_service.services;
 import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.product_service.dtos.*;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductResponseDTO;
+import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
@@ -19,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -44,7 +41,7 @@ public class ShopSubProductService {
             Optional<ProductEntity> product = productService.findByName(requestDTO.getProductName());
             ShopSubProductResponseDTO responseDTO = new ShopSubProductResponseDTO();
             HashMap<Long, Double> idToPriceMap = new HashMap<>();
-            HashMap<Double, Double> map = requestDTO.getMrpToSelling();
+            HashMap<Double, QuantityToSellingPrice> map = requestDTO.getMrpToSelling();
             Set<Double> MRPs = map.keySet();
             if (product.isEmpty()) {
                 ProductEntity toSaveProduct = modelMapper.map(requestDTO, ProductEntity.class);
@@ -55,9 +52,10 @@ public class ShopSubProductService {
                     ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
                     toSaveShopSubProduct.setSubProduct(savedSubProduct);
                     toSaveShopSubProduct.setShopId(requestDTO.getShopId());
-                    toSaveShopSubProduct.setSellingPrice(map.get(Mrp));
+                    toSaveShopSubProduct.setSellingPrice(map.get(Mrp).getSellingPrice());
+                    toSaveShopSubProduct.setQuantity(map.get(Mrp).getQuantity());
                     ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
-                    idToPriceMap.put(saved.getId(), savedSubProduct.getMrp());
+                    idToPriceMap.put(saved.getId(), toSaveShopSubProduct.getSellingPrice());
                 }
             } else {
                 List<SubProductEntity> subProducts = product.get().getSubProducts();
@@ -92,9 +90,10 @@ public class ShopSubProductService {
                                 ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
                                 toSaveShopSubProduct.setShopId(requestDTO.getShopId());
                                 toSaveShopSubProduct.setSubProduct(subProduct);
-                                toSaveShopSubProduct.setSellingPrice(map.get(Mrp));
+                                toSaveShopSubProduct.setSellingPrice(map.get(Mrp).getSellingPrice());
+                                toSaveShopSubProduct.setQuantity(map.get(Mrp).getQuantity());
                                 ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
-                                idToPriceMap.put(saved.getId(), subProduct.getMrp());
+                                idToPriceMap.put(saved.getId(), toSaveShopSubProduct.getSellingPrice());
                             }
                         });
             }
@@ -121,7 +120,7 @@ public class ShopSubProductService {
         shopExistenceCheck(requestDTO.getShopId());
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
-        if(shopSubProduct.getShopId() != requestDTO.getShopId()) {
+        if(shopSubProduct.getShopId().equals(requestDTO.getShopId())) {
             throw new Exception("Requested shop sub-product is not owned by your shop.");
         }
         shopSubProductRepository.deleteById(requestDTO.getShopSubProductId());
@@ -162,24 +161,25 @@ public class ShopSubProductService {
 
     public List<ShopProductDTO> getShopSubProductsByShopId(HttpServletRequest request, Long shopId) {
         List<ShopSubProductEntity> shopSubProductList = shopSubProductRepository.findByShopId(shopId);
-        HashMap<ProductEntity, LinkedList<ShopSubProduct2DTO>> subProductHashMap = new HashMap<>();
-        List<ShopProductDTO> shopSubProducts = new LinkedList<>();
+        HashMap<ProductEntity, List<ShopSubProduct2DTO>> subProductHashMap = new HashMap<>();
+        List<ShopProductDTO> shopSubProducts = new ArrayList<>();
 
         shopSubProductList.forEach(shopSubProduct -> {
             ProductEntity key = shopSubProduct.getSubProduct().getProduct();
             ShopSubProduct2DTO temp = new ShopSubProduct2DTO();
+            temp.setId(shopSubProduct.getId());
             temp.setMrp(shopSubProduct.getSubProduct().getMrp());
             temp.setSellingPrice(shopSubProduct.getSellingPrice());
             temp.setStock(shopSubProduct.getStock());
+
             if(subProductHashMap.containsKey(key)) {
                 subProductHashMap.get(key).add(temp);
             }
             else {
-                LinkedList<ShopSubProduct2DTO> list = new LinkedList<>();
+                ArrayList<ShopSubProduct2DTO> list = new ArrayList<>();
                 subProductHashMap.put(key, list);
                 subProductHashMap.get(key).add(temp);
             }
-            System.out.println(subProductHashMap.get(key));
         });
 
         Set<ProductEntity> productSet = subProductHashMap.keySet();

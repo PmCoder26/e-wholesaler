@@ -15,6 +15,8 @@ public class ShopSubProductDTO {
 
     private Double sellingPrice;
 
+    private Integer quantity;
+
     private Long stock;
 
 }
