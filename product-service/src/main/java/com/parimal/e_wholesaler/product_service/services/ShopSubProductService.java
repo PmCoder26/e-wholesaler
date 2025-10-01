@@ -170,6 +170,7 @@ public class ShopSubProductService {
             temp.setId(shopSubProduct.getId());
             temp.setMrp(shopSubProduct.getSubProduct().getMrp());
             temp.setSellingPrice(shopSubProduct.getSellingPrice());
+            temp.setQuantity(shopSubProduct.getQuantity());
             temp.setStock(shopSubProduct.getStock());
 
             if(subProductHashMap.containsKey(key)) {
