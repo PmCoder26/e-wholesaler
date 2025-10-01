@@ -2,10 +2,18 @@ package com.parimal.e_wholesaler.shop_service.controllers;
 
 import com.parimal.e_wholesaler.shop_service.dtos.*;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.*;
+import com.parimal.e_wholesaler.shop_service.dtos.product.ShopProductDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.DailyRevenueDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerResponseDTO;
 import com.parimal.e_wholesaler.shop_service.services.OwnerService;
 import com.parimal.e_wholesaler.shop_service.services.ShopService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -153,6 +161,17 @@ public class OwnerController {
             Long id
     ) {
         return ownerService.deleteOwnerById(request, id);
+    }
+
+    @PostMapping(path = "/{ownerId}/shop/products/shop-sub-product")
+    public ShopSubProductResponseDTO addShopSubProduct(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
+            @RequestBody
+            ShopSubProductRequestDTO requestDTO
+    ) {
+        return shopService.addShopSubProduct(request, ownerId,requestDTO);
     }
 
 

@@ -7,16 +7,20 @@ import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.*;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.ShopProductDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.DailyRevenueDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerResponseDTO;
 import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
-import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
-import com.parimal.e_wholesaler.shop_service.exceptions.UnAuthorizedAccessException;
+import com.parimal.e_wholesaler.shop_service.exceptions.*;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -25,7 +29,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -163,4 +166,15 @@ public class ShopService {
 
         return workerUpdateResponse.getData();
     }
+
+    public ShopSubProductResponseDTO addShopSubProduct(HttpServletRequest request, Long ownerId, ShopSubProductRequestDTO requestDTO) {
+        ShopEntity shop = shopRepository.findById(requestDTO.getShopId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found."));
+        if(!shop.getOwner().getId().equals(ownerId)) throw new ForbiddenException("Permission for this shop denied.");
+        ApiResponse<ShopSubProductResponseDTO> responseDTO = productFeignClient.addShopSubProduct(requestDTO);
+        if(responseDTO.getError() != null) throw new MyException(responseDTO.getError());
+
+        return responseDTO.getData();
+    }
+
 }

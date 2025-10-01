@@ -1,4 +1,4 @@
-package com.parimal.e_wholesaler.shop_service.dtos;
+package com.parimal.e_wholesaler.shop_service.dtos.sales;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

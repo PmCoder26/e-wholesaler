@@ -2,8 +2,9 @@ package com.parimal.e_wholesaler.shop_service.clients;
 
 import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.dtos.*;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;

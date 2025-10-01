@@ -6,7 +6,10 @@ import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.*;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.*;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesResponseDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
 import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
 import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
@@ -126,7 +129,6 @@ public class OwnerService {
         ownerRepository.deleteById(id);
         return new MessageDTO("Customer deleted successfully.");
     }
-
 
 //    Default type methods only accessible within the package.
 

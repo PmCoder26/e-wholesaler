@@ -1,4 +1,4 @@
-package com.parimal.e_wholesaler.shop_service.dtos;
+package com.parimal.e_wholesaler.shop_service.dtos.worker;
 
 import com.parimal.e_wholesaler.shop_service.utils.Gender;
 import jakarta.validation.constraints.NotEmpty;
