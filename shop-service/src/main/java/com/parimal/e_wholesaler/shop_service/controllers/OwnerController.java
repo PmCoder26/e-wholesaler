@@ -2,6 +2,7 @@ package com.parimal.e_wholesaler.shop_service.controllers;
 
 import com.parimal.e_wholesaler.shop_service.dtos.*;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.*;
+import com.parimal.e_wholesaler.shop_service.dtos.product.RequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.ShopProductDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductResponseDTO;
@@ -168,10 +169,21 @@ public class OwnerController {
             HttpServletRequest request,
             @PathVariable
             Long ownerId,
-            @RequestBody
+            @RequestBody @Valid
             ShopSubProductRequestDTO requestDTO
     ) {
         return shopService.addShopSubProduct(request, ownerId,requestDTO);
+    }
+
+    @DeleteMapping(path = "/{ownerId}/shop/products/shop-sub-product")
+    public MessageDTO removeShopSubProduct(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
+            @RequestBody @Valid
+            RequestDTO requestDTO
+    ) {
+        return shopService.removeShopSubProduct(request, ownerId, requestDTO);
     }
 
 

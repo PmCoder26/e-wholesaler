@@ -6,8 +6,10 @@ import com.parimal.e_wholesaler.shop_service.clients.OrderFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
-import com.parimal.e_wholesaler.shop_service.dtos.*;
-import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.DataDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.PairDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.RequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.ShopProductDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductResponseDTO;
@@ -175,6 +177,16 @@ public class ShopService {
         if(responseDTO.getError() != null) throw new MyException(responseDTO.getError());
 
         return responseDTO.getData();
+    }
+
+    public MessageDTO removeShopSubProduct(HttpServletRequest request, Long ownerId, RequestDTO requestDTO) {
+        ShopEntity shop = shopRepository.findById(requestDTO.getShopId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found."));
+        if(!shop.getOwner().getId().equals(ownerId)) throw new ForbiddenException("Permission for this shop-sub-product denied.");
+        ApiResponse<MessageDTO> shopSubProductResponse = productFeignClient.removeShopSubProduct(requestDTO);
+        if(shopSubProductResponse.getError() != null) throw new MyException(shopSubProductResponse.getError());
+
+        return shopSubProductResponse.getData();
     }
 
 }

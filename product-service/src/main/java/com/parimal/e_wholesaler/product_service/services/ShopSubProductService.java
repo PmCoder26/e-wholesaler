@@ -117,10 +117,9 @@ public class ShopSubProductService {
     }
 
     public MessageDTO removeShopSubProductById(HttpServletRequest request, RequestDTO requestDTO) throws Exception {
-        shopExistenceCheck(requestDTO.getShopId());
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
-        if(shopSubProduct.getShopId().equals(requestDTO.getShopId())) {
+        if(!shopSubProduct.getShopId().equals(requestDTO.getShopId())) {
             throw new Exception("Requested shop sub-product is not owned by your shop.");
         }
         shopSubProductRepository.deleteById(requestDTO.getShopSubProductId());
