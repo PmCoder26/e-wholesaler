@@ -9,10 +9,7 @@ import com.parimal.e_wholesaler.shop_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.DataDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.PairDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.RequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.ShopProductDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.*;
 import com.parimal.e_wholesaler.shop_service.dtos.sales.DailyRevenueDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
@@ -189,4 +186,12 @@ public class ShopService {
         return shopSubProductResponse.getData();
     }
 
+    public MessageDTO updateShopSubProduct(HttpServletRequest request, Long ownerId, ShopSubProductUpdateRequestDTO requestDTO) {
+        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
+        if(!shopExists) throw new ResourceNotFoundException("Shop of the requested owner not found.");
+        ApiResponse<MessageDTO> updateResponse = productFeignClient.updateShopSubProduct(requestDTO);
+        if(updateResponse.getError() != null) throw new MyException(updateResponse.getError());
+
+        return updateResponse.getData();
+    }
 }

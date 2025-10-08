@@ -3,20 +3,13 @@ package com.parimal.e_wholesaler.product_service.controllers;
 import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.product_service.dtos.ShopProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.SubProductStockUpdateDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.RequestDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductRequestDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductResponseDTO;
-import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
-import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
+import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
 import com.parimal.e_wholesaler.product_service.services.ShopSubProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -74,6 +67,15 @@ public class ShopSubProductController {
             @RequestBody @Valid SubProductStockUpdateDTO updateDTO
     ) {
         return shopSubProductService.updateStock(request, updateDTO);
+    }
+
+    @PutMapping
+    public MessageDTO updateShopSubProduct(
+            HttpServletRequest request,
+            @RequestBody @Valid
+            ShopSubProductUpdateRequestDTO requestDTO
+    ) {
+        return shopSubProductService.updateShopSubProduct(request, requestDTO);
     }
 
 }

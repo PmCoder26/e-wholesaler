@@ -13,5 +13,6 @@ public interface ShopRepository extends JpaRepository<ShopEntity, Long> {
 
     List<ShopEntity> findByOwner_Id(Long ownerId);
 
+    boolean existsByIdAndOwner_Id(Long shopId, Long ownerId);
 
 }

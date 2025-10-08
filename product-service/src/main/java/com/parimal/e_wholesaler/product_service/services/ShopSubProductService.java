@@ -7,6 +7,7 @@ import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
+import com.parimal.e_wholesaler.product_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepository;
 import com.parimal.e_wholesaler.product_service.utils.StockUpdate;
@@ -52,8 +53,10 @@ public class ShopSubProductService {
                     ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
                     toSaveShopSubProduct.setSubProduct(savedSubProduct);
                     toSaveShopSubProduct.setShopId(requestDTO.getShopId());
-                    toSaveShopSubProduct.setSellingPrice(map.get(Mrp).getSellingPrice());
-                    toSaveShopSubProduct.setQuantity(map.get(Mrp).getQuantity());
+                    QuantityToSellingPrice value = map.get(Mrp);
+                    toSaveShopSubProduct.setSellingPrice(value.getSellingPrice());
+                    toSaveShopSubProduct.setQuantity(value.getQuantity());
+                    toSaveShopSubProduct.setStock(value.getStock());
                     ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
                     idToPriceMap.put(saved.getId(), toSaveShopSubProduct.getSellingPrice());
                 }
@@ -90,8 +93,10 @@ public class ShopSubProductService {
                                 ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
                                 toSaveShopSubProduct.setShopId(requestDTO.getShopId());
                                 toSaveShopSubProduct.setSubProduct(subProduct);
-                                toSaveShopSubProduct.setSellingPrice(map.get(Mrp).getSellingPrice());
-                                toSaveShopSubProduct.setQuantity(map.get(Mrp).getQuantity());
+                                QuantityToSellingPrice value = map.get(Mrp);
+                                toSaveShopSubProduct.setSellingPrice(value.getSellingPrice());
+                                toSaveShopSubProduct.setQuantity(value.getQuantity());
+                                toSaveShopSubProduct.setStock(value.getStock());
                                 ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
                                 idToPriceMap.put(saved.getId(), toSaveShopSubProduct.getSellingPrice());
                             }
@@ -192,4 +197,25 @@ public class ShopSubProductService {
         return shopSubProducts;
     }
 
+    @Transactional
+    public MessageDTO updateShopSubProduct(HttpServletRequest request, ShopSubProductUpdateRequestDTO requestDTO) {
+        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(requestDTO.getId(), requestDTO.getShopId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shop's sub-product not found."));
+
+        if(areEntityAndRequestDTOSame(shopSubProduct, requestDTO))
+            throw new ResourceAlreadyExistsException("Data provided is same as of old shop's sub-product.");
+
+        shopSubProduct.setSellingPrice(requestDTO.getSellingPrice());
+        shopSubProduct.setQuantity(requestDTO.getQuantity());
+        shopSubProduct.setStock(requestDTO.getStock());
+        shopSubProductRepository.save(shopSubProduct);
+
+        return new MessageDTO("Shop's sub-product updated successfully");
+    }
+
+    private boolean areEntityAndRequestDTOSame(ShopSubProductEntity shopSubProduct, ShopSubProductUpdateRequestDTO requestDTO) {
+        return shopSubProduct.getQuantity().equals(requestDTO.getQuantity())
+                && shopSubProduct.getStock().equals(requestDTO.getStock())
+                && shopSubProduct.getSellingPrice().equals(requestDTO.getSellingPrice());
+    }
 }

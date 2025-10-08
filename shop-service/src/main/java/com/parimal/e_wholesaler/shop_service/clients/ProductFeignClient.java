@@ -2,10 +2,7 @@ package com.parimal.e_wholesaler.shop_service.clients;
 
 import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.RequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.ShopProductDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.ShopSubProductResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.product.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,5 +19,8 @@ public interface ProductFeignClient {
 
     @DeleteMapping
     ApiResponse<MessageDTO> removeShopSubProduct(@RequestBody RequestDTO requestDTO);
+
+    @PutMapping
+    ApiResponse<MessageDTO> updateShopSubProduct(@RequestBody ShopSubProductUpdateRequestDTO requestDTO);
 
 }

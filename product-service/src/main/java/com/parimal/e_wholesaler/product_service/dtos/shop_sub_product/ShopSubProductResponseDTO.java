@@ -14,5 +14,4 @@ public class ShopSubProductResponseDTO {
 
     private HashMap<Long, Double> idToPriceMap;
 
-
 }
