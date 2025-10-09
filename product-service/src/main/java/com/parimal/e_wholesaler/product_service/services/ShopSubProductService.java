@@ -197,7 +197,7 @@ public class ShopSubProductService {
         return shopSubProducts;
     }
 
-    @Transactional
+    @Transactional  // no need to use .save() when @Transactional used.
     public MessageDTO updateShopSubProduct(HttpServletRequest request, ShopSubProductUpdateRequestDTO requestDTO) {
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(requestDTO.getId(), requestDTO.getShopId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop's sub-product not found."));
@@ -208,7 +208,7 @@ public class ShopSubProductService {
         shopSubProduct.setSellingPrice(requestDTO.getSellingPrice());
         shopSubProduct.setQuantity(requestDTO.getQuantity());
         shopSubProduct.setStock(requestDTO.getStock());
-        shopSubProductRepository.save(shopSubProduct);
+        shopSubProduct.getSubProduct().setMrp(requestDTO.getMrp());
 
         return new MessageDTO("Shop's sub-product updated successfully");
     }
@@ -216,6 +216,7 @@ public class ShopSubProductService {
     private boolean areEntityAndRequestDTOSame(ShopSubProductEntity shopSubProduct, ShopSubProductUpdateRequestDTO requestDTO) {
         return shopSubProduct.getQuantity().equals(requestDTO.getQuantity())
                 && shopSubProduct.getStock().equals(requestDTO.getStock())
-                && shopSubProduct.getSellingPrice().equals(requestDTO.getSellingPrice());
+                && shopSubProduct.getSellingPrice().equals(requestDTO.getSellingPrice())
+                && shopSubProduct.getSubProduct().getMrp().equals(requestDTO.getMrp());
     }
 }
