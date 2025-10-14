@@ -39,14 +39,14 @@ public class ShopSubProductService {
             if (!shopExistsResponse.getData().getData()) {
                 throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
             }
-            Optional<ProductEntity> product = productService.findByName(requestDTO.getProductName());
+            Optional<ProductEntity> product = productService.findByNameIgnoreCase(request, requestDTO.getProductName());
             ShopSubProductResponseDTO responseDTO = new ShopSubProductResponseDTO();
             HashMap<Long, Double> idToPriceMap = new HashMap<>();
             HashMap<Double, QuantityToSellingPrice> map = requestDTO.getMrpToSelling();
             Set<Double> MRPs = map.keySet();
             if (product.isEmpty()) {
                 ProductEntity toSaveProduct = modelMapper.map(requestDTO, ProductEntity.class);
-                ProductEntity savedProduct = productService.saveProduct(toSaveProduct);
+                ProductEntity savedProduct = productService.saveProduct(request, toSaveProduct);
                 responseDTO.setProductId(savedProduct.getId());
                 for (Double Mrp : MRPs) {
                     SubProductEntity savedSubProduct = subProductService.addSubProduct(savedProduct, Mrp);
