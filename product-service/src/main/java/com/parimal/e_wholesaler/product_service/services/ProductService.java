@@ -51,13 +51,11 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    Optional<ProductEntity> findByName(HttpServletRequest request, String name) {
-        return productRepository.findByName(name);
-    }
-
     ProductEntity saveProduct(HttpServletRequest request, ProductEntity toSave) {
         return productRepository.save(toSave);
     }
 
     public Optional<ProductEntity> findByNameIgnoreCase(HttpServletRequest request, String productName) { return productRepository.findByNameIgnoreCase(productName); }
+
+    public boolean existsByName(HttpServletRequest request, String productName) { return productRepository.existsByName(productName); }
 }

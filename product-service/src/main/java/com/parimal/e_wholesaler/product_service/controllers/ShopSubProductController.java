@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.product_service.controllers;
 import com.parimal.e_wholesaler.product_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.product_service.dtos.ShopProductDTO;
 import com.parimal.e_wholesaler.product_service.dtos.SubProductStockUpdateDTO;
+import com.parimal.e_wholesaler.product_service.dtos.product.ProductRemoveRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
 import com.parimal.e_wholesaler.product_service.services.ShopSubProductService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -76,6 +77,15 @@ public class ShopSubProductController {
             ShopSubProductUpdateRequestDTO requestDTO
     ) {
         return shopSubProductService.updateShopSubProduct(request, requestDTO);
+    }
+
+    @DeleteMapping(path = "/remove-product")
+    public MessageDTO removeProductByShopIdAndProductName(
+            HttpServletRequest request,
+            @RequestBody @Valid
+            ProductRemoveRequestDTO requestDTO
+    ) {
+        return shopSubProductService.removeProductByShopIdAndProductName(request, requestDTO);
     }
 
 }

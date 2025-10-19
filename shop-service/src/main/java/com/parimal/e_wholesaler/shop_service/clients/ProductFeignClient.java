@@ -23,4 +23,7 @@ public interface ProductFeignClient {
     @PutMapping
     ApiResponse<MessageDTO> updateShopSubProduct(@RequestBody ShopSubProductUpdateRequestDTO requestDTO);
 
+    @DeleteMapping(path = "/remove-product")
+    ApiResponse<MessageDTO> removeProductByShopIdAndProductName(@RequestBody ProductRemoveRequestDTO requestDTO);
+
 }

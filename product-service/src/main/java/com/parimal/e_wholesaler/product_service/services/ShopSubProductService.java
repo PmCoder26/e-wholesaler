@@ -3,6 +3,7 @@ package com.parimal.e_wholesaler.product_service.services;
 import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
 import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.product_service.dtos.*;
+import com.parimal.e_wholesaler.product_service.dtos.product.ProductRemoveRequestDTO;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
@@ -211,6 +212,19 @@ public class ShopSubProductService {
         shopSubProduct.getSubProduct().setMrp(requestDTO.getMrp());
 
         return new MessageDTO("Shop's sub-product updated successfully");
+    }
+
+    @Transactional
+    public MessageDTO removeProductByShopIdAndProductName(HttpServletRequest request, ProductRemoveRequestDTO requestDTO) {
+        boolean productExists = productService.existsByName(request, requestDTO.getProductName());
+        if(!productExists) throw new ResourceNotFoundException("Product with name " + requestDTO.getProductName() + " not found.");
+
+        long shopSubProductsDeleteCount = shopSubProductRepository.deleteAllByShopIdAndSubProduct_Product_Name(requestDTO.getShopId(), requestDTO.getProductName());
+
+        MessageDTO message = new MessageDTO("Failed to delete the product or product doesn't exists");
+        if(shopSubProductsDeleteCount > 0) message.setMessage("Product deleted successfully");
+
+        return message;
     }
 
     private boolean areEntityAndRequestDTOSame(ShopSubProductEntity shopSubProduct, ShopSubProductUpdateRequestDTO requestDTO) {

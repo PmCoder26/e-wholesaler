@@ -194,6 +194,18 @@ public class OwnerController {
         return shopService.updateShopSubProduct(request, ownerId, requestDTO);
     }
 
+    @DeleteMapping(path = "/{ownerId}/shop/products/product")
+    public MessageDTO removeProductByShopIdAndProductName(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
+            @RequestBody @Valid
+            ProductRemoveRequestDTO requestDTO
+    ) {
+        return shopService.removeProductByShopIdAndProductName(request, ownerId, requestDTO);
+    }
+
+
 
 
 }

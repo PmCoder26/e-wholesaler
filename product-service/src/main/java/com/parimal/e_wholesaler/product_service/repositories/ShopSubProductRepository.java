@@ -8,10 +8,9 @@ import java.util.Optional;
 
 public interface ShopSubProductRepository extends JpaRepository<ShopSubProductEntity, Long> {
 
-    boolean existsByIdAndShopId(Long subProductId, Long shopId);
-
     Optional<ShopSubProductEntity> findByIdAndShopId(Long subProductId, Long shopId);
 
     List<ShopSubProductEntity> findByShopId(Long shopId);
 
+    long deleteAllByShopIdAndSubProduct_Product_Name(Long shopId, String productName);
 }

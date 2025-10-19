@@ -194,4 +194,15 @@ public class ShopService {
 
         return updateResponse.getData();
     }
+
+    public MessageDTO removeProductByShopIdAndProductName(HttpServletRequest request, Long ownerId, ProductRemoveRequestDTO requestDTO) {
+        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
+        if(!shopExists) throw new ResourceNotFoundException("Shop of the requested owner not found.");
+
+        ApiResponse<MessageDTO> removalResponse = productFeignClient.removeProductByShopIdAndProductName(requestDTO);
+        if(removalResponse.getError() != null) throw new MyException(removalResponse.getError());
+
+        return removalResponse.getData();
+    }
+
 }
