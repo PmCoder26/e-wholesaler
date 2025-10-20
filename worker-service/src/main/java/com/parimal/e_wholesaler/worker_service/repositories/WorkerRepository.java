@@ -26,4 +26,6 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, Long> {
     @Query(value = "SELECT w.id FROM WorkerEntity w WHERE w.mobNo = :mobNo")
     Optional<Long> findIdByMobNo(String mobNo);
 
+    List<WorkerEntity> findAllByShopId(Long shopId);
+
 }

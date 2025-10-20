@@ -59,7 +59,7 @@ public class WorkerService {
                     List<WorkerDTO> workerDTOS = workers.stream()
                             .map(workerEntity -> modelMapper.map(workerEntity, WorkerDTO.class))
                             .toList();
-                    return new ShopAndWorkersDTO(shopId, "", workerDTOS);
+                    return new ShopAndWorkersDTO(shopId, workerDTOS);
                 }).toList();
         return shopAndWorkers;
     }
@@ -106,4 +106,11 @@ public class WorkerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Worker-id with mobile number: " + mobNo + " not found"));
     }
 
+    public ShopAndWorkersDTO getWorkersByShopId(HttpServletRequest request, Long shopId) {
+        List<WorkerEntity> workers = workerRepository.findAllByShopId(shopId);
+        List<WorkerDTO> workerDTOList=  workers.stream()
+                .map(worker -> modelMapper.map(worker, WorkerDTO.class))
+                .toList();
+        return new ShopAndWorkersDTO(shopId, workerDTOList);
+    }
 }

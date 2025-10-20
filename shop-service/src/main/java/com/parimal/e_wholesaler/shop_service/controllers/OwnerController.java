@@ -205,6 +205,16 @@ public class OwnerController {
         return shopService.removeProductByShopIdAndProductName(request, ownerId, requestDTO);
     }
 
+    @GetMapping(path = "/{ownerId}/shop/{shopId}/workers")
+    public ShopAndWorkersDTO getWorkersByShopId(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
+            @PathVariable
+            Long shopId
+    ) {
+        return shopService.getWorkersByShopId(request, ownerId, shopId);
+    }
 
 
 

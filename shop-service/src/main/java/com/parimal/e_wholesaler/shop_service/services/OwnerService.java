@@ -116,7 +116,6 @@ public class OwnerService {
             ShopEntity shop = shops.get(x);
             ShopAndWorkersDTO shopAndWorkersDTO = shopWorkersList.get(x);
             if(!shop.getId().equals(shopAndWorkersDTO.getShopId())) throw new RuntimeException("Shop-id sequence mismatched.");
-            shopAndWorkersDTO.setShopName(shop.getName());
         }
         return shopWorkersList;
     }

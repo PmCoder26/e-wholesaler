@@ -13,8 +13,6 @@ public class ShopAndWorkersDTO {
 
     private Long shopId;
 
-    private String shopName;
-
     private List<WorkerDTO> workerList;
 
 }

@@ -58,9 +58,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     .header("Transaction-Token", transactionToken);
             return chain
                     .filter(exchange)
-                    .then(fromRunnable(() -> {
-                        log.info("Inside the Authentication Filter 'POST' with response: {}", exchange.getResponse());
-                    }));
+                    .then(fromRunnable(() -> log.info("Inside the Authentication Filter 'POST' with response: {}", exchange.getResponse())));
         };
     }
 

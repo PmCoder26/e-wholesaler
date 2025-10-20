@@ -15,6 +15,7 @@ import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerResponseDTO;
 import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
@@ -205,4 +206,13 @@ public class ShopService {
         return removalResponse.getData();
     }
 
+    public ShopAndWorkersDTO getWorkersByShopId(HttpServletRequest request, Long ownerId, Long shopId) {
+        boolean shopExists = shopRepository.existsByIdAndOwner_Id(shopId, ownerId);
+        if(!shopExists) throw new ResourceNotFoundException("Shop of the requested owner not found.");
+
+        ApiResponse<ShopAndWorkersDTO> workersResponse = workerFeignClient.getWorkersByShopId(shopId);
+        if(workersResponse.getError() != null) throw new MyException(workersResponse.getError());
+
+        return workersResponse.getData();
+    }
 }

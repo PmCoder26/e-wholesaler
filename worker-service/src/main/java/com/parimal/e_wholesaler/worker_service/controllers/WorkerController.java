@@ -85,4 +85,13 @@ public class WorkerController {
         return workerService.deleteWorkerById(request, requestDTO);
     }
 
+    @GetMapping(path = "/internal/shops/{shopId}")
+    public ShopAndWorkersDTO getWorkersByShopId(
+            HttpServletRequest request,
+            @PathVariable
+            Long shopId
+    ) {
+        return workerService.getWorkersByShopId(request, shopId);
+    }
+
 }
