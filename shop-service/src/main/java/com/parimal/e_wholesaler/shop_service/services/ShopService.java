@@ -158,9 +158,10 @@ public class ShopService {
         return workerAddResponse.getData();
     }
 
-    public WorkerDTO updateWorker(HttpServletRequest request, WorkerUpdateRequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsById(requestDTO.getShopId());
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
+    public WorkerDTO updateWorker(HttpServletRequest request, Long ownerId, WorkerUpdateRequestDTO requestDTO) {
+        ShopEntity shop = shopRepository.findById(requestDTO.getShopId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + "not found."));
+        if(!shop.getOwner().getId().equals(ownerId)) throw new ForbiddenException("Permission for this shop worker denied.");
 
         ApiResponse<WorkerDTO> workerUpdateResponse = workerFeignClient.updateWorker(requestDTO);
         if(workerUpdateResponse.getError() != null) throw new MyException(workerUpdateResponse.getError());

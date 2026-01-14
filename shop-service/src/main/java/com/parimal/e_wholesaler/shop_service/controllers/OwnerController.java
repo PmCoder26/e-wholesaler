@@ -144,13 +144,15 @@ public class OwnerController {
         return shopService.addWorker(request, requestDTO);
     }
 
-    @PostMapping(path = "/shops/worker/update")
+    @PutMapping(path = "/{ownerId}/shops/worker/update")
     public WorkerDTO updateWorker(
             HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
             @RequestBody @Valid
             WorkerUpdateRequestDTO requestDTO
     ) {
-        return shopService.updateWorker(request, requestDTO);
+        return shopService.updateWorker(request, ownerId,requestDTO);
     }
 
     @DeleteMapping(path = "/{id}")

@@ -6,10 +6,7 @@ import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerUpdateRequestDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +22,7 @@ public interface WorkerFeignClient {
     @PostMapping
     ApiResponse<WorkerDTO> addWorker(WorkerRequestDTO requestDTO);
 
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     ApiResponse<WorkerDTO> updateWorker(WorkerUpdateRequestDTO requestDTO);
 
     @GetMapping(path = "/internal/shops/{shopId}")
