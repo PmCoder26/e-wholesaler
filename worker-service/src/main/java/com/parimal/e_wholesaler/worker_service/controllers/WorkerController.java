@@ -18,7 +18,7 @@ public class WorkerController {
 
 
     @PostMapping
-    public WorkerResponseDTO createWorker(
+    public WorkerDTO createWorker(
             HttpServletRequest request,
             @RequestBody @Valid WorkerRequestDTO requestDTO
     ) {
@@ -47,7 +47,7 @@ public class WorkerController {
     public WorkerDTO updateWorker(
             HttpServletRequest request,
             @RequestBody @Valid
-            WorkerRequestDTO requestDTO
+            WorkerUpdateRequestDTO requestDTO
     ) {
         return workerService.updateWorker(request, requestDTO);
     }

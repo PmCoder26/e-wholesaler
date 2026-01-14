@@ -10,8 +10,9 @@ import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerUpdateRequestDTO;
 import com.parimal.e_wholesaler.shop_service.services.OwnerService;
 import com.parimal.e_wholesaler.shop_service.services.ShopService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -135,7 +136,7 @@ public class OwnerController {
     }
 
     @PostMapping(path = "/shops/worker")
-    public WorkerResponseDTO addWorker(
+    public WorkerDTO addWorker(
             HttpServletRequest request,
             @RequestBody @Valid
             WorkerRequestDTO requestDTO
@@ -144,10 +145,10 @@ public class OwnerController {
     }
 
     @PostMapping(path = "/shops/worker/update")
-    public WorkerResponseDTO updateWorker(
+    public WorkerDTO updateWorker(
             HttpServletRequest request,
             @RequestBody @Valid
-            WorkerRequestDTO requestDTO
+            WorkerUpdateRequestDTO requestDTO
     ) {
         return shopService.updateWorker(request, requestDTO);
     }

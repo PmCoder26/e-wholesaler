@@ -28,7 +28,7 @@ public class WorkerService {
     private final ModelMapper modelMapper;
 
 
-    public WorkerResponseDTO createWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+    public WorkerDTO createWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
         shopExistenceCheck(requestDTO.getShopId());
         boolean workerExists = workerRepository.existsByMobNo(requestDTO.getMobNo());
         if(workerExists) {
@@ -36,7 +36,7 @@ public class WorkerService {
         }
         WorkerEntity toSave = modelMapper.map(requestDTO, WorkerEntity.class);
         WorkerEntity saved = workerRepository.save(toSave);
-        return modelMapper.map(saved, WorkerResponseDTO.class);
+        return modelMapper.map(saved, WorkerDTO.class);
     }
 
     public WorkerDTO getWorkerById(HttpServletRequest request, Long id) {
@@ -90,13 +90,15 @@ public class WorkerService {
         }
     }
 
-    public WorkerDTO updateWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
-        WorkerEntity worker = workerRepository.findByMobNo(requestDTO.getMobNo())
+    public WorkerDTO updateWorker(HttpServletRequest request, WorkerUpdateRequestDTO requestDTO) {
+        WorkerEntity worker = workerRepository.findById(requestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found."));
         worker.setName(requestDTO.getName());
         worker.setSalary(requestDTO.getSalary());
+        worker.setMobNo(requestDTO.getMobNo());
         worker.setAddress(requestDTO.getAddress());
         worker.setCity(requestDTO.getCity());
+        worker.setState(requestDTO.getState());
         WorkerEntity saved = workerRepository.save(worker);
         return modelMapper.map(saved, WorkerDTO.class);
     }

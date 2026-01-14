@@ -16,8 +16,9 @@ import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerResponseDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerUpdateRequestDTO;
 import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
 import com.parimal.e_wholesaler.shop_service.exceptions.*;
@@ -147,21 +148,21 @@ public class ShopService {
         return revenueDTOList;
     }
 
-    public WorkerResponseDTO addWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+    public WorkerDTO addWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
         boolean shopExists = shopRepository.existsById(requestDTO.getShopId());
         if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
 
-        ApiResponse<WorkerResponseDTO> workerAddResponse = workerFeignClient.addWorker(requestDTO);
+        ApiResponse<WorkerDTO> workerAddResponse = workerFeignClient.addWorker(requestDTO);
         if(workerAddResponse.getError() != null) throw new MyException(workerAddResponse.getError());
 
         return workerAddResponse.getData();
     }
 
-    public WorkerResponseDTO updateWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+    public WorkerDTO updateWorker(HttpServletRequest request, WorkerUpdateRequestDTO requestDTO) {
         boolean shopExists = shopRepository.existsById(requestDTO.getShopId());
         if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
 
-        ApiResponse<WorkerResponseDTO> workerUpdateResponse = workerFeignClient.updateWorker(requestDTO);
+        ApiResponse<WorkerDTO> workerUpdateResponse = workerFeignClient.updateWorker(requestDTO);
         if(workerUpdateResponse.getError() != null) throw new MyException(workerUpdateResponse.getError());
 
         return workerUpdateResponse.getData();
