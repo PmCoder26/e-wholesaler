@@ -3,7 +3,9 @@ package com.parimal.e_wholesaler.product_service.advices;
 
 import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +21,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         if(body instanceof ApiResponse<?>){
+            if(((ApiResponse<?>) body).getError() != null) response.setStatusCode(((ApiResponse<?>) body).getError().getStatus());
             return body;
         }
         return new ApiResponse<>(body);

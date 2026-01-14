@@ -40,7 +40,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(ConfigClass config) {
         return (exchange, chain) -> {
-            log.info("Inside the Authentication Filter 'PRE' with request path: {}", exchange.getRequest().getPath());
             String requestPath = exchange.getRequest().getPath().value();
             if(requestPath.startsWith("/api/v1/users/")) return chain.filter(exchange);
 
@@ -51,14 +50,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             Claims claims = jwtService.getClaimsFromToken(accessToken);
             String role = (String) claims.get("roles");
             if(!isAuthorized(requestPath, role)) return completeResponse(exchange);
-            log.info("Before creating transaction token");
             String transactionToken = jwtService.generateTransactionToken(Long.parseLong(claims.getSubject()));
             exchange.getRequest()
                     .mutate()
                     .header("Transaction-Token", transactionToken);
-            return chain
-                    .filter(exchange)
-                    .then(fromRunnable(() -> log.info("Inside the Authentication Filter 'POST' with response: {}", exchange.getResponse())));
+            return chain.filter(exchange);
         };
     }
 

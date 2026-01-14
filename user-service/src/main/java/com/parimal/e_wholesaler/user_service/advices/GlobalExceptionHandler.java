@@ -1,9 +1,11 @@
 package com.parimal.e_wholesaler.user_service.advices;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parimal.e_wholesaler.user_service.exceptions.MyException;
 import com.parimal.e_wholesaler.user_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.user_service.exceptions.ResourceNotFoundException;
+import feign.FeignException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +58,35 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MyException.class)
     public ApiResponse handleMyException(MyException e) {
         return buildApiErrorResponse(e.apiError);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ApiResponse handleFeignException(FeignException e) {
+
+        HttpStatus status = HttpStatus.valueOf(e.status());
+
+        ApiError apiError = ApiError.builder()
+                .message(extractMessage(e))
+                .status(status)
+                .subErrors(Collections.emptyList())
+                .build();
+
+        return new ApiResponse(apiError);
+    }
+
+    private String extractMessage(FeignException e) {
+        try {
+            String body = e.contentUTF8();
+
+            ObjectMapper mapper = new ObjectMapper();
+            ApiResponse response = mapper.readValue(body, ApiResponse.class);
+
+            if (response.getError() != null) {
+                return response.getError().getMessage();
+            }
+        } catch (Exception ignored) {}
+
+        return e.getMessage(); // fallback
     }
 
     private ApiResponse buildApiError(String message, List<String> subErrors, HttpStatus status) {

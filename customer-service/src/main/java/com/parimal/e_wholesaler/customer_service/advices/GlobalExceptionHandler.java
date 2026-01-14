@@ -1,9 +1,11 @@
 package com.parimal.e_wholesaler.customer_service.advices;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parimal.e_wholesaler.customer_service.exceptions.ForbiddenException;
 import com.parimal.e_wholesaler.customer_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.customer_service.exceptions.UnAuthorizedAccessException;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +46,35 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ApiResponse handleException(Exception e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ApiResponse handleFeignException(FeignException e) {
+
+        HttpStatus status = HttpStatus.valueOf(e.status());
+
+        ApiError apiError = ApiError.builder()
+                .message(extractMessage(e))
+                .status(status)
+                .subErrors(Collections.emptyList())
+                .build();
+
+        return new ApiResponse(apiError);
+    }
+
+    private String extractMessage(FeignException e) {
+        try {
+            String body = e.contentUTF8();
+
+            ObjectMapper mapper = new ObjectMapper();
+            ApiResponse response = mapper.readValue(body, ApiResponse.class);
+
+            if (response.getError() != null) {
+                return response.getError().getMessage();
+            }
+        } catch (Exception ignored) {}
+
+        return e.getMessage(); // fallback
     }
 
     private ApiResponse buildApiError(String message, List<String> subErrors, HttpStatus status) {

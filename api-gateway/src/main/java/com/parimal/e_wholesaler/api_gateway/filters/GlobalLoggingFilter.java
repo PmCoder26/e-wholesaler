@@ -15,12 +15,8 @@ import static reactor.core.publisher.Mono.fromRunnable;
 public class GlobalLoggingFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("Inside the global logging filter 'PRE' with request path: {}", exchange.getRequest().getPath());
-        return chain
-                .filter(exchange)
-                .then(fromRunnable(() -> {
-                    log.info("Inside the global logging filter 'POST' with response: {}", exchange.getResponse());
-                }));
+
+        return chain.filter(exchange);
     }
 
     @Override

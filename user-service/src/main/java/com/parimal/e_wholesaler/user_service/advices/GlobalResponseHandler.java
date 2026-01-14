@@ -18,6 +18,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         if(body instanceof ApiResponse<?>){
+            if(((ApiResponse<?>) body).getError() != null) response.setStatusCode(((ApiResponse<?>) body).getError().getStatus());
             return body;
         }
         return new ApiResponse<>(body);
