@@ -22,7 +22,7 @@ public interface WorkerFeignClient {
     @PostMapping
     ApiResponse<WorkerDTO> addWorker(WorkerRequestDTO requestDTO);
 
-    @PutMapping(path = "/update")
+    @PutMapping
     ApiResponse<WorkerDTO> updateWorker(WorkerUpdateRequestDTO requestDTO);
 
     @GetMapping(path = "/internal/shops/{shopId}")

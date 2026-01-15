@@ -135,16 +135,18 @@ public class OwnerController {
         return shopService.getDailyRevenue(request, ownerId);
     }
 
-    @PostMapping(path = "/shops/worker")
+    @PostMapping(path = "/{ownerId}/shops/worker")
     public WorkerDTO addWorker(
             HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
             @RequestBody @Valid
             WorkerRequestDTO requestDTO
     ) {
-        return shopService.addWorker(request, requestDTO);
+        return shopService.addWorker(request, ownerId,requestDTO);
     }
 
-    @PutMapping(path = "/{ownerId}/shops/worker/update")
+    @PutMapping(path = "/{ownerId}/shops/worker")
     public WorkerDTO updateWorker(
             HttpServletRequest request,
             @PathVariable

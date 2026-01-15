@@ -4,6 +4,7 @@ package com.parimal.e_wholesaler.shop_service.advices;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parimal.e_wholesaler.shop_service.exceptions.*;
 import feign.FeignException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -61,6 +62,11 @@ public class GlobalExceptionHandler {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ApiResponse handleDataIntegrityViolation(DataIntegrityViolationException e) {
+        return buildApiError("Duplicate data or phone number already exists.", Collections.emptyList(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ApiResponse handleException(Exception e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,7 +74,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FeignException.class)
     public ApiResponse handleFeignException(FeignException e) {
-
         HttpStatus status = HttpStatus.valueOf(e.status());
 
         ApiError apiError = ApiError.builder()

@@ -43,7 +43,7 @@ public class WorkerController {
         return workerService.getWorkersByShopIdList(request, shopIdList);
     }
 
-    @PutMapping(path = "/update")
+    @PutMapping
     public WorkerDTO updateWorker(
             HttpServletRequest request,
             @RequestBody @Valid
