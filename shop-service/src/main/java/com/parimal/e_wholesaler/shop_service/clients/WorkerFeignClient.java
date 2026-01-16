@@ -1,10 +1,8 @@
 package com.parimal.e_wholesaler.shop_service.clients;
 
 import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerUpdateRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,5 +25,8 @@ public interface WorkerFeignClient {
 
     @GetMapping(path = "/internal/shops/{shopId}")
     ApiResponse<ShopAndWorkersDTO> getWorkersByShopId(@PathVariable Long shopId);
+
+    @DeleteMapping
+    ApiResponse<MessageDTO> deleteWorkerById(WorkerDeleteRequestDTO requestDTO);
 
 }

@@ -9,10 +9,7 @@ import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerUpdateRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.*;
 import com.parimal.e_wholesaler.shop_service.services.OwnerService;
 import com.parimal.e_wholesaler.shop_service.services.ShopService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -155,6 +152,17 @@ public class OwnerController {
             WorkerUpdateRequestDTO requestDTO
     ) {
         return shopService.updateWorker(request, ownerId,requestDTO);
+    }
+
+    @DeleteMapping(path = "/{ownerId}/shops/worker")
+    public MessageDTO deleteWorkerById(
+            HttpServletRequest request,
+            @PathVariable
+            Long ownerId,
+            @RequestBody @Valid
+            WorkerDeleteRequestDTO requestDTO
+    ) {
+            return shopService.deleteWorkerById(request, ownerId, requestDTO);
     }
 
     @DeleteMapping(path = "/{id}")

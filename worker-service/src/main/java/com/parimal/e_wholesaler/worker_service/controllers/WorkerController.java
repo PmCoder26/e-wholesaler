@@ -80,7 +80,7 @@ public class WorkerController {
     @DeleteMapping
     public MessageDTO deleteWorkerById(
             HttpServletRequest request,
-            @RequestBody @Valid DeleteRequestDTO requestDTO
+            @RequestBody @Valid WorkerDeleteRequestDTO requestDTO
     ) {
         return workerService.deleteWorkerById(request, requestDTO);
     }

@@ -28,4 +28,6 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, Long> {
 
     List<WorkerEntity> findAllByShopId(Long shopId);
 
+    boolean findByIdAndShopId(Long workerId, Long shopId);
+
 }

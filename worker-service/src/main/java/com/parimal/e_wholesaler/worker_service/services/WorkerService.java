@@ -64,15 +64,15 @@ public class WorkerService {
         return shopAndWorkers;
     }
 
-    public MessageDTO deleteWorkerById(HttpServletRequest request, DeleteRequestDTO requestDTO) {
-        shopExistenceCheck(requestDTO.getShopId());
-        WorkerEntity worker = workerRepository.findById(requestDTO.getWorkerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Worker with id: " + requestDTO.getWorkerId() + " not found."));
-        if(requestDTO.getShopId().equals(worker.getShopId())) {
+    public MessageDTO deleteWorkerById(HttpServletRequest request, WorkerDeleteRequestDTO requestDTO) {
+        boolean workerExists = workerRepository.existsByIdAndShopId(requestDTO.getWorkerId(), requestDTO.getShopId());
+
+        if(workerExists) {
             workerRepository.deleteById(requestDTO.getWorkerId());
-            return new MessageDTO("Worker deleted successfully.");
+            return new MessageDTO("Worker deleted successfully");
         }
-        throw new UnAuthorizedAccessException("Worker doesn't belong to the shop with id: " + requestDTO.getShopId());
+
+        throw new ResourceNotFoundException("Worker with id: " + requestDTO.getWorkerId() + " not found or permission for this worker denied.");
     }
 
     public DataDTO<Boolean> workerExistsByIdAndShopId(HttpServletRequest request, Long workerId, Long shopId) {

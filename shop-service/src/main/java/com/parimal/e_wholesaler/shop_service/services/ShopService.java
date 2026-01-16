@@ -15,10 +15,7 @@ import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopEditRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopResponseDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.ShopAndWorkersDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerRequestDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.worker.WorkerUpdateRequestDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.worker.*;
 import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
 import com.parimal.e_wholesaler.shop_service.exceptions.*;
@@ -149,8 +146,7 @@ public class ShopService {
     }
 
     public WorkerDTO addWorker(HttpServletRequest request, Long ownerId, WorkerRequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<WorkerDTO> workerAddResponse = workerFeignClient.addWorker(requestDTO);
         if(workerAddResponse.getError() != null) throw new MyException(workerAddResponse.getError());
@@ -159,8 +155,7 @@ public class ShopService {
     }
 
     public WorkerDTO updateWorker(HttpServletRequest request, Long ownerId, WorkerUpdateRequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<WorkerDTO> workerUpdateResponse = workerFeignClient.updateWorker(requestDTO);
         if(workerUpdateResponse.getError() != null) throw new MyException(workerUpdateResponse.getError());
@@ -168,9 +163,16 @@ public class ShopService {
         return workerUpdateResponse.getData();
     }
 
+    public MessageDTO deleteWorkerById(HttpServletRequest request, Long ownerId, WorkerDeleteRequestDTO requestDTO) {
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
+
+        ApiResponse<MessageDTO> response = workerFeignClient.deleteWorkerById(requestDTO);
+        if(response.getError() != null) throw new MyException(response.getError());
+        return response.getData();
+    }
+
     public ShopSubProductResponseDTO addShopSubProduct(HttpServletRequest request, Long ownerId, ShopSubProductRequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<ShopSubProductResponseDTO> responseDTO = productFeignClient.addShopSubProduct(requestDTO);
         if(responseDTO.getError() != null) throw new MyException(responseDTO.getError());
@@ -179,8 +181,7 @@ public class ShopService {
     }
 
     public MessageDTO removeShopSubProduct(HttpServletRequest request, Long ownerId, RequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> shopSubProductResponse = productFeignClient.removeShopSubProduct(requestDTO);
         if(shopSubProductResponse.getError() != null) throw new MyException(shopSubProductResponse.getError());
@@ -189,8 +190,7 @@ public class ShopService {
     }
 
     public MessageDTO updateShopSubProduct(HttpServletRequest request, Long ownerId, ShopSubProductUpdateRequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> updateResponse = productFeignClient.updateShopSubProduct(requestDTO);
         if(updateResponse.getError() != null) throw new MyException(updateResponse.getError());
@@ -199,8 +199,7 @@ public class ShopService {
     }
 
     public MessageDTO removeProductByShopIdAndProductName(HttpServletRequest request, Long ownerId, ProductRemoveRequestDTO requestDTO) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(requestDTO.getShopId(), ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> removalResponse = productFeignClient.removeProductByShopIdAndProductName(requestDTO);
         if(removalResponse.getError() != null) throw new MyException(removalResponse.getError());
@@ -209,12 +208,17 @@ public class ShopService {
     }
 
     public ShopAndWorkersDTO getWorkersByShopId(HttpServletRequest request, Long ownerId, Long shopId) {
-        boolean shopExists = shopRepository.existsByIdAndOwner_Id(shopId, ownerId);
-        if(!shopExists) throw new ResourceNotFoundException("Shop with id: " + shopId + " not found or permission for this shop denied.");
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
         ApiResponse<ShopAndWorkersDTO> workersResponse = workerFeignClient.getWorkersByShopId(shopId);
         if(workersResponse.getError() != null) throw new MyException(workersResponse.getError());
 
         return workersResponse.getData();
     }
+
+    private void shopExistsByShopIdAndOwnerId(Long shopId, Long ownerId) {
+        if(!shopRepository.existsByIdAndOwner_Id(shopId, ownerId))
+            throw new ResourceNotFoundException("Shop with id: " + shopId + " not found or permission for this shop denied.");
+    }
+
 }

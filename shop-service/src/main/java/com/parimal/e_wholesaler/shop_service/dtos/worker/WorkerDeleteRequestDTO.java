@@ -1,4 +1,4 @@
-package com.parimal.e_wholesaler.worker_service.dtos;
+package com.parimal.e_wholesaler.shop_service.dtos.worker;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteRequestDTO {
+public class WorkerDeleteRequestDTO {
 
     @NotNull(message = "Worker id cannot be null.")
     private Long workerId;
