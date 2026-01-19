@@ -1,7 +1,8 @@
 package com.parimal.e_wholesaler.shop_service.controllers;
 
-import com.parimal.e_wholesaler.shop_service.dtos.*;
-import com.parimal.e_wholesaler.shop_service.dtos.owner.*;
+import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerDTO;
+import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerHomeDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.*;
 import com.parimal.e_wholesaler.shop_service.dtos.sales.DailyRevenueDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesRequestDTO;
@@ -28,68 +29,46 @@ public class OwnerController {
     private final ShopService shopService;
 
 
-    @PostMapping
-    public OwnerResponseDTO createOwner(
-            HttpServletRequest request,
-            @RequestBody @Valid
-            OwnerRequestDTO requestDTO
-    ) {
-        return ownerService.createOwner(request, requestDTO);
-    }
-
-    @PostMapping(path = "/id")
-    public Long getOwnerIdByMobNo(
-            HttpServletRequest request,
-            @RequestBody String mobNo
-    ) {
-        return ownerService.getOwnerIdByMobNo(request, mobNo);
-    }
-
     @PostMapping(path = "/shop/sales")
     public MessageDTO createSalesForShop(
-            HttpServletRequest request,
             @RequestBody
             SalesRequestDTO requestDTO
     ) {
-        return ownerService.createDailySales(request, requestDTO.getShopId());
+        return ownerService.createDailySales(requestDTO.getShopId());
     }
 
     @GetMapping(path = "/{id}")
     public OwnerDTO getOwnerById(
-            HttpServletRequest request,
             @PathVariable
             Long id
     ) {
-        return ownerService.getOwnerById(request, id);
+        return ownerService.getOwnerById(id);
     }
 
     @GetMapping(path = "/{ownerId}/home")
     public OwnerHomeDTO getHomeDetails(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId
     ) {
-        return ownerService.getHomeDetails(request, ownerId);
+        return ownerService.getHomeDetails(ownerId);
     }
 
     @GetMapping(path = "/{ownerId}/shops")
     public List<ShopDTO> getShopsByOwnerId(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId
     ) {
-        return ownerService.getShopsByOwnerId(request, ownerId);
+        return ownerService.getShopsByOwnerId(ownerId);
     }
 
     @PostMapping(path = "/{ownerId}/shop")
     public ShopResponseDTO createShop(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             ShopRequestDTO requestDTO
     ) {
-        return shopService.createShop(request, ownerId, requestDTO);
+        return shopService.createShop(ownerId, requestDTO);
     }
 
     @PutMapping(path = "/{ownerId}/shop")
@@ -100,133 +79,121 @@ public class OwnerController {
             @RequestBody @Valid
             ShopEditRequestDTO requestDTO
     ) {
-        return shopService.updateShop(request, ownerId, requestDTO);
+        return shopService.updateShop(ownerId, requestDTO);
     }
 
     @GetMapping(path = "/{ownerId}/shop/{shopId}/products")
     public List<ShopProductDTO> getProductsByShopId(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @PathVariable
             Long shopId
     ) {
-        return shopService.getProductsByShopId(request, ownerId, shopId);
+        return shopService.getProductsByShopId(ownerId, shopId);
     }
 
     @GetMapping(path = "/{ownerId}/shop-workers")
     public List<ShopAndWorkersDTO> getShopWorkers(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId
     ) {
-        return ownerService.getShopWorkersByOwnerId(request, ownerId);
+        return ownerService.getShopWorkersByOwnerId(ownerId);
     }
 
     @GetMapping(path = "/{ownerId}/daily-revenue")
     public List<DailyRevenueDTO> getDailyRevenue(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId
     ) {
-        return shopService.getDailyRevenue(request, ownerId);
+        return shopService.getDailyRevenue(ownerId);
     }
 
     @PostMapping(path = "/{ownerId}/shops/worker")
     public WorkerDTO addWorker(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             WorkerRequestDTO requestDTO
     ) {
-        return shopService.addWorker(request, ownerId,requestDTO);
+        return shopService.addWorker(ownerId,requestDTO);
     }
 
     @PutMapping(path = "/{ownerId}/shops/worker")
     public WorkerDTO updateWorker(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             WorkerUpdateRequestDTO requestDTO
     ) {
-        return shopService.updateWorker(request, ownerId,requestDTO);
+        return shopService.updateWorker(ownerId,requestDTO);
     }
 
     @DeleteMapping(path = "/{ownerId}/shops/worker")
     public MessageDTO deleteWorkerById(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             WorkerDeleteRequestDTO requestDTO
     ) {
-            return shopService.deleteWorkerById(request, ownerId, requestDTO);
+            return shopService.deleteWorkerById(ownerId, requestDTO);
     }
 
     @DeleteMapping(path = "/{id}")
     public MessageDTO deleteOwnerById(
-            HttpServletRequest request,
             @PathVariable
             Long id
     ) {
-        return ownerService.deleteOwnerById(request, id);
+        return ownerService.deleteOwnerById(id);
     }
 
     @PostMapping(path = "/{ownerId}/shop/products/shop-sub-product")
     public ShopSubProductResponseDTO addShopSubProduct(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             ShopSubProductRequestDTO requestDTO
     ) {
-        return shopService.addShopSubProduct(request, ownerId,requestDTO);
+        return shopService.addShopSubProduct(ownerId,requestDTO);
     }
 
     @DeleteMapping(path = "/{ownerId}/shop/products/shop-sub-product")
     public MessageDTO removeShopSubProduct(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             RequestDTO requestDTO
     ) {
-        return shopService.removeShopSubProduct(request, ownerId, requestDTO);
+        return shopService.removeShopSubProduct(ownerId, requestDTO);
     }
 
     @PutMapping(path = "/{ownerId}/shop/products/shop-sub-product")
     public MessageDTO updateShopSubProduct(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             ShopSubProductUpdateRequestDTO requestDTO
     ) {
-        return shopService.updateShopSubProduct(request, ownerId, requestDTO);
+        return shopService.updateShopSubProduct(ownerId, requestDTO);
     }
 
     @DeleteMapping(path = "/{ownerId}/shop/products/product")
     public MessageDTO removeProductByShopIdAndProductName(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid
             ProductRemoveRequestDTO requestDTO
     ) {
-        return shopService.removeProductByShopIdAndProductName(request, ownerId, requestDTO);
+        return shopService.removeProductByShopIdAndProductName(ownerId, requestDTO);
     }
 
     @GetMapping(path = "/{ownerId}/shop/{shopId}/workers")
     public ShopAndWorkersDTO getWorkersByShopId(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @PathVariable
             Long shopId
     ) {
-        return shopService.getWorkersByShopId(request, ownerId, shopId);
+        return shopService.getWorkersByShopId(ownerId, shopId);
     }
 
 

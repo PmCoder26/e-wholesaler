@@ -1,16 +1,14 @@
 package com.parimal.e_wholesaler.order_service.configs;
 
 import feign.RequestInterceptor;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Configuration
-@Slf4j
 public class FeignClientConfig {
 
     @Bean
@@ -18,11 +16,10 @@ public class FeignClientConfig {
         return requestTemplate -> {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             if (requestAttributes instanceof ServletRequestAttributes) {
-                HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-                String transactionToken = request.getHeader("Transaction-Token");
-                // here, use the small case in adding the headers.
+                String transactionToken = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+                // Here, use the small case in adding the headers.
                 // Feign generally follows the convention of sending headers in lowercase
-                requestTemplate.header("transaction-token", transactionToken);
+                requestTemplate.header("X-Transaction-Token", transactionToken);
             }
         };
     }

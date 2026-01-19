@@ -7,18 +7,14 @@ import com.parimal.e_wholesaler.worker_service.entities.WorkerEntity;
 import com.parimal.e_wholesaler.worker_service.exceptions.MyException;
 import com.parimal.e_wholesaler.worker_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.worker_service.exceptions.ResourceNotFoundException;
-import com.parimal.e_wholesaler.worker_service.exceptions.UnAuthorizedAccessException;
 import com.parimal.e_wholesaler.worker_service.repositories.WorkerRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Slf4j
 @Service
 @AllArgsConstructor
 public class WorkerService {
@@ -28,7 +24,7 @@ public class WorkerService {
     private final ModelMapper modelMapper;
 
 
-    public WorkerDTO createWorker(HttpServletRequest request, WorkerRequestDTO requestDTO) {
+    public WorkerDTO createWorker(WorkerRequestDTO requestDTO) {
         shopExistenceCheck(requestDTO.getShopId());
         boolean workerExists = workerRepository.existsByMobNo(requestDTO.getMobNo());
         if(workerExists) {
@@ -39,21 +35,21 @@ public class WorkerService {
         return modelMapper.map(saved, WorkerDTO.class);
     }
 
-    public WorkerDTO getWorkerById(HttpServletRequest request, Long id) {
+    public WorkerDTO getWorkerById(Long id) {
         WorkerEntity worker = workerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker with id: " + id + " not found."));
         return modelMapper.map(worker, WorkerDTO.class);
     }
 
-    public Long getWorkerCount(HttpServletRequest request, List<Long> shopIdList) {
+    public Long getWorkerCount(List<Long> shopIdList) {
         AtomicLong workerCount = new AtomicLong(0L);
         shopIdList
                 .forEach(shopId -> workerCount.addAndGet(workerRepository.countByShopId(shopId)));
         return workerCount.get();
     }
 
-    public List<ShopAndWorkersDTO> getWorkersByShopIdList(HttpServletRequest request, List<Long> shopIdList) {
-        List<ShopAndWorkersDTO> shopAndWorkers = shopIdList.stream()
+    public List<ShopAndWorkersDTO> getWorkersByShopIdList(List<Long> shopIdList) {
+        return shopIdList.stream()
                 .map(shopId -> {
                     List<WorkerEntity> workers = workerRepository.findByShopId(shopId);
                     List<WorkerDTO> workerDTOS = workers.stream()
@@ -61,10 +57,9 @@ public class WorkerService {
                             .toList();
                     return new ShopAndWorkersDTO(shopId, workerDTOS);
                 }).toList();
-        return shopAndWorkers;
     }
 
-    public MessageDTO deleteWorkerById(HttpServletRequest request, WorkerDeleteRequestDTO requestDTO) {
+    public MessageDTO deleteWorkerById(WorkerDeleteRequestDTO requestDTO) {
         boolean workerExists = workerRepository.existsByIdAndShopId(requestDTO.getWorkerId(), requestDTO.getShopId());
 
         if(workerExists) {
@@ -75,7 +70,7 @@ public class WorkerService {
         throw new ResourceNotFoundException("Worker with id: " + requestDTO.getWorkerId() + " not found or permission for this worker denied.");
     }
 
-    public DataDTO<Boolean> workerExistsByIdAndShopId(HttpServletRequest request, Long workerId, Long shopId) {
+    public DataDTO<Boolean> workerExistsByIdAndShopId(Long workerId, Long shopId) {
         boolean workerExists = workerRepository.existsByIdAndShopId(workerId, shopId);
         return new DataDTO<>(workerExists);
     }
@@ -90,7 +85,7 @@ public class WorkerService {
         }
     }
 
-    public WorkerDTO updateWorker(HttpServletRequest request, WorkerUpdateRequestDTO requestDTO) {
+    public WorkerDTO updateWorker(WorkerUpdateRequestDTO requestDTO) {
         WorkerEntity worker = workerRepository.findById(requestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found."));
         worker.setName(requestDTO.getName());
@@ -103,16 +98,21 @@ public class WorkerService {
         return modelMapper.map(saved, WorkerDTO.class);
     }
 
-    public Long getWorkerIdByMobNo(HttpServletRequest request, String mobNo) {
-        return workerRepository.findIdByMobNo(mobNo)
-                .orElseThrow(() -> new ResourceNotFoundException("Worker-id with mobile number: " + mobNo + " not found"));
+    public WorkerDataResponseDTO getWorkerDataByMobNo(String mobNo) {
+        WorkerEntity worker = workerRepository.findByMobNo(mobNo)
+                .orElseThrow(() -> new ResourceNotFoundException("Worker-id not found"));
+        return new WorkerDataResponseDTO(worker.getId(), worker.getShopId());
     }
 
-    public ShopAndWorkersDTO getWorkersByShopId(HttpServletRequest request, Long shopId) {
+    public ShopAndWorkersDTO getWorkersByShopId(Long shopId) {
         List<WorkerEntity> workers = workerRepository.findAllByShopId(shopId);
         List<WorkerDTO> workerDTOList=  workers.stream()
                 .map(worker -> modelMapper.map(worker, WorkerDTO.class))
                 .toList();
         return new ShopAndWorkersDTO(shopId, workerDTOList);
+    }
+
+    public Boolean workerExistsByMobNo(String mobNo) {
+        return workerRepository.existsByMobNo(mobNo);
     }
 }

@@ -4,7 +4,6 @@ import com.parimal.e_wholesaler.user_service.entities.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,35 +25,23 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(UserEntity user) {
+    public String generateAccessToken(UserEntity user, Map<String, Object> extraClaims) {
         return Jwts.builder()
                 .signWith(getSecretKey())
                 .subject(user.getId().toString())
-                .claim("username", user.getUsername())
-                .claim("roles", user.getUserType())
+                .claims(extraClaims)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 10)))
                 .compact();
     }
 
-    public String generateRefreshToken(UserEntity user) {
+    public String generateRefreshToken(UserEntity user, Map<String, Object> extraClaims) {
         return Jwts.builder()
                 .signWith(getSecretKey())
                 .subject(user.getId().toString())
-                .claim("username", user.getUsername())
-                .claim("roles", user.getUserType())
+                .claims(extraClaims)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 180)))
-                .compact();
-    }
-
-    public String generateTransactionToken(Long id) {
-        return Jwts
-                .builder()
-                .signWith(getSecretKey())
-                .subject(id.toString())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 5)))
                 .compact();
     }
 
@@ -75,4 +63,12 @@ public class JwtService {
                 .get("username").toString();
     }
 
+    public Claims getClaimsFromToken(String token) {
+        return Jwts
+                .parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 }

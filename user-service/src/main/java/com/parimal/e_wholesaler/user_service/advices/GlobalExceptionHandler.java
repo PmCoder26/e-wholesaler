@@ -8,9 +8,7 @@ import com.parimal.e_wholesaler.user_service.exceptions.ResourceNotFoundExceptio
 import feign.FeignException;
 import feign.RetryableException;
 import io.jsonwebtoken.JwtException;
-import jakarta.ws.rs.NotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -56,11 +54,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ApiResponse handleDataIntegrityViolation(DataIntegrityViolationException e) {
         return buildApiError("Duplicate data or phone number already exists.", Collections.emptyList(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ApiResponse handleException(Exception e) {
-        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MyException.class)

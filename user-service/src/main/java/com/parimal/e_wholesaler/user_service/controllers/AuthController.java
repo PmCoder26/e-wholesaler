@@ -7,6 +7,7 @@ import com.parimal.e_wholesaler.user_service.dtos.RefreshAccessTokenResponseDTO;
 import com.parimal.e_wholesaler.user_service.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/auth")
 @AllArgsConstructor
+@PreAuthorize(value = "hasRole('USER_SERVICE')")
 public class AuthController {
 
     private final AuthService authService;

@@ -20,7 +20,7 @@ public class PermissionMapping {
                     SHOP_VIEW, SHOP_CREATE, SHOP_UPDATE, SHOP_DELETE),
             WORKER, Set.of(
                     WORKER_VIEW,
-                    ORDER_VIEW, ORDER_CREATE, ORDER_UPDATE, ORDER_DELETE,
+                    ORDER_VIEW, ORDER_CREATE, ORDER_UPDATE,
                     PRODUCT_VIEW,
                     SALES_UPDATE,
                     SHOP_VIEW),
@@ -32,10 +32,13 @@ public class PermissionMapping {
     );
 
     public static Set<SimpleGrantedAuthority> getAuthorities(UserType userType) {
-        return map.get(userType)
+        Set<SimpleGrantedAuthority> authorities = map.get(userType)
                 .stream()
                 .map(permission -> new SimpleGrantedAuthority(permission.name()))
                 .collect(Collectors.toSet());
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + userType.name()));
+
+        return authorities;
     }
 
 }

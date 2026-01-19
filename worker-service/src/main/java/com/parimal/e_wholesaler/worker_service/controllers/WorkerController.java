@@ -5,6 +5,7 @@ import com.parimal.e_wholesaler.worker_service.services.WorkerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/worker")
 @AllArgsConstructor
+@PreAuthorize(value = "hasRole('OWNER')")
 public class WorkerController {
 
     private final WorkerService workerService;
@@ -19,10 +21,9 @@ public class WorkerController {
 
     @PostMapping
     public WorkerDTO createWorker(
-            HttpServletRequest request,
             @RequestBody @Valid WorkerRequestDTO requestDTO
     ) {
-        return workerService.createWorker(request, requestDTO);
+        return workerService.createWorker(requestDTO);
     }
 
     @PostMapping(path = "/worker-count")
@@ -31,7 +32,7 @@ public class WorkerController {
             @RequestBody
             List<Long> shopIdList
     ) {
-        return workerService.getWorkerCount(request, shopIdList);
+        return workerService.getWorkerCount(shopIdList);
     }
 
     @PostMapping(path = "/shops")
@@ -40,49 +41,37 @@ public class WorkerController {
             @RequestBody
             List<Long> shopIdList
     ) {
-        return workerService.getWorkersByShopIdList(request, shopIdList);
+        return workerService.getWorkersByShopIdList(shopIdList);
     }
 
     @PutMapping
     public WorkerDTO updateWorker(
-            HttpServletRequest request,
             @RequestBody @Valid
             WorkerUpdateRequestDTO requestDTO
     ) {
-        return workerService.updateWorker(request, requestDTO);
+        return workerService.updateWorker(requestDTO);
     }
 
     @GetMapping(path = "/{id}")
     public WorkerDTO getWorkerById(
-            HttpServletRequest request,
             @PathVariable Long id
     ) {
-        return workerService.getWorkerById(request, id);
+        return workerService.getWorkerById(id);
     }
 
     @GetMapping(path = "/{workerId}/shop/{shopId}")
     public DataDTO<Boolean> workerExistsByIdAndShopId(
-            HttpServletRequest request,
             @PathVariable Long workerId,
             @PathVariable Long shopId
     ) {
-        return workerService.workerExistsByIdAndShopId(request, workerId, shopId);
-    }
-
-    @PostMapping(path = "/id")
-    public Long getWorkerIdByMobNo(
-            HttpServletRequest request,
-            @RequestBody String mobNo
-    ) {
-        return workerService.getWorkerIdByMobNo(request, mobNo);
+        return workerService.workerExistsByIdAndShopId(workerId, shopId);
     }
  
     @DeleteMapping
     public MessageDTO deleteWorkerById(
-            HttpServletRequest request,
             @RequestBody @Valid WorkerDeleteRequestDTO requestDTO
     ) {
-        return workerService.deleteWorkerById(request, requestDTO);
+        return workerService.deleteWorkerById(requestDTO);
     }
 
     @GetMapping(path = "/internal/shops/{shopId}")
@@ -91,7 +80,7 @@ public class WorkerController {
             @PathVariable
             Long shopId
     ) {
-        return workerService.getWorkersByShopId(request, shopId);
+        return workerService.getWorkersByShopId(shopId);
     }
 
 }

@@ -1,10 +1,8 @@
 package com.parimal.e_wholesaler.api_gateway.services;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +40,22 @@ public class JwtService {
                 .getPayload();
     }
 
-    public String generateTransactionToken(Long id) {
+    public String generateTransactionToken(Long id, Claims extraClaims) {
         return Jwts
                 .builder()
                 .signWith(getSecretKey())
                 .subject(id.toString())
+                .claims(extraClaims)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 5)))
+                .compact();
+    }
+
+    public String generateUserServiceTransactionToken() {
+        return Jwts
+                .builder()
+                .signWith(getSecretKey())
+                .subject("user_service_transaction_token")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + (1000L * 60 * 5)))
                 .compact();

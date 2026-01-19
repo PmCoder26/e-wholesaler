@@ -53,11 +53,6 @@ public class GlobalExceptionHandler {
         return buildApiErrorResponse(e.apiError);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ApiResponse handleRuntimeException(RuntimeException e) {
-        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(ForbiddenException.class)
     public ApiResponse handleForbiddenException(ForbiddenException e) {
         return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.FORBIDDEN);
@@ -66,11 +61,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ApiResponse handleDataIntegrityViolation(DataIntegrityViolationException e) {
         return buildApiError("Duplicate data or phone number already exists.", Collections.emptyList(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ApiResponse handleException(Exception e) {
-        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(FeignException.class)

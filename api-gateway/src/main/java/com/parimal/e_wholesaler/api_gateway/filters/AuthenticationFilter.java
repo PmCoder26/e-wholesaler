@@ -2,26 +2,18 @@ package com.parimal.e_wholesaler.api_gateway.filters;
 
 import com.parimal.e_wholesaler.api_gateway.services.JwtService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static reactor.core.publisher.Mono.fromRunnable;
 
 @Component
-@Slf4j
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.ConfigClass> implements Ordered {
 
     private final JwtService jwtService;
@@ -41,19 +33,27 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public GatewayFilter apply(ConfigClass config) {
         return (exchange, chain) -> {
             String requestPath = exchange.getRequest().getPath().value();
-            if(requestPath.startsWith("/api/v1/users/")) return chain.filter(exchange);
+
+            if(requestPath.startsWith("/users/")) {
+                String userServiceTransactionToken = jwtService.generateUserServiceTransactionToken();
+                exchange.getRequest()
+                        .mutate()
+                        .header("X-Transaction-Token", userServiceTransactionToken);
+                return chain.filter(exchange);
+            }
 
             String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
             if(authHeader == null) return completeResponse(exchange);
 
             String accessToken = authHeader.split("Bearer ")[1];
             Claims claims = jwtService.getClaimsFromToken(accessToken);
-            String role = (String) claims.get("roles");
+            String role = (String) claims.get("user_type");
             if(!isAuthorized(requestPath, role)) return completeResponse(exchange);
-            String transactionToken = jwtService.generateTransactionToken(Long.parseLong(claims.getSubject()));
+
+            String transactionToken = jwtService.generateTransactionToken(Long.parseLong(claims.getSubject()), claims);
             exchange.getRequest()
                     .mutate()
-                    .header("Transaction-Token", transactionToken);
+                    .header("X-Transaction-Token", transactionToken);
             return chain.filter(exchange);
         };
     }
