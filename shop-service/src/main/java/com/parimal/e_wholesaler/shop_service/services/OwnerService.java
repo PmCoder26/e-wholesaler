@@ -16,7 +16,6 @@ import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceAlreadyExistsException;
 import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.shop_service.repositories.OwnerRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -37,7 +36,7 @@ public class OwnerService {
 
     private final ModelMapper modelMapper;
 
-    public OwnerResponseDTO createOwner(HttpServletRequest request, OwnerRequestDTO requestDTO) {
+    public OwnerResponseDTO createOwner(OwnerRequestDTO requestDTO) {
          boolean ownerExists = ownerRepository.existsByMobNo(Long.parseLong(requestDTO.getMobNo()));
          if(ownerExists) {
              throw new ResourceAlreadyExistsException("Owner already exists or use another mobile number");
@@ -47,7 +46,7 @@ public class OwnerService {
         return modelMapper.map(saved, OwnerResponseDTO.class);
     }
 
-    public MessageDTO createDailySales(HttpServletRequest request, Long shopId) {
+    public MessageDTO createDailySales(Long shopId) {
         ApiResponse<SalesResponseDTO> salesResponse = salesFeignClient.createSalesForShop(new SalesRequestDTO(shopId));
         log.error("Error: {}", salesResponse.getError());
         if(salesResponse.getError() != null) {
@@ -56,23 +55,22 @@ public class OwnerService {
         return new MessageDTO("Daily sales created for shop-id: " + salesResponse.getData().getId());
     }
 
-    public List<ShopDTO> getShopsByOwnerId(HttpServletRequest request, Long ownerId) {
+    public List<ShopDTO> getShopsByOwnerId(Long ownerId) {
         OwnerEntity owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + ownerId + " not found."));
-        List<ShopDTO> shops = owner.getShops()
+        return owner.getShops()
                 .stream()
                 .map(shop -> modelMapper.map(shop, ShopDTO.class))
                 .toList();
-        return shops;
     }
 
-    public OwnerDTO getOwnerById(HttpServletRequest request, Long id) {
+    public OwnerDTO getOwnerById(Long id) {
         OwnerEntity owner = ownerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + id + " not found."));
         return modelMapper.map(owner, OwnerDTO.class);
     }
 
-    public OwnerHomeDTO getHomeDetails(HttpServletRequest request, Long ownerId) {
+    public OwnerHomeDTO getHomeDetails(Long ownerId) {
         OwnerEntity owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + ownerId + " not found."));
         List<ShopEntity> shops = owner.getShops();
@@ -100,7 +98,7 @@ public class OwnerService {
         );
     }
 
-    public List<ShopAndWorkersDTO> getShopWorkersByOwnerId(HttpServletRequest request, Long ownerId) {
+    public List<ShopAndWorkersDTO> getShopWorkersByOwnerId(Long ownerId) {
         OwnerEntity owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with id: " + ownerId + " not found."));
         List<ShopEntity> shops = owner.getShops();
@@ -120,7 +118,7 @@ public class OwnerService {
         return shopWorkersList;
     }
 
-    public MessageDTO deleteOwnerById(HttpServletRequest request, Long id) {
+    public MessageDTO deleteOwnerById(Long id) {
         boolean ownerExists = ownerRepository.existsById(id);
         if(!ownerExists) {
             throw new ResourceNotFoundException("Owner with id: " + id + " not found.");
@@ -140,7 +138,7 @@ public class OwnerService {
         return ownerRepository.existsById(ownerId);
     }
 
-    public Long getOwnerIdByMobNo(HttpServletRequest request, String mobNo) {
+    public Long getOwnerIdByMobNo(String mobNo) {
         return ownerRepository.findIdByMobNo(mobNo)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner with mobile number: " + mobNo + " not found."));
     }

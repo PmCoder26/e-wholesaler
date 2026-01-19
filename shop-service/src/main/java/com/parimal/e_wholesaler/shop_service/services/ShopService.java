@@ -20,7 +20,6 @@ import com.parimal.e_wholesaler.shop_service.entities.OwnerEntity;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
 import com.parimal.e_wholesaler.shop_service.exceptions.*;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -46,7 +45,7 @@ public class ShopService {
     private final WorkerFeignClient workerFeignClient;
 
 
-    public ShopResponseDTO createShop(HttpServletRequest request, Long ownerId, ShopRequestDTO requestDTO) {
+    public ShopResponseDTO createShop(Long ownerId, ShopRequestDTO requestDTO) {
          boolean shopExists = shopRepository.existsByNameAndGstNo(requestDTO.getName(), requestDTO.getGstNo());
          if(shopExists) {
              throw new ResourceAlreadyExistsException("Shop already exists.");
@@ -58,13 +57,13 @@ public class ShopService {
         return modelMapper.map(saved, ShopResponseDTO.class);
     }
 
-    public ShopDTO getShopById(HttpServletRequest request, Long id) {
+    public ShopDTO getShopById(Long id) {
         ShopEntity shop = shopRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + id + " not found."));
         return modelMapper.map(shop, ShopDTO.class);
     }
 
-    public MessageDTO deleteShopById(HttpServletRequest request, Long id) {
+    public MessageDTO deleteShopById(Long id) {
         boolean exists = shopRepository.existsById(id);
         if(!exists) {
             throw new ResourceNotFoundException("Shop with id: " + id + " not found.");
@@ -73,12 +72,12 @@ public class ShopService {
         return new MessageDTO("Shop deleted successfully.");
     }
 
-    public DataDTO<Boolean> existsById(HttpServletRequest request, Long id) {
+    public DataDTO<Boolean> existsById(Long id) {
         boolean shopExists = shopRepository.existsById(id);
         return new DataDTO<>(shopExists);
     }
 
-    public ShopDTO updateShop(HttpServletRequest request, Long ownerId, ShopEditRequestDTO requestDTO) {
+    public ShopDTO updateShop(Long ownerId, ShopEditRequestDTO requestDTO) {
         ShopEntity shop = shopRepository.findById(requestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + requestDTO.getId() + " not found."));
         if(!shop.getOwner().getId().equals(ownerId))
@@ -94,7 +93,7 @@ public class ShopService {
         return modelMapper.map(saved, ShopDTO.class);
     }
 
-    public List<ShopProductDTO> getProductsByShopId(HttpServletRequest request, Long ownerId, Long shopId) {
+    public List<ShopProductDTO> getProductsByShopId(Long ownerId, Long shopId) {
         ShopEntity shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + shopId + " now found."));
         if(!shop.getOwner().getId().equals(ownerId)) {
@@ -112,7 +111,7 @@ public class ShopService {
         return productsResponse.getData();
     }
 
-    public List<DailyRevenueDTO> getDailyRevenue(HttpServletRequest request, Long ownerId) {
+    public List<DailyRevenueDTO> getDailyRevenue(Long ownerId) {
         boolean ownerExists = ownerService.ownerExistsById(ownerId);
         if(!ownerExists) throw new ResourceNotFoundException("Owner with id: " + ownerId + " not found.");
         List<ShopEntity> shopList = shopRepository.findByOwner_Id(ownerId);
@@ -145,7 +144,7 @@ public class ShopService {
         return revenueDTOList;
     }
 
-    public WorkerDTO addWorker(HttpServletRequest request, Long ownerId, WorkerRequestDTO requestDTO) {
+    public WorkerDTO addWorker(Long ownerId, WorkerRequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<WorkerDTO> workerAddResponse = workerFeignClient.addWorker(requestDTO);
@@ -154,7 +153,7 @@ public class ShopService {
         return workerAddResponse.getData();
     }
 
-    public WorkerDTO updateWorker(HttpServletRequest request, Long ownerId, WorkerUpdateRequestDTO requestDTO) {
+    public WorkerDTO updateWorker(Long ownerId, WorkerUpdateRequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<WorkerDTO> workerUpdateResponse = workerFeignClient.updateWorker(requestDTO);
@@ -163,7 +162,7 @@ public class ShopService {
         return workerUpdateResponse.getData();
     }
 
-    public MessageDTO deleteWorkerById(HttpServletRequest request, Long ownerId, WorkerDeleteRequestDTO requestDTO) {
+    public MessageDTO deleteWorkerById(Long ownerId, WorkerDeleteRequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> response = workerFeignClient.deleteWorkerById(requestDTO);
@@ -171,7 +170,7 @@ public class ShopService {
         return response.getData();
     }
 
-    public ShopSubProductResponseDTO addShopSubProduct(HttpServletRequest request, Long ownerId, ShopSubProductRequestDTO requestDTO) {
+    public ShopSubProductResponseDTO addShopSubProduct(Long ownerId, ShopSubProductRequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<ShopSubProductResponseDTO> responseDTO = productFeignClient.addShopSubProduct(requestDTO);
@@ -180,7 +179,7 @@ public class ShopService {
         return responseDTO.getData();
     }
 
-    public MessageDTO removeShopSubProduct(HttpServletRequest request, Long ownerId, RequestDTO requestDTO) {
+    public MessageDTO removeShopSubProduct(Long ownerId, RequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> shopSubProductResponse = productFeignClient.removeShopSubProduct(requestDTO);
@@ -189,7 +188,7 @@ public class ShopService {
         return shopSubProductResponse.getData();
     }
 
-    public MessageDTO updateShopSubProduct(HttpServletRequest request, Long ownerId, ShopSubProductUpdateRequestDTO requestDTO) {
+    public MessageDTO updateShopSubProduct(Long ownerId, ShopSubProductUpdateRequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> updateResponse = productFeignClient.updateShopSubProduct(requestDTO);
@@ -198,7 +197,7 @@ public class ShopService {
         return updateResponse.getData();
     }
 
-    public MessageDTO removeProductByShopIdAndProductName(HttpServletRequest request, Long ownerId, ProductRemoveRequestDTO requestDTO) {
+    public MessageDTO removeProductByShopIdAndProductName(Long ownerId, ProductRemoveRequestDTO requestDTO) {
         shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
 
         ApiResponse<MessageDTO> removalResponse = productFeignClient.removeProductByShopIdAndProductName(requestDTO);
@@ -207,7 +206,7 @@ public class ShopService {
         return removalResponse.getData();
     }
 
-    public ShopAndWorkersDTO getWorkersByShopId(HttpServletRequest request, Long ownerId, Long shopId) {
+    public ShopAndWorkersDTO getWorkersByShopId(Long ownerId, Long shopId) {
         shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
         ApiResponse<ShopAndWorkersDTO> workersResponse = workerFeignClient.getWorkersByShopId(shopId);
