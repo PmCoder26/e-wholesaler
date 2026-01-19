@@ -72,5 +72,8 @@ public class UserService implements UserDetailsService {
         return modelMapper.map(saved, SignupResponseDTO.class);
     }
 
+    public Object findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found."));
+    }
 }
 

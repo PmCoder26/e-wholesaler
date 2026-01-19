@@ -65,8 +65,8 @@ public class AuthService {
     }
 
     public RefreshAccessTokenResponseDTO refreshAccessToken(RefreshAccessTokenRequestDTO requestDTO) {
-        String username = jwtService.getUsernameFromToken(requestDTO.getRefreshToken());
-        UserEntity user = (UserEntity) userService.loadUserByUsername(username);
+        Long userId= jwtService.getUserIdFromToken(requestDTO.getRefreshToken());
+        UserEntity user = (UserEntity) userService.findById(userId);
         Map<String, Object> extraClaims = new HashMap<>();
 
         if(user.getUserType().equals(OWNER)) {
