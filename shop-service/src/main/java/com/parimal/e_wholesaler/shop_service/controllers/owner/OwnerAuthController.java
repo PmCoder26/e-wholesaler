@@ -1,8 +1,8 @@
-package com.parimal.e_wholesaler.shop_service.controllers;
+package com.parimal.e_wholesaler.shop_service.controllers.owner;
 
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.owner.OwnerResponseDTO;
-import com.parimal.e_wholesaler.shop_service.services.OwnerService;
+import com.parimal.e_wholesaler.shop_service.services.owner.OwnerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/owner/auth")
-@AllArgsConstructor
 @PreAuthorize(value = "hasRole('USER_SERVICE')")
+@AllArgsConstructor
 public class OwnerAuthController {
 
     private final OwnerService ownerService;

@@ -13,7 +13,7 @@ public class PermissionMapping {
     private static final Map<UserType, Set<Permission>> map = Map.of(
             OWNER, Set.of(
                     WORKER_CREATE, WORKER_UPDATE, WORKER_DELETE, WORKER_VIEW,
-                    OWNER_VIEW, OWNER_CREATE, OWNER_UPDATE, OWNER_DELETE,
+                    OWNER_VIEW, OWNER_CREATE, OWNER_UPDATE,
                     ORDER_VIEW, ORDER_CREATE, ORDER_UPDATE, ORDER_DELETE,
                     PRODUCT_VIEW, PRODUCT_CREATE, PRODUCT_UPDATE, PRODUCT_DELETE,
                     SALES_VIEW, SALES_CREATE, SALES_UPDATE, SALES_DELETE,
@@ -27,8 +27,7 @@ public class PermissionMapping {
             CUSTOMER, Set.of(
                     CUSTOMER_VIEW,
                     CUSTOMER_CREATE,
-                    CUSTOMER_UPDATE,
-                    CUSTOMER_DELETE)
+                    CUSTOMER_UPDATE)
     );
 
     public static Set<SimpleGrantedAuthority> getAuthorities(UserType userType) {
