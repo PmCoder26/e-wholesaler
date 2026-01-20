@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/worker")
 @AllArgsConstructor
-@PreAuthorize(value = "hasRole('OWNER')")
+@PreAuthorize(value = "hasAnyRole('OWNER', 'WORKER')")
 public class WorkerController {
 
     private final WorkerService workerService;

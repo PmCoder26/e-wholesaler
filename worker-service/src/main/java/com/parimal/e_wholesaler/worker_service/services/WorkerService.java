@@ -10,6 +10,7 @@ import com.parimal.e_wholesaler.worker_service.exceptions.ResourceNotFoundExcept
 import com.parimal.e_wholesaler.worker_service.repositories.WorkerRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class WorkerService {
     private final ModelMapper modelMapper;
 
 
+    @PreAuthorize(value = "hasAuthority('WORKER_CREATE')")
     public WorkerDTO createWorker(WorkerRequestDTO requestDTO) {
         shopExistenceCheck(requestDTO.getShopId());
         boolean workerExists = workerRepository.existsByMobNo(requestDTO.getMobNo());
@@ -35,12 +37,14 @@ public class WorkerService {
         return modelMapper.map(saved, WorkerDTO.class);
     }
 
+    @PreAuthorize(value = "hasAuthority('WORKER_VIEW')")
     public WorkerDTO getWorkerById(Long id) {
         WorkerEntity worker = workerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker with id: " + id + " not found."));
         return modelMapper.map(worker, WorkerDTO.class);
     }
 
+    @PreAuthorize(value = "hasRole('OWNER')")
     public Long getWorkerCount(List<Long> shopIdList) {
         AtomicLong workerCount = new AtomicLong(0L);
         shopIdList
@@ -48,6 +52,7 @@ public class WorkerService {
         return workerCount.get();
     }
 
+    @PreAuthorize(value = "hasRole('OWNER')")
     public List<ShopAndWorkersDTO> getWorkersByShopIdList(List<Long> shopIdList) {
         return shopIdList.stream()
                 .map(shopId -> {
@@ -59,6 +64,7 @@ public class WorkerService {
                 }).toList();
     }
 
+    @PreAuthorize(value = "hasAuthority('WORKER_DELETE')")
     public MessageDTO deleteWorkerById(WorkerDeleteRequestDTO requestDTO) {
         boolean workerExists = workerRepository.existsByIdAndShopId(requestDTO.getWorkerId(), requestDTO.getShopId());
 
@@ -75,16 +81,7 @@ public class WorkerService {
         return new DataDTO<>(workerExists);
     }
 
-    private void shopExistenceCheck(Long shopId) {
-        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(shopId);
-        if(shopExistsData.getData() == null) {
-            throw new MyException(shopExistsData.getError().getMessage());
-        }
-        if(!shopExistsData.getData().getData()) {
-            throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");
-        }
-    }
-
+    @PreAuthorize(value = "hasAuthority('WORKER_UPDATE')")
     public WorkerDTO updateWorker(WorkerUpdateRequestDTO requestDTO) {
         WorkerEntity worker = workerRepository.findById(requestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found."));
@@ -104,6 +101,7 @@ public class WorkerService {
         return new WorkerDataResponseDTO(worker.getId(), worker.getShopId());
     }
 
+    @PreAuthorize(value = "hasRole('OWNER')")
     public ShopAndWorkersDTO getWorkersByShopId(Long shopId) {
         List<WorkerEntity> workers = workerRepository.findAllByShopId(shopId);
         List<WorkerDTO> workerDTOList=  workers.stream()
@@ -115,4 +113,15 @@ public class WorkerService {
     public Boolean workerExistsByMobNo(String mobNo) {
         return workerRepository.existsByMobNo(mobNo);
     }
+
+    private void shopExistenceCheck(Long shopId) {
+        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(shopId);
+        if(shopExistsData.getData() == null) {
+            throw new MyException(shopExistsData.getError().getMessage());
+        }
+        if(!shopExistsData.getData().getData()) {
+            throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");
+        }
+    }
+
 }
