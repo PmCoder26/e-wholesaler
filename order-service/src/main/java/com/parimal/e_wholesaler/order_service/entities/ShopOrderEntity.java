@@ -1,6 +1,5 @@
 package com.parimal.e_wholesaler.order_service.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.parimal.e_wholesaler.order_service.utils.OrderStatus;
 import com.parimal.e_wholesaler.order_service.utils.PaymentMethod;
 import jakarta.persistence.*;
