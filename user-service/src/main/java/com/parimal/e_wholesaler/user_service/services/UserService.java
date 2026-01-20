@@ -1,12 +1,10 @@
 package com.parimal.e_wholesaler.user_service.services;
 
+import com.parimal.e_wholesaler.common.advices.ApiError;
 import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.user_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.user_service.clients.WorkerFeignClient;
-import com.parimal.e_wholesaler.user_service.dtos.OwnerRequestDTO;
-import com.parimal.e_wholesaler.user_service.dtos.OwnerResponseDTO;
-import com.parimal.e_wholesaler.user_service.dtos.SignupRequestDTO;
-import com.parimal.e_wholesaler.user_service.dtos.SignupResponseDTO;
+import com.parimal.e_wholesaler.user_service.dtos.*;
 import com.parimal.e_wholesaler.user_service.entities.UserEntity;
 import com.parimal.e_wholesaler.common.exceptions.MyException;
 import com.parimal.e_wholesaler.common.exceptions.ResourceAlreadyExistsException;
@@ -15,6 +13,7 @@ import com.parimal.e_wholesaler.user_service.repositories.UserRepository;
 import com.parimal.e_wholesaler.common.enums.UserType;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +41,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found."));
     }
 
-    public SignupResponseDTO signup(SignupRequestDTO requestDTO) {
+    public SignupResponseDTO signupOwner(SignupRequestDTO requestDTO) {
         boolean userExists = userRepository.existsByUsername(requestDTO.getUsername());
         if(userExists) {
             throw new ResourceAlreadyExistsException("User with username: " + requestDTO.getUsername() + " already exists.");
@@ -68,11 +67,39 @@ public class UserService implements UserDetailsService {
             ApiResponse<OwnerResponseDTO> ownerResponse = shopFeignClient.createOwner(ownerRequestDTO);
             if(ownerResponse.getError() != null) throw new MyException(ownerResponse.getError());
         }
-        else if(toSave.getUserType() == UserType.WORKER) {
-            ApiResponse<Boolean> workerResponse = workerFeignClient.workerExistsByMobNo(toSave.getUsername());
-            if(workerResponse.getError() != null) throw new MyException(workerResponse.getError());
-            if(!workerResponse.getData()) throw new ResourceNotFoundException("Worker not found.");
+        else if(toSave.getUserType() == UserType.CUSTOMER) {
+
         }
+
+        UserEntity saved = userRepository.save(toSave);
+
+        return modelMapper.map(saved, SignupResponseDTO.class);
+    }
+
+    public SignupResponseDTO signupWorker(SignupWorkerRequestDTO requestDTO) {
+        if(!requestDTO.getUserType().equals(UserType.WORKER)) {
+            throw new MyException(
+                    ApiError.builder()
+                            .message("Invalid user-type.")
+                            .status(HttpStatus.BAD_REQUEST)
+                            .build());
+        }
+
+        boolean userExists = userRepository.existsByUsername(requestDTO.getUsername());
+        if(userExists) {
+            throw new ResourceAlreadyExistsException("User with username: " + requestDTO.getUsername() + " already exists.");
+        }
+        requestDTO.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
+
+        // set the token as credentials for further feign requests.
+        Authentication authToSet = new UsernamePasswordAuthenticationToken(null, getTransactionToken());
+        SecurityContextHolder.getContext().setAuthentication(authToSet);
+
+        UserEntity toSave = modelMapper.map(requestDTO, UserEntity.class);
+
+        ApiResponse<Boolean> workerResponse = workerFeignClient.workerExistsByMobNo(toSave.getUsername());
+        if(workerResponse.getError() != null) throw new MyException(workerResponse.getError());
+        if(!workerResponse.getData()) throw new ResourceNotFoundException("Worker not found.");
 
         UserEntity saved = userRepository.save(toSave);
 
