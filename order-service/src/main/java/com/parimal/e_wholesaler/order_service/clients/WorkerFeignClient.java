@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.order_service.clients;
 
-import com.parimal.e_wholesaler.order_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.order_service.dtos.DataDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

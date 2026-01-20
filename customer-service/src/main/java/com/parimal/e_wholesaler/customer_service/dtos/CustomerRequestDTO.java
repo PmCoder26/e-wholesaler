@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.customer_service.dtos;
 
-import com.parimal.e_wholesaler.customer_service.utils.Gender;
+import com.parimal.e_wholesaler.common.enums.Gender;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

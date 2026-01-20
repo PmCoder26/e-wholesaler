@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.user_service.dtos;
 
-import com.parimal.e_wholesaler.user_service.utils.UserType;
+import com.parimal.e_wholesaler.common.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

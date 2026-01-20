@@ -1,8 +1,8 @@
 package com.parimal.e_wholesaler.shop_service.filters;
 
 import com.parimal.e_wholesaler.shop_service.services.JwtService;
-import com.parimal.e_wholesaler.shop_service.utils.PermissionMapping;
-import com.parimal.e_wholesaler.shop_service.utils.UserType;
+import com.parimal.e_wholesaler.common.utils.PermissionMapping;
+import com.parimal.e_wholesaler.common.enums.UserType;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,7 +46,7 @@ public class TransactionTokenFilter extends OncePerRequestFilter {
 
             if (subject.equals("user_service_transaction_token")) {
                 Authentication authentication =
-                        new UsernamePasswordAuthenticationToken(claims, null, Set.of(new SimpleGrantedAuthority("ROLE_USER_SERVICE")));
+                        new UsernamePasswordAuthenticationToken(claims, transactionToken, Set.of(new SimpleGrantedAuthority("ROLE_USER_SERVICE")));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 filterChain.doFilter(request, response);
                 return;

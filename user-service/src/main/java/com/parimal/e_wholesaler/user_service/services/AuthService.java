@@ -1,11 +1,11 @@
 package com.parimal.e_wholesaler.user_service.services;
 
-import com.parimal.e_wholesaler.user_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.user_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.user_service.clients.WorkerFeignClient;
 import com.parimal.e_wholesaler.user_service.dtos.*;
 import com.parimal.e_wholesaler.user_service.entities.UserEntity;
-import com.parimal.e_wholesaler.user_service.exceptions.MyException;
+import com.parimal.e_wholesaler.common.exceptions.MyException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.parimal.e_wholesaler.user_service.utils.UserType.OWNER;
-import static com.parimal.e_wholesaler.user_service.utils.UserType.WORKER;
+import static com.parimal.e_wholesaler.common.enums.UserType.OWNER;
+import static com.parimal.e_wholesaler.common.enums.UserType.WORKER;
 
 @Service
 @AllArgsConstructor
@@ -34,11 +34,13 @@ public class AuthService {
     public LoginResponseDTO login(LoginRequestDTO requestDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(requestDTO.getUsername(), requestDTO.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        Authentication tempAuth = authenticationManager.authenticate(authenticationToken);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // set the token as credentials for further feign requests.
+        Authentication authToSet = new UsernamePasswordAuthenticationToken(null, getTransactionToken());
+        SecurityContextHolder.getContext().setAuthentication(authToSet);
 
-        UserEntity user = (UserEntity) authentication.getPrincipal();
+        UserEntity user = (UserEntity) tempAuth.getPrincipal();
         Long userTypeId = null;
         Map<String, Object> extraClaims = new HashMap<>();
 
@@ -65,6 +67,10 @@ public class AuthService {
     }
 
     public RefreshAccessTokenResponseDTO refreshAccessToken(RefreshAccessTokenRequestDTO requestDTO) {
+        // set the token as credentials for further feign requests.
+        Authentication authToSet = new UsernamePasswordAuthenticationToken(null, getTransactionToken());
+        SecurityContextHolder.getContext().setAuthentication(authToSet);
+
         Long userId= jwtService.getUserIdFromToken(requestDTO.getRefreshToken());
         UserEntity user = (UserEntity) userService.findById(userId);
         Map<String, Object> extraClaims = new HashMap<>();
@@ -86,6 +92,10 @@ public class AuthService {
         String newAccessToken = jwtService.generateAccessToken(user, extraClaims);
 
         return new RefreshAccessTokenResponseDTO(newAccessToken);
+    }
+
+    private String getTransactionToken() {
+        return SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
     }
 
 }

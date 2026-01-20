@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.worker_service.dtos;
 
-import com.parimal.e_wholesaler.worker_service.utils.Gender;
+import com.parimal.e_wholesaler.common.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

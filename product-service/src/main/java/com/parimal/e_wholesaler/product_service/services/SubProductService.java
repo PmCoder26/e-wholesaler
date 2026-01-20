@@ -6,8 +6,8 @@ import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductReque
 import com.parimal.e_wholesaler.product_service.dtos.sub_product.SubProductResponseDTO;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
-import com.parimal.e_wholesaler.product_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceAlreadyExistsException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.SubProductRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;

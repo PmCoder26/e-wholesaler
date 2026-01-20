@@ -1,7 +1,7 @@
 package com.parimal.e_wholesaler.user_service.entities;
 
-import com.parimal.e_wholesaler.user_service.utils.PermissionMapping;
-import com.parimal.e_wholesaler.user_service.utils.UserType;
+import com.parimal.e_wholesaler.common.utils.PermissionMapping;
+import com.parimal.e_wholesaler.common.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

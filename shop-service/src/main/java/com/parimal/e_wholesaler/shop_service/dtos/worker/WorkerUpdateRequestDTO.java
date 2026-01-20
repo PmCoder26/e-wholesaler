@@ -1,7 +1,7 @@
 package com.parimal.e_wholesaler.shop_service.dtos.worker;
 
 
-import com.parimal.e_wholesaler.shop_service.utils.Gender;
+import com.parimal.e_wholesaler.common.enums.Gender;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

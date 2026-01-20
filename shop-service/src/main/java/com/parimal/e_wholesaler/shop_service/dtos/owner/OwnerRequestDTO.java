@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.dtos.owner;
 
-import com.parimal.e_wholesaler.shop_service.utils.Gender;
+import com.parimal.e_wholesaler.common.enums.Gender;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

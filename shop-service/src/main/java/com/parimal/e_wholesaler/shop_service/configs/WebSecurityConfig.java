@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.configs;
 
-import com.parimal.e_wholesaler.shop_service.advices.CustomAccessDeniedHandler;
+import com.parimal.e_wholesaler.common.advices.CustomAccessDeniedHandler;
 import com.parimal.e_wholesaler.shop_service.filters.TransactionTokenFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

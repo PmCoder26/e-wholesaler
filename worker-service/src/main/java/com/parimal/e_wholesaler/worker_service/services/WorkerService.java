@@ -1,12 +1,12 @@
 package com.parimal.e_wholesaler.worker_service.services;
 
-import com.parimal.e_wholesaler.worker_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.worker_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.worker_service.dtos.*;
 import com.parimal.e_wholesaler.worker_service.entities.WorkerEntity;
-import com.parimal.e_wholesaler.worker_service.exceptions.MyException;
-import com.parimal.e_wholesaler.worker_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.worker_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.MyException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceAlreadyExistsException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.worker_service.repositories.WorkerRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -117,7 +117,7 @@ public class WorkerService {
     private void shopExistenceCheck(Long shopId) {
         ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(shopId);
         if(shopExistsData.getData() == null) {
-            throw new MyException(shopExistsData.getError().getMessage());
+            throw new MyException(shopExistsData.getError());
         }
         if(!shopExistsData.getData().getData()) {
             throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");

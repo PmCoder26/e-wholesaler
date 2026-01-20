@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.product_service.services;
 
-import com.parimal.e_wholesaler.product_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
 import com.parimal.e_wholesaler.product_service.dtos.*;
 import com.parimal.e_wholesaler.product_service.dtos.product.ProductRemoveRequestDTO;
@@ -8,8 +8,8 @@ import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
-import com.parimal.e_wholesaler.product_service.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.product_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceAlreadyExistsException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepository;
 import com.parimal.e_wholesaler.product_service.utils.StockUpdate;
 import jakarta.servlet.http.HttpServletRequest;

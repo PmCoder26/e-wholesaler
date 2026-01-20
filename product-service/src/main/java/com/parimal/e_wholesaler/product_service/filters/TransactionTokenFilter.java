@@ -1,8 +1,8 @@
 package com.parimal.e_wholesaler.product_service.filters;
 
+import com.parimal.e_wholesaler.common.enums.UserType;
+import com.parimal.e_wholesaler.common.utils.PermissionMapping;
 import com.parimal.e_wholesaler.product_service.services.JwtService;
-import com.parimal.e_wholesaler.product_service.utils.PermissionMapping;
-import com.parimal.e_wholesaler.product_service.utils.UserType;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

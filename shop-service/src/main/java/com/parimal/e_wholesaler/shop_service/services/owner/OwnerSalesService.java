@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.shop_service.services.owner;
 
-import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.clients.OrderFeignClient;
 import com.parimal.e_wholesaler.shop_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
@@ -9,8 +9,8 @@ import com.parimal.e_wholesaler.shop_service.dtos.sales.DailyRevenueDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesRequestDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.sales.SalesResponseDTO;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
-import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.MyException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.shop_service.repositories.OwnerRepository;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import lombok.AllArgsConstructor;

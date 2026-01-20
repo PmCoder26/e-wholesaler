@@ -1,7 +1,7 @@
 package com.parimal.e_wholesaler.user_service.dtos;
 
-import com.parimal.e_wholesaler.user_service.utils.Gender;
-import com.parimal.e_wholesaler.user_service.utils.UserType;
+import com.parimal.e_wholesaler.common.enums.Gender;
+import com.parimal.e_wholesaler.common.enums.UserType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

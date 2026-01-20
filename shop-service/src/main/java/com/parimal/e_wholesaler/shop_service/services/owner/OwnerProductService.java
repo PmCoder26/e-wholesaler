@@ -1,13 +1,13 @@
 package com.parimal.e_wholesaler.shop_service.services.owner;
 
-import com.parimal.e_wholesaler.shop_service.advices.ApiError;
-import com.parimal.e_wholesaler.shop_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiError;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.product.*;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
-import com.parimal.e_wholesaler.shop_service.exceptions.MyException;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.MyException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

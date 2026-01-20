@@ -101,6 +101,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.parimal.e_wholesaler</groupId>
+			<artifactId>e-wholesaler-common</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
     </dependencies>
 
 	<dependencyManagement>

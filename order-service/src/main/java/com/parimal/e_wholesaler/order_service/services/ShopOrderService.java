@@ -1,6 +1,6 @@
 package com.parimal.e_wholesaler.order_service.services;
 
-import com.parimal.e_wholesaler.order_service.advices.ApiResponse;
+import com.parimal.e_wholesaler.common.advices.ApiResponse;
 import com.parimal.e_wholesaler.order_service.clients.SalesFeignClient;
 import com.parimal.e_wholesaler.order_service.clients.SubProductFeignClient;
 import com.parimal.e_wholesaler.order_service.clients.WorkerFeignClient;
@@ -10,8 +10,8 @@ import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderRequestDTO;
 import com.parimal.e_wholesaler.order_service.dtos.shop.ShopOrderResponseDTO;
 import com.parimal.e_wholesaler.order_service.entities.ShopOrderEntity;
 import com.parimal.e_wholesaler.order_service.entities.ShopOrderItemEntity;
-import com.parimal.e_wholesaler.order_service.exceptions.MyException;
-import com.parimal.e_wholesaler.order_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.MyException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.order_service.repositories.ShopOrderRepository;
 import com.parimal.e_wholesaler.order_service.utils.OrderStatus;
 import com.parimal.e_wholesaler.order_service.utils.SalesUpdate;

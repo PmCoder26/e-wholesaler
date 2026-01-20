@@ -4,7 +4,7 @@ import com.parimal.e_wholesaler.shop_service.dtos.DataDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
 import com.parimal.e_wholesaler.shop_service.dtos.shop.ShopDTO;
 import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
-import com.parimal.e_wholesaler.shop_service.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
