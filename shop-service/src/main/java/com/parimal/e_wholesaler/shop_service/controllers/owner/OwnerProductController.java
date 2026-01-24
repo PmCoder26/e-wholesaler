@@ -1,14 +1,21 @@
 package com.parimal.e_wholesaler.shop_service.controllers.owner;
 
-import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.*;
+import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopRequestDTO;
+import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopResponseDTO;
+import com.parimal.e_wholesaler.common.dtos.product.ProductIdentityDTO;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopRequestDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
 import com.parimal.e_wholesaler.shop_service.services.owner.OwnerProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/owner")
@@ -20,53 +27,67 @@ public class OwnerProductController {
     
 
     @GetMapping(path = "/{ownerId}/shop/{shopId}/products")
-    public List<ShopProductDTO> getProductsByShopId(
+    public List<ProductIdentityDTO> getShopProducts(
             @PathVariable
             Long ownerId,
             @PathVariable
             Long shopId
     ) {
-        return ownerProductService.getProductsByShopId(ownerId, shopId);
+        return ownerProductService.getShopProducts(ownerId, shopId);
     }
 
-    @PostMapping(path = "/{ownerId}/shop/products/shop-sub-product")
-    public ShopSubProductResponseDTO addShopSubProduct(
+    @PostMapping(path = "/{ownerId}/shop/{shopId}/products")
+    public AddProductForShopResponseDTO addProduct(
             @PathVariable
             Long ownerId,
+            @PathVariable
+            Long shopId,
             @RequestBody @Valid
-            ShopSubProductRequestDTO requestDTO
+            AddProductForShopRequestDTO requestDTO
     ) {
-        return ownerProductService.addShopSubProduct(ownerId,requestDTO);
+        return ownerProductService.addProduct(ownerId, shopId, requestDTO);
     }
 
-    @DeleteMapping(path = "/{ownerId}/shop/products/shop-sub-product")
-    public MessageDTO removeShopSubProduct(
-            @PathVariable
-            Long ownerId,
+    @PostMapping(path = "/{ownerId}/shop/{shopId}/products/{productId}/sub-products")
+    public AddSubProductsForShopResponseDTO addShopSubProduct(
+            @PathVariable Long ownerId,
+            @PathVariable Long shopId,
+            @PathVariable Long productId,
             @RequestBody @Valid
-            RequestDTO requestDTO
+            AddSubProductsForShopRequestDTO requestDTO
     ) {
-        return ownerProductService.removeShopSubProduct(ownerId, requestDTO);
+        return ownerProductService.addShopSubProduct(ownerId, shopId, productId,requestDTO);
     }
 
-    @PutMapping(path = "/{ownerId}/shop/products/shop-sub-product")
-    public MessageDTO updateShopSubProduct(
-            @PathVariable
-            Long ownerId,
-            @RequestBody @Valid
-            ShopSubProductUpdateRequestDTO requestDTO
+    @GetMapping(path = "/{ownerId}/shop/{shopId}/products/{productId}/sub-products")
+    public List<SubProductDTO2> getShopProductDetails(
+            @PathVariable Long ownerId,
+            @PathVariable Long shopId,
+            @PathVariable Long productId
     ) {
-        return ownerProductService.updateShopSubProduct(ownerId, requestDTO);
+        return ownerProductService.getShopProductDetails(ownerId, shopId, productId);
     }
 
-    @DeleteMapping(path = "/{ownerId}/shop/products/product")
-    public MessageDTO removeProductByShopIdAndProductName(
-            @PathVariable
-            Long ownerId,
-            @RequestBody @Valid
-            ProductRemoveRequestDTO requestDTO
+    @DeleteMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteShopSubProduct(
+            @PathVariable Long ownerId,
+            @PathVariable Long shopId,
+            @PathVariable Long shopSubProductId
     ) {
-        return ownerProductService.removeProductByShopIdAndProductName(ownerId, requestDTO);
+        ownerProductService.deleteShopSubProduct(ownerId, shopId, shopSubProductId);
     }
+
+    @PutMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    public SellingUnitDTO updateProductSellingUnit(
+            @PathVariable Long ownerId,
+            @PathVariable Long shopId,
+            @PathVariable Long shopSubProductId,
+            @PathVariable Long sellingUnitId,
+            @RequestBody Map<String, Object> updates
+    ) {
+        return ownerProductService.updateProductSellingUnit(ownerId, shopId, shopSubProductId, sellingUnitId, updates);
+    }
+
     
 }

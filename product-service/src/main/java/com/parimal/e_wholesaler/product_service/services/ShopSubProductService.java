@@ -1,236 +1,198 @@
 package com.parimal.e_wholesaler.product_service.services;
 
-import com.parimal.e_wholesaler.common.advices.ApiResponse;
-import com.parimal.e_wholesaler.product_service.clients.ShopFeignClient;
-import com.parimal.e_wholesaler.product_service.dtos.*;
-import com.parimal.e_wholesaler.product_service.dtos.product.ProductRemoveRequestDTO;
-import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.*;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitRequestDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopRequestDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
+import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductRequestDTO;
+import com.parimal.e_wholesaler.common.enums.UnitType;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
+import com.parimal.e_wholesaler.product_service.entities.ShopSellingUnitEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.SubProductEntity;
-import com.parimal.e_wholesaler.common.exceptions.ResourceAlreadyExistsException;
-import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.product_service.repositories.ProductRepository;
+import com.parimal.e_wholesaler.product_service.repositories.SellingUnitRepository;
 import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepository;
-import com.parimal.e_wholesaler.product_service.utils.StockUpdate;
-import jakarta.servlet.http.HttpServletRequest;
+import com.parimal.e_wholesaler.product_service.repositories.SubProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class ShopSubProductService {
 
+    private final ProductRepository productRepository;
+    private final SubProductRepository subProductRepository;
     private final ShopSubProductRepository shopSubProductRepository;
-    private final ProductService productService;
-    private final SubProductService subProductService;
+
+    private final SellingUnitRepository sellingUnitRepository;
     private final ModelMapper modelMapper;
-    private final ShopFeignClient shopFeignClient;
 
 
     @Transactional
-    public ShopSubProductResponseDTO addShopSubProduct(HttpServletRequest request, ShopSubProductRequestDTO requestDTO) throws Exception {
-        ApiResponse<DataDTO<Boolean>> shopExistsResponse = shopFeignClient.shopExistsById(requestDTO.getShopId());
-        if (shopExistsResponse.getData() != null) {
-            if (!shopExistsResponse.getData().getData()) {
-                throw new ResourceNotFoundException("Shop with id: " + requestDTO.getShopId() + " not found.");
-            }
-            Optional<ProductEntity> product = productService.findByNameIgnoreCase(request, requestDTO.getProductName());
-            ShopSubProductResponseDTO responseDTO = new ShopSubProductResponseDTO();
-            HashMap<Long, Double> idToPriceMap = new HashMap<>();
-            HashMap<Double, QuantityToSellingPrice> map = requestDTO.getMrpToSelling();
-            Set<Double> MRPs = map.keySet();
-            if (product.isEmpty()) {
-                ProductEntity toSaveProduct = modelMapper.map(requestDTO, ProductEntity.class);
-                ProductEntity savedProduct = productService.saveProduct(request, toSaveProduct);
-                responseDTO.setProductId(savedProduct.getId());
-                for (Double Mrp : MRPs) {
-                    SubProductEntity savedSubProduct = subProductService.addSubProduct(savedProduct, Mrp);
-                    ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
-                    toSaveShopSubProduct.setSubProduct(savedSubProduct);
-                    toSaveShopSubProduct.setShopId(requestDTO.getShopId());
-                    QuantityToSellingPrice value = map.get(Mrp);
-                    toSaveShopSubProduct.setSellingPrice(value.getSellingPrice());
-                    toSaveShopSubProduct.setQuantity(value.getQuantity());
-                    toSaveShopSubProduct.setStock(value.getStock());
-                    ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
-                    idToPriceMap.put(saved.getId(), toSaveShopSubProduct.getSellingPrice());
+    public AddSubProductsForShopResponseDTO addSubProductsForShop(Long shopId, Long productId, AddSubProductsForShopRequestDTO req) {
+
+        AddSubProductsForShopResponseDTO response = new AddSubProductsForShopResponseDTO();
+        List<SubProductDTO2> addedSubProducts = new ArrayList<>();
+        boolean isAnythingAdded = false;
+
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        for (SubProductRequestDTO spReq : req.getSubProducts()) {
+
+            // 1️⃣ SUB-PRODUCT
+            SubProductEntity subProduct = subProductRepository
+                    .findByProduct_IdAndMrp(product.getId(), spReq.getMrp())
+                    .orElseGet(() -> {
+                        SubProductEntity sp = new SubProductEntity();
+                        sp.setProduct(product);
+                        sp.setMrp(spReq.getMrp());
+                        return subProductRepository.save(sp);
+                    });
+
+            // 2️⃣ SHOP-SUB-PRODUCT
+            ShopSubProductEntity shopSubProduct = shopSubProductRepository
+                    .findByShopIdAndSubProduct_Id(shopId, subProduct.getId())
+                    .orElseGet(() -> {
+                        ShopSubProductEntity ssp = new ShopSubProductEntity();
+                        ssp.setShopId(shopId);
+                        ssp.setSubProduct(subProduct);
+                        return shopSubProductRepository.save(ssp);
+                    });
+
+            List<SellingUnitDTO> addedUnits = new ArrayList<>();
+
+            // 3️⃣ SELLING UNITS
+            if (spReq.getSellingUnits() != null) {
+                for (SellingUnitRequestDTO unitReq : spReq.getSellingUnits()) {
+
+                    boolean exists = sellingUnitRepository
+                            .existsByShopSubProduct_IdAndUnitType(
+                                    shopSubProduct.getId(),
+                                    unitReq.getUnitType()
+                            );
+
+                    if (exists) continue;
+
+                    ShopSellingUnitEntity unit = new ShopSellingUnitEntity();
+                    unit.setShopSubProduct(shopSubProduct);
+                    unit.setUnitType(unitReq.getUnitType());
+                    unit.setPackets(unitReq.getPackets());
+                    unit.setSellingPrice(unitReq.getSellingPrice());
+                    unit = sellingUnitRepository.save(unit);
+
+                    SellingUnitDTO unitDTO = new SellingUnitDTO();
+                    unitDTO.setId(unit.getId());
+                    unitDTO.setUnitType(unit.getUnitType());
+                    unitDTO.setPackets(unit.getPackets());
+                    unitDTO.setSellingPrice(unit.getSellingPrice());
+
+                    addedUnits.add(unitDTO);
+                    isAnythingAdded = true;
                 }
-            } else {
-                List<SubProductEntity> subProducts = product.get().getSubProducts();
-                List<Double> subProductPrices = product.get()
-                        .getSubProducts()
-                        .stream()
-                        .map(SubProductEntity::getMrp)
-                        .toList();
-                Long shopId = requestDTO.getShopId();
-                responseDTO.setProductId(product.get().getId());
-                MRPs
-                        .forEach(Mrp -> {
-                            boolean shouldAssignSubProduct = false;
-                            SubProductEntity subProduct = null;
-                            if (subProductPrices.contains(Mrp)) {
-                                int idx = subProductPrices.indexOf(Mrp);
-                                boolean shopHasNoSubProduct = subProducts.get(idx)
-                                        .getShopSubProducts()
-                                        .stream()
-                                        .filter(s -> Objects.equals(s.getShopId(), shopId))
-                                        .toList()
-                                        .isEmpty();
-                                if (shopHasNoSubProduct) {
-                                    subProduct = subProducts.get(idx);
-                                    shouldAssignSubProduct = true;
-                                }
-                            } else {
-                                subProduct = subProductService.addSubProduct(product.get(), Mrp);
-                                shouldAssignSubProduct = true;
-                            }
-                            if (shouldAssignSubProduct) {
-                                ShopSubProductEntity toSaveShopSubProduct = new ShopSubProductEntity();
-                                toSaveShopSubProduct.setShopId(requestDTO.getShopId());
-                                toSaveShopSubProduct.setSubProduct(subProduct);
-                                QuantityToSellingPrice value = map.get(Mrp);
-                                toSaveShopSubProduct.setSellingPrice(value.getSellingPrice());
-                                toSaveShopSubProduct.setQuantity(value.getQuantity());
-                                toSaveShopSubProduct.setStock(value.getStock());
-                                ShopSubProductEntity saved = shopSubProductRepository.save(toSaveShopSubProduct);
-                                idToPriceMap.put(saved.getId(), toSaveShopSubProduct.getSellingPrice());
-                            }
-                        });
             }
-            responseDTO.setIdToPriceMap(idToPriceMap);
-            return responseDTO;
+
+            // 4️⃣ Add sub-product ONLY if something was added
+            if (!addedUnits.isEmpty()) {
+                SubProductDTO2 subDTO = new SubProductDTO2();
+                subDTO.setId(subProduct.getId());
+                subDTO.setMrp(subProduct.getMrp());
+                subDTO.setSellingUnits(addedUnits);
+
+                addedSubProducts.add(subDTO);
+            }
+        }
+
+        if (isAnythingAdded) {
+            response.setMessage("New product details were added, and existing ones were skipped");
+            response.setAddedSubProducts(addedSubProducts);
         } else {
-            throw new Exception(shopExistsResponse.getError().getMessage());
+            response.setMessage("All provided sub-product details already exist for this shop");
         }
+
+        return response;
     }
 
-    public ShopSubProductDTO getShopSubProductById(HttpServletRequest request, RequestDTO requestDTO) throws Exception {
-        shopExistenceCheck(requestDTO.getShopId());
-        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
-        if(!Objects.equals(shopSubProduct.getShopId(), requestDTO.getShopId())) {
-            throw new Exception("Requested shop sub-product is not owned by your shop.");
-        }
-        ShopSubProductDTO shopSubProductDTO = modelMapper.map(shopSubProduct, ShopSubProductDTO.class);
-        shopSubProductDTO.setMrp(shopSubProduct.getSubProduct().getMrp());
-        return shopSubProductDTO;
-    }
-
-    public MessageDTO removeShopSubProductById(HttpServletRequest request, RequestDTO requestDTO) throws Exception {
-        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findById(requestDTO.getShopSubProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product with id: " + requestDTO.getShopSubProductId() + " not found."));
-        if(!shopSubProduct.getShopId().equals(requestDTO.getShopId())) {
-            throw new Exception("Requested shop sub-product is not owned by your shop.");
-        }
-        shopSubProductRepository.deleteById(requestDTO.getShopSubProductId());
-        return new MessageDTO("Shop sub-product removed successfully");
-    }
-
-    public ShopSubProductDTO getShopSubProductByIds(HttpServletRequest request, Long subProductId, Long shopId) {
+    public ShopSubProductDTO getShopSubProductByIds(Long subProductId, Long shopId) {
         ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(subProductId, shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop sub-product not found with sub-product id: " + subProductId + " and shop id: " + shopId));
         return modelMapper.map(shopSubProduct, ShopSubProductDTO.class);
     }
 
-    public MessageDTO updateStock(HttpServletRequest request, SubProductStockUpdateDTO updateDTO) {
-        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(updateDTO.getSubProductId(), updateDTO.getShopId())
-                .orElseThrow(() -> new ResourceNotFoundException("Sub-product not found."));
-        if(updateDTO.getStockUpdate().equals(StockUpdate.INCREASE)) {
-            shopSubProduct.setStock(shopSubProduct.getStock() + updateDTO.getStock());
-        }
-        else {
-            if(shopSubProduct.getStock() < updateDTO.getStock()) {
-                throw new RuntimeException("Insufficient stock.");
-            }
-            shopSubProduct.setStock(shopSubProduct.getStock() - updateDTO.getStock());
-        }
-        shopSubProductRepository.save(shopSubProduct);
-        return new MessageDTO("Stock updated successfully.");
-    }
+    public List<SubProductDTO2> getShopProductDetails(Long shopId, Long productId) {
 
-    private void shopExistenceCheck(Long shopId) throws Exception {
-        ApiResponse<DataDTO<Boolean>> shopExistsData = shopFeignClient.shopExistsById(shopId);
-        if(shopExistsData.getData() == null) {
-            throw new Exception(shopExistsData.getError().getMessage());
-        }
-        if(!shopExistsData.getData().getData()) {
-            throw new ResourceNotFoundException("Shop with id: " + shopId + " not found.");
-        }
-    }
+        List<ShopSubProductEntity> shopSubProducts = shopSubProductRepository.findByShopIdAndProductId(shopId, productId);
 
-    public List<ShopProductDTO> getShopSubProductsByShopId(HttpServletRequest request, Long shopId) {
-        List<ShopSubProductEntity> shopSubProductList = shopSubProductRepository.findByShopId(shopId);
-        HashMap<ProductEntity, List<ShopSubProduct2DTO>> subProductHashMap = new HashMap<>();
-        List<ShopProductDTO> shopSubProducts = new ArrayList<>();
-
-        shopSubProductList.forEach(shopSubProduct -> {
-            ProductEntity key = shopSubProduct.getSubProduct().getProduct();
-            ShopSubProduct2DTO temp = new ShopSubProduct2DTO();
-            temp.setId(shopSubProduct.getId());
-            temp.setMrp(shopSubProduct.getSubProduct().getMrp());
-            temp.setSellingPrice(shopSubProduct.getSellingPrice());
-            temp.setQuantity(shopSubProduct.getQuantity());
-            temp.setStock(shopSubProduct.getStock());
-
-            if(subProductHashMap.containsKey(key)) {
-                subProductHashMap.get(key).add(temp);
-            }
-            else {
-                ArrayList<ShopSubProduct2DTO> list = new ArrayList<>();
-                subProductHashMap.put(key, list);
-                subProductHashMap.get(key).add(temp);
-            }
-        });
-
-        Set<ProductEntity> productSet = subProductHashMap.keySet();
-        for(ProductEntity product : productSet) {
-            List<ShopSubProduct2DTO> shopSubProductEntityList = subProductHashMap.get(product);
-            ShopProductDTO shopProductDTO = modelMapper.map(product, ShopProductDTO.class);
-            shopProductDTO.setShopSubProducts(shopSubProductEntityList);
-            shopSubProducts.add(shopProductDTO);
-        }
-        return shopSubProducts;
-    }
-
-    @Transactional  // no need to use .save() when @Transactional used.
-    public MessageDTO updateShopSubProduct(HttpServletRequest request, ShopSubProductUpdateRequestDTO requestDTO) {
-        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(requestDTO.getId(), requestDTO.getShopId())
-                .orElseThrow(() -> new ResourceNotFoundException("Shop's sub-product not found."));
-
-        if(areEntityAndRequestDTOSame(shopSubProduct, requestDTO))
-            throw new ResourceAlreadyExistsException("Data provided is same as of old shop's sub-product.");
-
-        shopSubProduct.setSellingPrice(requestDTO.getSellingPrice());
-        shopSubProduct.setQuantity(requestDTO.getQuantity());
-        shopSubProduct.setStock(requestDTO.getStock());
-        shopSubProduct.getSubProduct().setMrp(requestDTO.getMrp());
-
-        return new MessageDTO("Shop's sub-product updated successfully");
+        return shopSubProducts.stream()
+                .map( ssp -> {
+                    List<SellingUnitDTO> sellingUnits = ssp.getSellingUnits()
+                            .stream()
+                            .map(su -> modelMapper.map(su, SellingUnitDTO.class))
+                            .toList();
+                    return new SubProductDTO2(ssp.getId(), ssp.getSubProduct().getMrp(), sellingUnits);
+                }).toList();
     }
 
     @Transactional
-    public MessageDTO removeProductByShopIdAndProductName(HttpServletRequest request, ProductRemoveRequestDTO requestDTO) {
-        boolean productExists = productService.existsByName(request, requestDTO.getProductName());
-        if(!productExists) throw new ResourceNotFoundException("Product with name " + requestDTO.getProductName() + " not found.");
+    public void deleteShopSubProduct(Long shopId, Long shopSubProductId) {
 
-        long shopSubProductsDeleteCount = shopSubProductRepository.deleteAllByShopIdAndSubProduct_Product_Name(requestDTO.getShopId(), requestDTO.getProductName());
+        ShopSubProductEntity shopSubProduct = shopSubProductRepository.findByIdAndShopId(shopSubProductId, shopId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sub-Product not found"));
 
-        MessageDTO message = new MessageDTO("Failed to delete the product or product doesn't exists");
-        if(shopSubProductsDeleteCount > 0) message.setMessage("Product deleted successfully");
-
-        return message;
+        shopSubProductRepository.delete(shopSubProduct);
     }
 
-    private boolean areEntityAndRequestDTOSame(ShopSubProductEntity shopSubProduct, ShopSubProductUpdateRequestDTO requestDTO) {
-        return shopSubProduct.getQuantity().equals(requestDTO.getQuantity())
-                && shopSubProduct.getStock().equals(requestDTO.getStock())
-                && shopSubProduct.getSellingPrice().equals(requestDTO.getSellingPrice())
-                && shopSubProduct.getSubProduct().getMrp().equals(requestDTO.getMrp());
+    @Transactional
+    public SellingUnitDTO updateProductSellingUnit(
+            Long shopId, Long shopSubProductId, Long sellingUnitId, Map<String, Object> updates)
+    {
+        ShopSellingUnitEntity sellingUnit = sellingUnitRepository
+                .findByIdAndShopSubProduct_IdAndShopSubProduct_ShopId(sellingUnitId, shopSubProductId, shopId)
+                .orElseThrow(() -> new ResourceNotFoundException("Selling-unit not found, enter valid data"));
+
+        updates.forEach((key, value) -> {
+                    if (value == null) throw new RuntimeException("Update-value(s) cannot be null");
+                    switch (key) {
+                        case "unitType" -> {
+                            if (value instanceof String str) {
+                                try {
+                                    UnitType unitType = UnitType.valueOf(str.toUpperCase());
+                                    sellingUnit.setUnitType(unitType);
+                                } catch (IllegalArgumentException ex) {
+                                    throw new IllegalArgumentException(
+                                            "Invalid unitType: " + str + ". Allowed values: " + Arrays.toString(UnitType.values())
+                                    );
+                                }
+                            }
+                        }
+                        case "packets" -> {
+                            if(value instanceof Integer packets) sellingUnit.setPackets(packets);
+                            else throw new RuntimeException("Invalid type of packets");
+                        }
+                        case "sellingPrice" -> {
+                            if(value instanceof Double price) sellingUnit.setSellingPrice(price);
+                            else throw new RuntimeException("Invalid type of selling-price");
+                        }
+                        default -> throw new IllegalArgumentException("Provided filed(s) not supported");
+                    }
+                });
+
+        ShopSellingUnitEntity updatedUnit = sellingUnitRepository.save(sellingUnit);
+
+        return modelMapper.map(updatedUnit, SellingUnitDTO.class);
     }
+
 }

@@ -68,14 +68,19 @@ public class GlobalExceptionHandler {
         return buildApiError(e.getError().getMessage(), e.getError().getSubErrors(), e.getError().getStatus());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ApiResponse handleIllegalArgumentException(IllegalArgumentException e) {
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ApiResponse handleRuntimeException(RuntimeException e) {
-        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ApiResponse handleException(Exception e) {
-        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.BAD_REQUEST);
+        return buildApiError(e.getMessage(), Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(FeignException.class)

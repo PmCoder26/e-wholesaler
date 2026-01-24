@@ -2,18 +2,25 @@ package com.parimal.e_wholesaler.shop_service.services.owner;
 
 import com.parimal.e_wholesaler.common.advices.ApiError;
 import com.parimal.e_wholesaler.common.advices.ApiResponse;
-import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
-import com.parimal.e_wholesaler.shop_service.dtos.MessageDTO;
-import com.parimal.e_wholesaler.shop_service.dtos.product.*;
-import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
+import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopRequestDTO;
+import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopResponseDTO;
+import com.parimal.e_wholesaler.common.dtos.product.ProductIdentityDTO;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopRequestDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
+import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
 import com.parimal.e_wholesaler.common.exceptions.MyException;
 import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
+import com.parimal.e_wholesaler.shop_service.clients.ProductFeignClient;
+import com.parimal.e_wholesaler.shop_service.clients.ShopSubProductFeignClient;
+import com.parimal.e_wholesaler.shop_service.entities.ShopEntity;
 import com.parimal.e_wholesaler.shop_service.repositories.ShopRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -21,10 +28,11 @@ public class OwnerProductService {
 
     private final ShopRepository shopRepository;
 
+    private final ShopSubProductFeignClient shopSubProductFeignClient;
     private final ProductFeignClient productFeignClient;
 
 
-    public List<ShopProductDTO> getProductsByShopId(Long ownerId, Long shopId) {
+    public AddProductForShopResponseDTO addProduct(Long ownerId, Long shopId, AddProductForShopRequestDTO requestDTO) {
         ShopEntity shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + shopId + " now found."));
         if(!shop.getOwner().getId().equals(ownerId)) {
@@ -35,47 +43,67 @@ public class OwnerProductService {
             throw new MyException(apiError);
         }
 
-        ApiResponse<List<ShopProductDTO>> productsResponse = productFeignClient.getShopSubProductsByShopId(shopId);
+        ApiResponse<AddProductForShopResponseDTO> productsResponse = productFeignClient.addProduct(shopId, requestDTO);
+        if(productsResponse.getError() != null) throw new MyException(productsResponse.getError());
+
+        return productsResponse.getData();
+    }
+
+    public List<ProductIdentityDTO> getShopProducts(Long ownerId, Long shopId) {
+        ShopEntity shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shop with id: " + shopId + " now found."));
+        if(!shop.getOwner().getId().equals(ownerId)) {
+            ApiError apiError = ApiError.builder()
+                    .message("You don't have permission to access this shop.")
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+            throw new MyException(apiError);
+        }
+
+        ApiResponse<List<ProductIdentityDTO>> productsResponse = productFeignClient.getShopProductForOwner(shopId);
         if(productsResponse.getError() != null) {
             throw new MyException(productsResponse.getError());
         }
         return productsResponse.getData();
     }
 
-    public ShopSubProductResponseDTO addShopSubProduct(Long ownerId, ShopSubProductRequestDTO requestDTO) {
-        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
+    public AddSubProductsForShopResponseDTO addShopSubProduct(Long ownerId, Long shopId, Long productId, AddSubProductsForShopRequestDTO requestDTO) {
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
-        ApiResponse<ShopSubProductResponseDTO> responseDTO = productFeignClient.addShopSubProduct(requestDTO);
+        ApiResponse<AddSubProductsForShopResponseDTO> responseDTO = shopSubProductFeignClient.addShopSubProduct(shopId, productId, requestDTO);
         if(responseDTO.getError() != null) throw new MyException(responseDTO.getError());
 
         return responseDTO.getData();
     }
 
-    public MessageDTO removeShopSubProduct(Long ownerId, RequestDTO requestDTO) {
-        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
+    public List<SubProductDTO2> getShopProductDetails(Long ownerId, Long shopId, Long productId) {
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
-        ApiResponse<MessageDTO> shopSubProductResponse = productFeignClient.removeShopSubProduct(requestDTO);
-        if(shopSubProductResponse.getError() != null) throw new MyException(shopSubProductResponse.getError());
+        ApiResponse<List<SubProductDTO2>> response = shopSubProductFeignClient.getShopProductDetails(shopId, productId);
+        if(response.getError() != null) throw new MyException(response.getError());
 
-        return shopSubProductResponse.getData();
+        return response.getData();
     }
 
-    public MessageDTO updateShopSubProduct(Long ownerId, ShopSubProductUpdateRequestDTO requestDTO) {
-        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
+    public void deleteShopSubProduct(Long ownerId, Long shopId, Long shopSubProductId) {
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
-        ApiResponse<MessageDTO> updateResponse = productFeignClient.updateShopSubProduct(requestDTO);
-        if(updateResponse.getError() != null) throw new MyException(updateResponse.getError());
-
-        return updateResponse.getData();
+        ApiResponse<Void> response = shopSubProductFeignClient.deleteShopSubProduct(shopId, shopSubProductId);
+        if(response!= null && response.getError() != null) throw new MyException(response.getError());
     }
 
-    public MessageDTO removeProductByShopIdAndProductName(Long ownerId, ProductRemoveRequestDTO requestDTO) {
-        shopExistsByShopIdAndOwnerId(requestDTO.getShopId(), ownerId);
+    public SellingUnitDTO updateProductSellingUnit(
+            Long ownerId, Long shopId, Long shopSubProductId, Long sellingUnitId, Map<String, Object> updates)
+    {
+        if(updates.isEmpty()) throw new IllegalArgumentException("Update-data cannot be empty");
 
-        ApiResponse<MessageDTO> removalResponse = productFeignClient.removeProductByShopIdAndProductName(requestDTO);
-        if(removalResponse.getError() != null) throw new MyException(removalResponse.getError());
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
-        return removalResponse.getData();
+        ApiResponse<SellingUnitDTO> response = shopSubProductFeignClient
+                .updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, updates);
+        if(response.getError() != null) throw new MyException(response.getError());
+
+        return response.getData();
     }
 
     private void shopExistsByShopIdAndOwnerId(Long shopId, Long ownerId) {

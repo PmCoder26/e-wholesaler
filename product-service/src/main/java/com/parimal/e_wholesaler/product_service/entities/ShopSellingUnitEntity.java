@@ -1,5 +1,6 @@
 package com.parimal.e_wholesaler.product_service.entities;
 
+import com.parimal.e_wholesaler.common.enums.UnitType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,34 +10,39 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+@Data
 @Entity
 @Table(
-        name = "shop_sub_product",
+        name = "shop_selling_units",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = { "shop_id", "sub_product_id" })
+                @UniqueConstraint(columnNames = { "shop_sub_product_id", "unit_type" })
         }
 )
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class ShopSubProductEntity {
+@EntityListeners(value = AuditingEntityListener.class)
+public class ShopSellingUnitEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_product_id", nullable = false)
-    private SubProductEntity subProduct;
+    @JoinColumn(name = "shop_sub_product_id", nullable = false)
+    private ShopSubProductEntity shopSubProduct;
 
-    @JoinColumn(name = "shop_id", nullable = false)
-    private Long shopId;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "unit_type", nullable = false)
+    private UnitType unitType;      // piece, box, sack, etc,
 
-    @OneToMany(mappedBy = "shopSubProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShopSellingUnitEntity> sellingUnits;
+    // no. of pieces in the unitType.
+    @Column(nullable = false)
+    private Integer packets;
+
+    // selling price of unitType.
+    @Column(nullable = false)
+    private Double sellingPrice;
 
     @CreatedDate
     private LocalDateTime createdAt;
