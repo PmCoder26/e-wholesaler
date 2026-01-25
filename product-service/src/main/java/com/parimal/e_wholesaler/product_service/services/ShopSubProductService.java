@@ -195,4 +195,13 @@ public class ShopSubProductService {
         return modelMapper.map(updatedUnit, SellingUnitDTO.class);
     }
 
+    @Transactional
+    public void deleteProductSellingUnit(Long shopId, Long shopSubProductId, Long sellingUnitId) {
+
+        ShopSellingUnitEntity sellingUnit = sellingUnitRepository
+                .findByIdAndShopSubProduct_IdAndShopSubProduct_ShopId(sellingUnitId, shopSubProductId, shopId)
+                .orElseThrow(() -> new ResourceNotFoundException("Selling-unit not found, enter valid data"));
+
+        sellingUnitRepository.delete(sellingUnit);
+    }
 }

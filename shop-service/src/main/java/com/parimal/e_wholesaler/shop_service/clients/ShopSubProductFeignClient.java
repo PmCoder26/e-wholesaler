@@ -29,4 +29,8 @@ public interface ShopSubProductFeignClient {
             @PathVariable Long shopId, @PathVariable Long shopSubProductId, @PathVariable Long sellingUnitId,
             @RequestBody Map<String, Object> updates);
 
+    @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    ApiResponse<Void> deleteProductSellingUnit(
+            @PathVariable Long shopId, @PathVariable Long shopSubProductId, @PathVariable Long sellingUnitId);
+
 }

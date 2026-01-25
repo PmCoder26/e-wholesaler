@@ -89,5 +89,16 @@ public class OwnerProductController {
         return ownerProductService.updateProductSellingUnit(ownerId, shopId, shopSubProductId, sellingUnitId, updates);
     }
 
+    @DeleteMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteProductSellingUnit(
+            @PathVariable Long ownerId,
+            @PathVariable Long shopId,
+            @PathVariable Long shopSubProductId,
+            @PathVariable Long sellingUnitId
+    ) {
+        ownerProductService.deleteProductSellingUnit(ownerId, shopId, shopSubProductId, sellingUnitId);
+    }
+
     
 }

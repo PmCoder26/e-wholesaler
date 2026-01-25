@@ -66,4 +66,14 @@ public class ShopSubProductController {
         return shopSubProductService.updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, updates);
     }
 
+    @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteProductSellingUnit(
+            @PathVariable Long shopId,
+            @PathVariable Long shopSubProductId,
+            @PathVariable Long sellingUnitId
+    ) {
+        shopSubProductService.deleteProductSellingUnit(shopId, shopSubProductId, sellingUnitId);
+    }
+
 }
