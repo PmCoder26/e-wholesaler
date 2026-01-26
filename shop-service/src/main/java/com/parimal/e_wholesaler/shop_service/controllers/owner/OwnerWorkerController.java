@@ -20,6 +20,7 @@ public class OwnerWorkerController {
 
 
     @GetMapping(path = "/{ownerId}/shop-workers")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public List<ShopAndWorkersDTO> getShopWorkers(
             @PathVariable
             Long ownerId
@@ -28,6 +29,7 @@ public class OwnerWorkerController {
     }
 
     @PostMapping(path = "/{ownerId}/shops/worker")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public WorkerDTO addWorker(
             @PathVariable
             Long ownerId,
@@ -38,6 +40,7 @@ public class OwnerWorkerController {
     }
 
     @PutMapping(path = "/{ownerId}/shops/worker")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public WorkerDTO updateWorker(
             @PathVariable
             Long ownerId,
@@ -48,6 +51,7 @@ public class OwnerWorkerController {
     }
 
     @DeleteMapping(path = "/{ownerId}/shops/worker")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public MessageDTO deleteWorkerById(
             @PathVariable
             Long ownerId,
@@ -58,6 +62,7 @@ public class OwnerWorkerController {
     }
 
     @GetMapping(path = "/{ownerId}/shop/{shopId}/workers")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public ShopAndWorkersDTO getWorkersByShopId(
             @PathVariable
             Long ownerId,

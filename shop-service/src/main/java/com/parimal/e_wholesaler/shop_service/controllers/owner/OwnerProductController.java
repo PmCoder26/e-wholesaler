@@ -27,6 +27,7 @@ public class OwnerProductController {
     
 
     @GetMapping(path = "/{ownerId}/shop/{shopId}/products")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public List<ProductIdentityDTO> getShopProducts(
             @PathVariable
             Long ownerId,
@@ -37,6 +38,7 @@ public class OwnerProductController {
     }
 
     @PostMapping(path = "/{ownerId}/shop/{shopId}/products")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public AddProductForShopResponseDTO addProduct(
             @PathVariable
             Long ownerId,
@@ -49,6 +51,7 @@ public class OwnerProductController {
     }
 
     @PostMapping(path = "/{ownerId}/shop/{shopId}/products/{productId}/sub-products")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public AddSubProductsForShopResponseDTO addShopSubProduct(
             @PathVariable Long ownerId,
             @PathVariable Long shopId,
@@ -60,6 +63,7 @@ public class OwnerProductController {
     }
 
     @GetMapping(path = "/{ownerId}/shop/{shopId}/products/{productId}/sub-products")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public List<SubProductDTO2> getShopProductDetails(
             @PathVariable Long ownerId,
             @PathVariable Long shopId,
@@ -69,6 +73,7 @@ public class OwnerProductController {
     }
 
     @DeleteMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteShopSubProduct(
             @PathVariable Long ownerId,
@@ -79,6 +84,7 @@ public class OwnerProductController {
     }
 
     @PutMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public SellingUnitDTO updateProductSellingUnit(
             @PathVariable Long ownerId,
             @PathVariable Long shopId,
@@ -90,6 +96,7 @@ public class OwnerProductController {
     }
 
     @DeleteMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductSellingUnit(
             @PathVariable Long ownerId,

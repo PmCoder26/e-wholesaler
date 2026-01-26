@@ -19,6 +19,7 @@ public class OwnerHomeController {
 
 
     @GetMapping(path = "/{ownerId}/home")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public OwnerHomeDTO getHomeDetails(
             @PathVariable
             Long ownerId

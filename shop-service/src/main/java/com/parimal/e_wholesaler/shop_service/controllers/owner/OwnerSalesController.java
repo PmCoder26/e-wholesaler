@@ -19,6 +19,7 @@ public class OwnerSalesController {
     private final OwnerSalesService ownerSalesService;
 
     @PostMapping(path = "/shop/sales")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public MessageDTO createSalesForShop(
             @RequestBody
             SalesRequestDTO requestDTO
@@ -27,6 +28,7 @@ public class OwnerSalesController {
     }
 
     @GetMapping(path = "/{ownerId}/daily-revenue")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public List<DailyRevenueDTO> getDailyRevenue(
             @PathVariable
             Long ownerId

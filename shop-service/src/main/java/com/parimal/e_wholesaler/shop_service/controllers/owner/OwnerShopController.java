@@ -23,6 +23,7 @@ public class OwnerShopController {
     
 
     @GetMapping(path = "/{ownerId}/shops")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public List<ShopDTO> getShopsByOwnerId(
             @PathVariable
             Long ownerId
@@ -31,6 +32,7 @@ public class OwnerShopController {
     }
 
     @PostMapping(path = "/{ownerId}/shop")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public ShopResponseDTO createShop(
             @PathVariable
             Long ownerId,
@@ -41,8 +43,8 @@ public class OwnerShopController {
     }
 
     @PutMapping(path = "/{ownerId}/shop")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public ShopDTO updateShop(
-            HttpServletRequest request,
             @PathVariable
             Long ownerId,
             @RequestBody @Valid

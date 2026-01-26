@@ -9,6 +9,7 @@ import com.parimal.e_wholesaler.product_service.services.ShopSubProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ShopSubProductController {
 
 
     @PostMapping(path = "/{shopId}/products/{productId}/sub-products")
+    @PreAuthorize(value = "hasAuthority('PRODUCT_CREATE')")
     public AddSubProductsForShopResponseDTO addShopSubProduct(
             @PathVariable Long shopId,
             @PathVariable Long productId,
@@ -32,6 +34,7 @@ public class ShopSubProductController {
     }
 
     @GetMapping(path = "/{shopId}/products/{productId}/sub-products")
+    @PreAuthorize(value = "hasAuthority('PRODUCT_VIEW')")
    public List<SubProductDTO2> getShopProductDetails(
            @PathVariable Long shopId,
            @PathVariable Long productId
@@ -40,6 +43,7 @@ public class ShopSubProductController {
    }
 
     @GetMapping(path = "/{subProductId}/shop/{shopId}")
+    @PreAuthorize(value = "hasAuthority('PRODUCT_VIEW')")
     public ShopSubProductDTO getShopSubProductByIds(
             @PathVariable Long subProductId,
             @PathVariable Long shopId
@@ -48,6 +52,7 @@ public class ShopSubProductController {
     }
 
     @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}")
+    @PreAuthorize(value = "hasAuthority('PRODUCT_DELETE')")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteShopSubProduct(
             @PathVariable Long shopId,
@@ -57,6 +62,7 @@ public class ShopSubProductController {
     }
 
     @PutMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    @PreAuthorize(value = "hasAuthority('PRODUCT_UPDATE')")
     public SellingUnitDTO updateProductSellingUnit(
             @PathVariable Long shopId,
             @PathVariable Long shopSubProductId,
@@ -67,6 +73,7 @@ public class ShopSubProductController {
     }
 
     @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
+    @PreAuthorize(value = "hasAuthority('PRODUCT_DELETE')")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductSellingUnit(
             @PathVariable Long shopId,

@@ -13,13 +13,13 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/worker")
 @AllArgsConstructor
-@PreAuthorize(value = "hasAnyRole('OWNER', 'WORKER')")
 public class WorkerController {
 
     private final WorkerService workerService;
 
 
     @PostMapping
+    @PreAuthorize(value = "hasAuthority('WORKER_CREATE')")
     public WorkerDTO createWorker(
             @RequestBody @Valid WorkerRequestDTO requestDTO
     ) {
@@ -27,8 +27,8 @@ public class WorkerController {
     }
 
     @PostMapping(path = "/worker-count")
+    @PreAuthorize(value = "hasAuthority('WORKER_VIEW')")
     public Long getWorkerCount(
-            HttpServletRequest request,
             @RequestBody
             List<Long> shopIdList
     ) {
@@ -36,8 +36,8 @@ public class WorkerController {
     }
 
     @PostMapping(path = "/shops")
+    @PreAuthorize(value = "hasAuthority('WORKER_VIEW')")
     public List<ShopAndWorkersDTO> getWorkersByShopIdList(
-            HttpServletRequest request,
             @RequestBody
             List<Long> shopIdList
     ) {
@@ -45,6 +45,7 @@ public class WorkerController {
     }
 
     @PutMapping
+    @PreAuthorize(value = "hasAuthority('WORKER_UPDATE')")
     public WorkerDTO updateWorker(
             @RequestBody @Valid
             WorkerUpdateRequestDTO requestDTO
@@ -53,6 +54,7 @@ public class WorkerController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize(value = "hasAuthority('WORKER_VIEW')")
     public WorkerDTO getWorkerById(
             @PathVariable Long id
     ) {
@@ -60,6 +62,7 @@ public class WorkerController {
     }
 
     @GetMapping(path = "/{workerId}/shop/{shopId}")
+    @PreAuthorize(value = "hasAuthority('WORKER_VIEW')")
     public DataDTO<Boolean> workerExistsByIdAndShopId(
             @PathVariable Long workerId,
             @PathVariable Long shopId
@@ -68,6 +71,7 @@ public class WorkerController {
     }
  
     @DeleteMapping
+    @PreAuthorize(value = "hasAuthority('WORKER_DELETE')")
     public MessageDTO deleteWorkerById(
             @RequestBody @Valid WorkerDeleteRequestDTO requestDTO
     ) {
@@ -75,8 +79,8 @@ public class WorkerController {
     }
 
     @GetMapping(path = "/internal/shops/{shopId}")
+    @PreAuthorize(value = "hasAuthority('WORKER_VIEW')")
     public ShopAndWorkersDTO getWorkersByShopId(
-            HttpServletRequest request,
             @PathVariable
             Long shopId
     ) {

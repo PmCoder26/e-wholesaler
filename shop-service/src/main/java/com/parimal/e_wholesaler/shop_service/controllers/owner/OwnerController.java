@@ -16,7 +16,6 @@ public class OwnerController {
     private final OwnerService ownerService;
 
 
-    @PreAuthorize(value = "")
     @GetMapping(path = "/{id}")
     public OwnerDTO getOwnerById(
             @PathVariable
