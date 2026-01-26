@@ -4,5 +4,6 @@ public enum UnitType {
     PIECE,
     BOX,
     SACK,
-    CARTOON
+    CARTOON,
+    DOZEN
 }
