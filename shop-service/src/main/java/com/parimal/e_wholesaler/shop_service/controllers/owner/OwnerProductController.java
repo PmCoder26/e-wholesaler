@@ -50,6 +50,20 @@ public class OwnerProductController {
         return ownerProductService.addProduct(ownerId, shopId, requestDTO);
     }
 
+    @DeleteMapping(path = "/{ownerId}/shop/{shopId}/products/{productId}")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteShopProduct(
+            @PathVariable
+            Long ownerId,
+            @PathVariable
+            Long shopId,
+            @PathVariable
+            Long productId
+    ) {
+        ownerProductService.deleteShopProduct(ownerId, shopId, productId);
+    }
+
     @PostMapping(path = "/{ownerId}/shop/{shopId}/products/{productId}/sub-products")
     @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public AddSubProductsForShopResponseDTO addShopSubProduct(

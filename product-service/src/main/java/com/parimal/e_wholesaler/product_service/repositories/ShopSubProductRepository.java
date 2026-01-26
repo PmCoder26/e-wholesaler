@@ -25,4 +25,6 @@ public interface ShopSubProductRepository extends JpaRepository<ShopSubProductEn
     )
     List<ShopSubProductEntity> findByShopIdAndProductId(Long shopId, Long productId);
 
+    long deleteAllByShopIdAndSubProduct_Product_Id(Long shopId, Long productId);
+
 }

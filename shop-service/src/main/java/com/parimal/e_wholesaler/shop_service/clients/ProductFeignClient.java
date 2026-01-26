@@ -5,6 +5,7 @@ import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.product.ProductIdentityDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,5 +20,8 @@ public interface ProductFeignClient {
 
     @GetMapping(path = "/{shopId}/owner/products")
     ApiResponse<List<ProductIdentityDTO>> getShopProductForOwner(@PathVariable Long shopId);
+
+    @DeleteMapping(path = "/{shopId}/products/{productId}")
+    ApiResponse<Void> deleteShopProduct(@PathVariable Long shopId, @PathVariable Long productId);
 
 }

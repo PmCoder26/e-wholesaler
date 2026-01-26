@@ -118,4 +118,10 @@ public class OwnerProductService {
             throw new ResourceNotFoundException("Shop with id: " + shopId + " not found or permission for this shop denied.");
     }
 
+    public void deleteShopProduct(Long ownerId, Long shopId, Long productId) {
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
+
+        ApiResponse<Void> response = productFeignClient.deleteShopProduct(shopId, productId);
+        if(response != null && response.getError() != null) throw new MyException(response.getError());
+    }
 }

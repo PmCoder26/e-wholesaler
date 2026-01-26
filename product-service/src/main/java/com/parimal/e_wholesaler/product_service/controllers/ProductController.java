@@ -28,6 +28,15 @@ public class ProductController {
         return productService.addProductForShop(shopId, productRequest);
     }
 
+    @DeleteMapping(path = "/{shopId}/products/{productId}")
+    @PreAuthorize(value = "hasAuthority('SHOP_PRODUCT_DELETE')")
+    public void deleteShopProduct(
+            @PathVariable Long shopId,
+            @PathVariable Long productId
+    ) {
+        productService.deleteShopProduct(shopId, productId);
+    }
+
     @GetMapping(path = "/{shopId}/owner/products")
     @PreAuthorize(value = "hasAuthority('PRODUCT_VIEW')")
     public List<ProductIdentityDTO> getShopProductForOwner(

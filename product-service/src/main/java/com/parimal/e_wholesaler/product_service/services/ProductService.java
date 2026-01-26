@@ -8,6 +8,7 @@ import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
 import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductRequestDTO;
+import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSellingUnitEntity;
 import com.parimal.e_wholesaler.product_service.entities.ShopSubProductEntity;
@@ -129,6 +130,12 @@ public class ProductService {
 
     public List<ProductIdentityDTO> getShopProductForOwner(Long shopId) {
         return productRepository.findShopProductsByShopId(shopId);
+    }
+
+    @Transactional
+    public void deleteShopProduct(Long shopId, Long productId) {
+        long deletedRows = shopSubProductRepository.deleteAllByShopIdAndSubProduct_Product_Id(shopId, productId);
+        if(deletedRows == 0) throw new ResourceNotFoundException("No such product found to delete");
     }
 
 }
