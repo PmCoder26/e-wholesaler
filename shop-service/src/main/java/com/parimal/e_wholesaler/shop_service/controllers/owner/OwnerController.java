@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/owner")
-@PreAuthorize(value = "hasRole('ADMIN')")
 @AllArgsConstructor
 public class OwnerController {
 
@@ -17,6 +16,7 @@ public class OwnerController {
 
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#id)")
     public OwnerDTO getOwnerById(
             @PathVariable
             Long id
