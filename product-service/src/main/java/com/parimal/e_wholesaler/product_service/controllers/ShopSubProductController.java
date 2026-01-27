@@ -52,7 +52,7 @@ public class ShopSubProductController {
     }
 
     @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}")
-    @PreAuthorize(value = "hasAuthority('PRODUCT_DELETE')")
+    @PreAuthorize(value = "hasAuthority('SHOP_PRODUCT_DELETE')")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteShopSubProduct(
             @PathVariable Long shopId,
@@ -62,7 +62,7 @@ public class ShopSubProductController {
     }
 
     @PutMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
-    @PreAuthorize(value = "hasAuthority('PRODUCT_UPDATE')")
+    @PreAuthorize(value = "hasAuthority('SHOP_PRODUCT_UPDATE')")
     public SellingUnitDTO updateProductSellingUnit(
             @PathVariable Long shopId,
             @PathVariable Long shopSubProductId,
@@ -73,7 +73,7 @@ public class ShopSubProductController {
     }
 
     @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
-    @PreAuthorize(value = "hasAuthority('PRODUCT_DELETE')")
+    @PreAuthorize(value = "hasAuthority('SHOP_PRODUCT_DELETE')")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductSellingUnit(
             @PathVariable Long shopId,
