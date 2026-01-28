@@ -1,6 +1,7 @@
 package com.parimal.e_wholesaler.product_service.controllers;
 
 import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
@@ -67,9 +68,9 @@ public class ShopSubProductController {
             @PathVariable Long shopId,
             @PathVariable Long shopSubProductId,
             @PathVariable Long sellingUnitId,
-            @RequestBody Map<String, Object> updates
-    ) {
-        return shopSubProductService.updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, updates);
+            @RequestBody  @Valid SellingUnitRequestDTO requestDTO
+            ) {
+        return shopSubProductService.updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, requestDTO);
     }
 
     @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")

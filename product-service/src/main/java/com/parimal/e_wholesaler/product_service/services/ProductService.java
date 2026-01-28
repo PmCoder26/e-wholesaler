@@ -81,7 +81,7 @@ public class ProductService {
                     });
 
             SubProductDTO2 subDTO = new SubProductDTO2();
-            subDTO.setId(subProduct.getId());
+            subDTO.setId(shopSubProduct.getId());
             subDTO.setMrp(subProduct.getMrp());
 
             List<SellingUnitDTO> sellingUnitDTOs = new ArrayList<>();

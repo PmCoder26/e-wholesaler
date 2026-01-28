@@ -4,6 +4,7 @@ import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.product.ProductIdentityDTO;
 import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
@@ -104,9 +105,9 @@ public class OwnerProductController {
             @PathVariable Long shopId,
             @PathVariable Long shopSubProductId,
             @PathVariable Long sellingUnitId,
-            @RequestBody Map<String, Object> updates
-    ) {
-        return ownerProductService.updateProductSellingUnit(ownerId, shopId, shopSubProductId, sellingUnitId, updates);
+            @RequestBody @Valid SellingUnitRequestDTO requestDTO
+            ) {
+        return ownerProductService.updateProductSellingUnit(ownerId, shopId, shopSubProductId, sellingUnitId, requestDTO);
     }
 
     @DeleteMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")

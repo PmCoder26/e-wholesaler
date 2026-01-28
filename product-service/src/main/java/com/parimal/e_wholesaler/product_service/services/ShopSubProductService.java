@@ -108,7 +108,7 @@ public class ShopSubProductService {
             // 4️⃣ Add sub-product ONLY if something was added
             if (!addedUnits.isEmpty()) {
                 SubProductDTO2 subDTO = new SubProductDTO2();
-                subDTO.setId(subProduct.getId());
+                subDTO.setId(shopSubProduct.getId());
                 subDTO.setMrp(subProduct.getMrp());
                 subDTO.setSellingUnits(addedUnits);
 
@@ -157,38 +157,15 @@ public class ShopSubProductService {
 
     @Transactional
     public SellingUnitDTO updateProductSellingUnit(
-            Long shopId, Long shopSubProductId, Long sellingUnitId, Map<String, Object> updates)
+            Long shopId, Long shopSubProductId, Long sellingUnitId, SellingUnitRequestDTO requestDTO)
     {
         ShopSellingUnitEntity sellingUnit = sellingUnitRepository
                 .findByIdAndShopSubProduct_IdAndShopSubProduct_ShopId(sellingUnitId, shopSubProductId, shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Selling-unit not found, enter valid data"));
 
-        updates.forEach((key, value) -> {
-                    if (value == null) throw new RuntimeException("Update-value(s) cannot be null");
-                    switch (key) {
-                        case "unitType" -> {
-                            if (value instanceof String str) {
-                                try {
-                                    UnitType unitType = UnitType.valueOf(str.toUpperCase());
-                                    sellingUnit.setUnitType(unitType);
-                                } catch (IllegalArgumentException ex) {
-                                    throw new IllegalArgumentException(
-                                            "Invalid unitType: " + str + ". Allowed values: " + Arrays.toString(UnitType.values())
-                                    );
-                                }
-                            }
-                        }
-                        case "packets" -> {
-                            if(value instanceof Integer packets) sellingUnit.setPackets(packets);
-                            else throw new RuntimeException("Invalid type of packets");
-                        }
-                        case "sellingPrice" -> {
-                            if(value instanceof Double price) sellingUnit.setSellingPrice(price);
-                            else throw new RuntimeException("Invalid type of selling-price");
-                        }
-                        default -> throw new IllegalArgumentException("Provided filed(s) not supported");
-                    }
-                });
+        sellingUnit.setUnitType(requestDTO.getUnitType());
+        sellingUnit.setPackets(requestDTO.getPackets());
+        sellingUnit.setSellingPrice(requestDTO.getSellingPrice());
 
         ShopSellingUnitEntity updatedUnit = sellingUnitRepository.save(sellingUnit);
 

@@ -6,6 +6,7 @@ import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.product.AddProductForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.product.ProductIdentityDTO;
 import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitDTO;
+import com.parimal.e_wholesaler.common.dtos.shop_selling_unit.SellingUnitRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopRequestDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
@@ -93,14 +94,14 @@ public class OwnerProductService {
     }
 
     public SellingUnitDTO updateProductSellingUnit(
-            Long ownerId, Long shopId, Long shopSubProductId, Long sellingUnitId, Map<String, Object> updates)
+            Long ownerId, Long shopId, Long shopSubProductId, Long sellingUnitId, SellingUnitRequestDTO requestDTO)
     {
-        if(updates.isEmpty()) throw new IllegalArgumentException("Update-data cannot be empty");
+        if(requestDTO == null) throw new IllegalArgumentException("Update-data cannot be empty");
 
         shopExistsByShopIdAndOwnerId(shopId, ownerId);
 
         ApiResponse<SellingUnitDTO> response = shopSubProductFeignClient
-                .updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, updates);
+                .updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, requestDTO);
         if(response.getError() != null) throw new MyException(response.getError());
 
         return response.getData();
