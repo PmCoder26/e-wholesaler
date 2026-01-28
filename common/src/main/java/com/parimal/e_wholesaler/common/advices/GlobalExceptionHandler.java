@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ApiResponse handleDataIntegrityViolation(DataIntegrityViolationException e) {
-        return buildApiError("Duplicate data or phone number already exists.", Collections.emptyList(), HttpStatus.CONFLICT);
+        return buildApiError("Duplicate data or data already exists.", Collections.emptyList(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
