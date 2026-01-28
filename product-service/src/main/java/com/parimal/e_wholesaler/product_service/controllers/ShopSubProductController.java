@@ -62,26 +62,4 @@ public class ShopSubProductController {
         shopSubProductService.deleteShopSubProduct(shopId, shopSubProductId);
     }
 
-    @PutMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
-    @PreAuthorize(value = "hasAuthority('SHOP_PRODUCT_UPDATE')")
-    public SellingUnitDTO updateProductSellingUnit(
-            @PathVariable Long shopId,
-            @PathVariable Long shopSubProductId,
-            @PathVariable Long sellingUnitId,
-            @RequestBody  @Valid SellingUnitRequestDTO requestDTO
-            ) {
-        return shopSubProductService.updateProductSellingUnit(shopId, shopSubProductId, sellingUnitId, requestDTO);
-    }
-
-    @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
-    @PreAuthorize(value = "hasAuthority('SHOP_PRODUCT_DELETE')")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteProductSellingUnit(
-            @PathVariable Long shopId,
-            @PathVariable Long shopSubProductId,
-            @PathVariable Long sellingUnitId
-    ) {
-        shopSubProductService.deleteProductSellingUnit(shopId, shopSubProductId, sellingUnitId);
-    }
-
 }

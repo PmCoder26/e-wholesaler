@@ -25,6 +25,10 @@ public interface ShopSubProductFeignClient {
     @DeleteMapping(path = "/{shopId}/sub-products/{shopSubProductId}")
     ApiResponse<Void> deleteShopSubProduct(@PathVariable Long shopId, @PathVariable Long shopSubProductId);
 
+    @PostMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units")
+    ApiResponse<SellingUnitDTO> addProductSellingUnit(
+            @PathVariable Long shopId, @PathVariable Long shopSubProductId, SellingUnitRequestDTO requestDTO);
+
     @PutMapping(path = "/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
     ApiResponse<SellingUnitDTO> updateProductSellingUnit(
             @PathVariable Long shopId, @PathVariable Long shopSubProductId, @PathVariable Long sellingUnitId,

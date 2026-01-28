@@ -98,6 +98,17 @@ public class OwnerProductController {
         ownerProductService.deleteShopSubProduct(ownerId, shopId, shopSubProductId);
     }
 
+    @PostMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units")
+    @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
+    public SellingUnitDTO addProductSellingUnit(
+            @PathVariable Long ownerId,
+            @PathVariable Long shopId,
+            @PathVariable Long shopSubProductId,
+            @RequestBody @Valid SellingUnitRequestDTO requestDTO
+    ) {
+        return ownerProductService.addProductSellingUnit(ownerId, shopId, shopSubProductId, requestDTO);
+    }
+
     @PutMapping(path = "/{ownerId}/shop/{shopId}/sub-products/{shopSubProductId}/selling-units/{sellingUnitId}")
     @PreAuthorize(value = "@ownerSecurity.isAuthorizedOwner(#ownerId)")
     public SellingUnitDTO updateProductSellingUnit(

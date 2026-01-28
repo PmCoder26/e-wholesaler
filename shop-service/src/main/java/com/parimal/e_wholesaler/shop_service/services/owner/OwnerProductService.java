@@ -93,6 +93,15 @@ public class OwnerProductService {
         if(response!= null && response.getError() != null) throw new MyException(response.getError());
     }
 
+    public SellingUnitDTO addProductSellingUnit(Long ownerId, Long shopId, Long shopSubProductId, SellingUnitRequestDTO requestDTO) {
+        shopExistsByShopIdAndOwnerId(shopId, ownerId);
+
+        ApiResponse<SellingUnitDTO> response = shopSubProductFeignClient.addProductSellingUnit(shopId, shopSubProductId, requestDTO);
+        if(response.getError() != null) throw new MyException(response.getError());
+
+        return response.getData();
+    }
+
     public SellingUnitDTO updateProductSellingUnit(
             Long ownerId, Long shopId, Long shopSubProductId, Long sellingUnitId, SellingUnitRequestDTO requestDTO)
     {

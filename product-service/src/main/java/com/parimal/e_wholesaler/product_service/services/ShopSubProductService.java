@@ -6,7 +6,6 @@ import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopReq
 import com.parimal.e_wholesaler.common.dtos.sub_product.AddSubProductsForShopResponseDTO;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductDTO2;
 import com.parimal.e_wholesaler.common.dtos.sub_product.SubProductRequestDTO;
-import com.parimal.e_wholesaler.common.enums.UnitType;
 import com.parimal.e_wholesaler.common.exceptions.ResourceNotFoundException;
 import com.parimal.e_wholesaler.product_service.dtos.shop_sub_product.ShopSubProductDTO;
 import com.parimal.e_wholesaler.product_service.entities.ProductEntity;
@@ -19,16 +18,12 @@ import com.parimal.e_wholesaler.product_service.repositories.ShopSubProductRepos
 import com.parimal.e_wholesaler.product_service.repositories.SubProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
 @Service
 @AllArgsConstructor
 public class ShopSubProductService {
@@ -155,30 +150,4 @@ public class ShopSubProductService {
         shopSubProductRepository.delete(shopSubProduct);
     }
 
-    @Transactional
-    public SellingUnitDTO updateProductSellingUnit(
-            Long shopId, Long shopSubProductId, Long sellingUnitId, SellingUnitRequestDTO requestDTO)
-    {
-        ShopSellingUnitEntity sellingUnit = sellingUnitRepository
-                .findByIdAndShopSubProduct_IdAndShopSubProduct_ShopId(sellingUnitId, shopSubProductId, shopId)
-                .orElseThrow(() -> new ResourceNotFoundException("Selling-unit not found, enter valid data"));
-
-        sellingUnit.setUnitType(requestDTO.getUnitType());
-        sellingUnit.setPackets(requestDTO.getPackets());
-        sellingUnit.setSellingPrice(requestDTO.getSellingPrice());
-
-        ShopSellingUnitEntity updatedUnit = sellingUnitRepository.save(sellingUnit);
-
-        return modelMapper.map(updatedUnit, SellingUnitDTO.class);
-    }
-
-    @Transactional
-    public void deleteProductSellingUnit(Long shopId, Long shopSubProductId, Long sellingUnitId) {
-
-        ShopSellingUnitEntity sellingUnit = sellingUnitRepository
-                .findByIdAndShopSubProduct_IdAndShopSubProduct_ShopId(sellingUnitId, shopSubProductId, shopId)
-                .orElseThrow(() -> new ResourceNotFoundException("Selling-unit not found, enter valid data"));
-
-        sellingUnitRepository.delete(sellingUnit);
-    }
 }
